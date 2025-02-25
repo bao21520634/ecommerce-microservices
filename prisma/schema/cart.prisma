@@ -1,0 +1,67 @@
+enum OrderStatus {
+  Draft
+  WaitForConfirmation
+  ReadyForDelivery
+  Delivery
+  Delivered
+  Cancelled
+}
+
+enum PaymentStatus {
+  Pending
+  Paid
+  UnPaid
+}
+
+enum ShippingStatus {
+  Delivering
+}
+
+model Order {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt       DateTime?
+  createdBy       String?
+  updatedBy       String?
+  deletedBy       String?
+
+  code            String            @unique
+  customerId      String            @db.ObjectId  // Reference to User in Account service
+  addressId       String?           @db.ObjectId  // Reference to Address in Account service
+  
+  subTotal        Float
+  discount        Float             @default(0)
+  tax             Float             @default(0)
+  total           Float
+  note            String?
+
+  orderStatus     OrderStatus       @default(Draft)
+  paymentStatus   PaymentStatus     @default(Pending)
+  shippingStatus  ShippingStatus?
+
+  orderItems      OrderItem[]
+}
+
+model OrderItem {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt       DateTime?
+  createdBy       String?
+  updatedBy       String?
+  deletedBy       String?
+
+  productVariantId String   @db.ObjectId  // Reference to Product in Catalog service
+  order           Order     @relation(fields: [orderId], references: [id])
+  orderId         String    @db.ObjectId
+
+  displayName     String
+  priceInclTax    Float
+  priceExclTax    Float
+  quantity        Int
+  subTotal        Float
+  discount        Float     @default(0)
+  tax             Float     @default(0)
+  total           Float
+}

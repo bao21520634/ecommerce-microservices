@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package paymentHistory;
+
+import "charge.proto";
+import "order.proto";
+
+message PaymentHistoryRequest {
+    string customerId = 1;
+    int32 page = 2;
+    int32 pageSize = 3;
+}
+  
+message PaymentHistoryResponse {
+    repeated charge.ChargeResponse charges = 1;
+    int32 totalCount = 2;
+    int32 page = 3;
+    int32 pageSize = 4;
+}
+  
+message OrderPaymentDetailsResponse {
+    order.Order order = 1;
+    charge.ChargeResponse chargeDetails = 2;
+}
+
+message GetOrderPaymentDetailsRequest {
+  string orderId = 1;
+}

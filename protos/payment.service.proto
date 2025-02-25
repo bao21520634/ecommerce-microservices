@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package payment;
+
+import "checkout.proto";
+import "charge.proto";
+import "paymentHistory.proto";
+
+service PaymentService {
+  // Checkout and Order Management
+  rpc InitiateCheckout(checkout.CheckoutRequest) returns (checkout.CheckoutResponse) {}
+  rpc PlaceOrder(checkout.PlaceOrderRequest) returns (checkout.PlaceOrderResponse) {}
+  rpc CancelCheckout(checkout.CancelCheckoutRequest) returns (checkout.CheckoutResponse) {}
+
+  // Payment Processing
+  rpc CreateCharge(charge.ChargeRequest) returns (charge.ChargeResponse) {}
+
+  // Payment and Order Queries
+  rpc GetPaymentHistory(paymentHistory.PaymentHistoryRequest) returns (paymentHistory.PaymentHistoryResponse) {}
+  rpc GetOrderPaymentDetails(paymentHistory.GetOrderPaymentDetailsRequest) returns (paymentHistory.OrderPaymentDetailsResponse) {}
+}

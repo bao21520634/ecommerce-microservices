@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package account;
+
+import "user.proto";
+import "auth.proto";
+
+service AccountService {
+  // User Management RPCs
+  rpc CreateUser(user.CreateRequest) returns (user.CreateResponse) {}
+  rpc ReadUser(user.ReadRequest) returns (user.ReadResponse) {}
+  rpc UpdateUser(user.UpdateRequest) returns (user.UpdateResponse) {}
+  rpc DeleteUser(user.DeleteRequest) returns (user.DeleteResponse) {}
+  rpc SearchUser(user.SearchRequest) returns (user.SearchResponse) {}
+
+  // Authentication RPCs
+  rpc Login(auth.LoginRequest) returns (auth.LoginResponse) {}
+  rpc Logout(auth.LogoutRequest) returns (auth.LogoutResponse) {}
+  rpc ReadSession(auth.ReadSessionRequest) returns(auth.ReadSessionResponse) {}
+
+  // Account Verification RPCs
+  rpc VerifyAccount(auth.VerifyAccountRequest) returns (auth.VerifyAccountResponse) {}
+  rpc ResendVerificationCode(auth.ResendVerificationCodeRequest) returns (auth.ResendVerificationCodeResponse) {}
+  rpc VerifyActivationLink(auth.VerifyActivationLinkRequest) returns (auth.VerifyActivationLinkResponse) {}
+
+  // Password Management RPCs
+  rpc ForgotPassword(auth.ForgotPasswordRequest) returns (auth.ForgotPasswordResponse) {}
+  rpc UpdatePassword(auth.UpdatePasswordRequest) returns (auth.UpdatePasswordResponse) {}
+}

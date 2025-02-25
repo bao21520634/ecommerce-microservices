@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package catalog;
+
+import 'common.proto';
+import 'category.proto';
+import 'product.proto';
+import 'productCategory.proto';
+
+service CatalogService {
+    // category
+    rpc category(common.Id) returns (category.NullableCategory){}
+    rpc categories(common.Query) returns (category.Categories){}
+    rpc categoriesTotal(common.Query) returns (common.Count){}
+    rpc createCategory (category.CreateCategoryInput) returns (category.Category) {}
+    rpc createManyCategories (category.CreateManyCategoriesInput) returns (category.Categories) {}
+    rpc updateCategory (category.UpdateCategoryInput) returns (category.Category) {}
+    rpc updateManyCategories (category.UpdateManyCategoriesInput) returns (category.Categories) {}
+    rpc deleteCategory (common.Id) returns (category.Category) {}
+    rpc deleteManyCategories (category.DeleteManyCategoriesInput) returns (common.DeleteManyResponse) {}
+
+    // product
+    rpc product(common.Id) returns (product.NullableProduct){}
+    rpc products(common.Query) returns (product.Products){}
+    rpc productsTotal(common.Query) returns (common.Count){}
+    rpc createProduct (product.CreateProductInput) returns (product.Product) {}
+    rpc createManyProducts (product.CreateManyProductsInput) returns (product.Products) {}
+    rpc updateProduct (product.UpdateProductInput) returns (product.Product) {}
+    rpc updateManyProducts (product.UpdateManyProductsInput) returns (product.Products) {}
+    rpc deleteProduct (common.Id) returns (product.Product) {}
+    rpc deleteManyProducts (product.DeleteManyProductsInput) returns (common.DeleteManyResponse) {}
+
+    // product category
+    rpc productCategory(common.Id) returns (productCategory.NullableProductCategory){}
+    rpc productCategories(common.Query) returns (productCategory.ProductCategories){}
+    rpc productCategoriesTotal(common.Query) returns (common.Count){}
+    rpc createProductCategory (productCategory.CreateProductCategoryInput) returns (productCategory.ProductCategory) {}
+    rpc createManyProductCategories (productCategory.CreateManyProductCategoriesInput) returns (productCategory.ProductCategory) {}
+    rpc updateProductCategory (productCategory.UpdateProductCategoryInput) returns (productCategory.ProductCategory) {}
+    rpc updateManyProductCategories (productCategory.UpdateManyProductCategoriesInput) returns (productCategory.ProductCategories) {}
+    rpc deleteProductCategory (common.Id) returns (productCategory.ProductCategory) {}
+    rpc deleteManyProductCategories (productCategory.DeleteManyProductCategoriesInput) returns (common.DeleteManyResponse) {}
+}

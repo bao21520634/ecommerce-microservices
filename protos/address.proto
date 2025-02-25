@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package address;
+
+message Address {
+    string id = 1;
+    string address1 = 2;
+    string address2 = 3;
+    string country = 4;
+    string state = 5;
+    string city = 6;
+    string zip = 7;
+}

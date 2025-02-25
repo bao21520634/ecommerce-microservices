@@ -1,0 +1,38 @@
+{
+    "name": "catalog-service",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "apps/catalog-service/src",
+    "projectType": "application",
+    "tags": [],
+    "targets": {
+        "build": {
+            "executor": "nx:run-commands",
+            "options": {
+                "command": "webpack-cli build",
+                "args": ["node-env=production"]
+            },
+            "configurations": {
+                "development": {
+                    "args": ["node-env=development"]
+                }
+            }
+        },
+        "serve": {
+            "executor": "@nx/js:node",
+            "defaultConfiguration": "development",
+            "dependsOn": ["build"],
+            "options": {
+                "buildTarget": "catalog-service:build",
+                "runBuildTargetDependencies": false
+            },
+            "configurations": {
+                "development": {
+                    "buildTarget": "catalog-service:build:development"
+                },
+                "production": {
+                    "buildTarget": "catalog-service:build:production"
+                }
+            }
+        }
+    }
+}

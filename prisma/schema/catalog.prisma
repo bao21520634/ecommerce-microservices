@@ -1,0 +1,110 @@
+enum ProductType {
+  Simple
+  Variant
+}
+
+enum ProductStatus {
+  Active
+  Locked
+  Deleted
+}
+
+enum CategoryStatus {
+  Active
+  Locked
+  Deleted
+}
+
+model Product {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  createdBy String?
+  updatedBy String?
+  deletedBy String?
+
+  name               String
+  slug               String        @unique
+  shortDescription   String?
+  longDescription    String?
+  thumbnailUrl       String?
+  productType        ProductType   @default(Simple)
+  productTemplateId  String?
+  manufacturerId     String?
+  sortOrder          Int           @default(0)
+  metaTitle          String?
+  metaDescription    String?
+  metaKeywords       String?
+  tags               String?
+  allowCustomMetaTag Boolean       @default(false)
+  limitedToLocations Boolean       @default(false)
+  limitedToStores    Boolean       @default(false)
+  status             ProductStatus @default(Active)
+  displayPrice       Boolean       @default(true)
+  shippable          Boolean       @default(true)
+  weight             Float?
+  length             Float?
+  width              Float?
+  height             Float?
+  taxCategory        String?
+  taxPercent         Float?
+  priceExclTax       Float
+  priceInclTax       Float
+  unit               String?
+  stockAvailability  Int?
+  attributes         Json?
+  variantAttributes  Json?
+
+  categories ProductCategory[]
+}
+
+model Category {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  createdBy String?
+  updatedBy String?
+  deletedBy String?
+
+  name                           String
+  slug                           String         @unique
+  shortDescription               String?
+  longDescription                String?
+  thumbnailUrl                   String?
+  backgroundUrl                  String?
+  templateId                     String?
+  parentId                       String?        @db.ObjectId
+  parent                         Category?      @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children                       Category[]     @relation("CategoryHierarchy")
+  sortOrder                      Int            @default(0)
+  metaTitle                      String?
+  metaDescription                String?
+  metaKeywords                   String?
+  allowCustomMetaTag             Boolean        @default(false)
+  limitedToLocations             Boolean        @default(false)
+  limitedToStores                Boolean        @default(false)
+  taxCategory                    String?
+  pageSize                       Int?
+  pageSizeOption                 Int[]
+  allowCustomersToSelectPageSize Boolean        @default(false)
+  priceRangeFiltering            Boolean        @default(false)
+  manuallyPriceRange             Boolean        @default(false)
+  priceFrom                      Float?
+  priceTo                        Float?
+  status                         CategoryStatus @default(Active)
+
+  products ProductCategory[]
+}
+
+model ProductCategory {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String   @db.ObjectId
+  product    Product  @relation(fields: [productId], references: [id])
+  productId  String   @db.ObjectId
+  sortOrder  Int      @default(0)
+
+  @@unique([categoryId, productId])
+}
