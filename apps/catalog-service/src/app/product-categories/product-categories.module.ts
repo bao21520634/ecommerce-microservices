@@ -16,7 +16,8 @@ import {
 import { ProductCategoryRepository } from './repositories';
 import { ProductCategoryCommandHandlers } from './commands';
 import { ProductCategoryQueryHandlers } from './queries/handlers';
-import { ClerkAuthGuard } from '@ecommerce-microservices/common';
+import { ProductCategoryEventHandlers } from './events';
+import { EventBus } from '@nestjs/cqrs';
 
 @Module({
     imports: [
@@ -37,11 +38,12 @@ import { ClerkAuthGuard } from '@ecommerce-microservices/common';
         }),
     ],
     providers: [
+        EventBus,
         ...ProductCategoryCommandHandlers,
         ...ProductCategoryQueryHandlers,
+        ...ProductCategoryEventHandlers,
         ProductCategoryRepository,
         PrismaRepository,
-        ClerkAuthGuard,
         {
             provide: PRISMA_OPTIONS,
             useValue: {

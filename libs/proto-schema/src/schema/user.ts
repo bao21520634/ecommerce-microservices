@@ -81,7 +81,7 @@ export interface PasswordStruct {
 }
 
 export interface AuthServices {
-  password: PasswordStruct | undefined;
+  password?: PasswordStruct | undefined;
 }
 
 export interface Settings {
@@ -107,7 +107,7 @@ export interface User {
   bio?: string | undefined;
   role: UserRoles;
   emails: EmailObject[];
-  services: AuthServices | undefined;
+  services?: AuthServices | undefined;
   settings?: Settings | undefined;
 }
 
@@ -142,15 +142,15 @@ export interface ReadRequest {
 }
 
 export interface ReadResponse {
-  user: User | undefined;
+  user?: User | undefined;
 }
 
 export interface UpdateRequest {
-  user: User | undefined;
+  user?: User | undefined;
 }
 
 export interface UpdateResponse {
-  user: User | undefined;
+  user?: User | undefined;
 }
 
 export interface SearchRequest {
@@ -163,6 +163,8 @@ export interface SearchRequest {
 export interface SearchResponse {
   users: User[];
 }
+
+export const USER_PACKAGE_NAME = "user";
 
 function createBasePasswordStruct(): PasswordStruct {
   return { hashed: "" };
@@ -211,19 +213,10 @@ export const PasswordStruct: MessageFns<PasswordStruct> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<PasswordStruct>, I>>(base?: I): PasswordStruct {
-    return PasswordStruct.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<PasswordStruct>, I>>(object: I): PasswordStruct {
-    const message = createBasePasswordStruct();
-    message.hashed = object.hashed ?? "";
-    return message;
-  },
 };
 
 function createBaseAuthServices(): AuthServices {
-  return { password: undefined };
+  return {};
 }
 
 export const AuthServices: MessageFns<AuthServices> = {
@@ -268,17 +261,6 @@ export const AuthServices: MessageFns<AuthServices> = {
       obj.password = PasswordStruct.toJSON(message.password);
     }
     return obj;
-  },
-
-  create<I extends Exact<DeepPartial<AuthServices>, I>>(base?: I): AuthServices {
-    return AuthServices.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<AuthServices>, I>>(object: I): AuthServices {
-    const message = createBaseAuthServices();
-    message.password = (object.password !== undefined && object.password !== null)
-      ? PasswordStruct.fromPartial(object.password)
-      : undefined;
-    return message;
   },
 };
 
@@ -328,15 +310,6 @@ export const Settings: MessageFns<Settings> = {
       obj.stripeId = message.stripeId;
     }
     return obj;
-  },
-
-  create<I extends Exact<DeepPartial<Settings>, I>>(base?: I): Settings {
-    return Settings.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<Settings>, I>>(object: I): Settings {
-    const message = createBaseSettings();
-    message.stripeId = object.stripeId ?? "";
-    return message;
   },
 };
 
@@ -434,36 +407,10 @@ export const EmailObject: MessageFns<EmailObject> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<EmailObject>, I>>(base?: I): EmailObject {
-    return EmailObject.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<EmailObject>, I>>(object: I): EmailObject {
-    const message = createBaseEmailObject();
-    message.address = object.address ?? "";
-    message.verified = object.verified ?? false;
-    message.primary = object.primary ?? false;
-    message.verificationCode = object.verificationCode ?? "";
-    return message;
-  },
 };
 
 function createBaseUser(): User {
-  return {
-    id: "",
-    username: "",
-    primaryEmail: "",
-    fullName: "",
-    phone: undefined,
-    address: undefined,
-    sex: undefined,
-    dob: undefined,
-    bio: undefined,
-    role: 0,
-    emails: [],
-    services: undefined,
-    settings: undefined,
-  };
+  return { id: "", username: "", primaryEmail: "", fullName: "", role: 0, emails: [] };
 }
 
 export const User: MessageFns<User> = {
@@ -691,33 +638,6 @@ export const User: MessageFns<User> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<User>, I>>(base?: I): User {
-    return User.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<User>, I>>(object: I): User {
-    const message = createBaseUser();
-    message.id = object.id ?? "";
-    message.username = object.username ?? "";
-    message.primaryEmail = object.primaryEmail ?? "";
-    message.fullName = object.fullName ?? "";
-    message.phone = object.phone ?? undefined;
-    message.address = (object.address !== undefined && object.address !== null)
-      ? Address.fromPartial(object.address)
-      : undefined;
-    message.sex = object.sex ?? undefined;
-    message.dob = object.dob ?? undefined;
-    message.bio = object.bio ?? undefined;
-    message.role = object.role ?? 0;
-    message.emails = object.emails?.map((e) => EmailObject.fromPartial(e)) || [];
-    message.services = (object.services !== undefined && object.services !== null)
-      ? AuthServices.fromPartial(object.services)
-      : undefined;
-    message.settings = (object.settings !== undefined && object.settings !== null)
-      ? Settings.fromPartial(object.settings)
-      : undefined;
-    return message;
-  },
 };
 
 function createBaseCreateRequest(): CreateRequest {
@@ -858,25 +778,6 @@ export const CreateRequest: MessageFns<CreateRequest> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<CreateRequest>, I>>(base?: I): CreateRequest {
-    return CreateRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<CreateRequest>, I>>(object: I): CreateRequest {
-    const message = createBaseCreateRequest();
-    message.username = object.username ?? "";
-    message.password = object.password ?? "";
-    message.email = object.email ?? "";
-    message.fullName = object.fullName ?? "";
-    message.service = object.service ?? 0;
-    message.tokens = Object.entries(object.tokens ?? {}).reduce<{ [key: string]: string }>((acc, [key, value]) => {
-      if (value !== undefined) {
-        acc[key] = globalThis.String(value);
-      }
-      return acc;
-    }, {});
-    return message;
-  },
 };
 
 function createBaseCreateRequest_TokensEntry(): CreateRequest_TokensEntry {
@@ -943,16 +844,6 @@ export const CreateRequest_TokensEntry: MessageFns<CreateRequest_TokensEntry> = 
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<CreateRequest_TokensEntry>, I>>(base?: I): CreateRequest_TokensEntry {
-    return CreateRequest_TokensEntry.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<CreateRequest_TokensEntry>, I>>(object: I): CreateRequest_TokensEntry {
-    const message = createBaseCreateRequest_TokensEntry();
-    message.key = object.key ?? "";
-    message.value = object.value ?? "";
-    return message;
-  },
 };
 
 function createBaseCreateResponse(): CreateResponse {
@@ -1001,15 +892,6 @@ export const CreateResponse: MessageFns<CreateResponse> = {
       obj.activationLink = message.activationLink;
     }
     return obj;
-  },
-
-  create<I extends Exact<DeepPartial<CreateResponse>, I>>(base?: I): CreateResponse {
-    return CreateResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<CreateResponse>, I>>(object: I): CreateResponse {
-    const message = createBaseCreateResponse();
-    message.activationLink = object.activationLink ?? "";
-    return message;
   },
 };
 
@@ -1060,15 +942,6 @@ export const DeleteRequest: MessageFns<DeleteRequest> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<DeleteRequest>, I>>(base?: I): DeleteRequest {
-    return DeleteRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<DeleteRequest>, I>>(object: I): DeleteRequest {
-    const message = createBaseDeleteRequest();
-    message.id = object.id ?? "";
-    return message;
-  },
 };
 
 function createBaseDeleteResponse(): DeleteResponse {
@@ -1117,15 +990,6 @@ export const DeleteResponse: MessageFns<DeleteResponse> = {
       obj.success = message.success;
     }
     return obj;
-  },
-
-  create<I extends Exact<DeepPartial<DeleteResponse>, I>>(base?: I): DeleteResponse {
-    return DeleteResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<DeleteResponse>, I>>(object: I): DeleteResponse {
-    const message = createBaseDeleteResponse();
-    message.success = object.success ?? false;
-    return message;
   },
 };
 
@@ -1176,19 +1040,10 @@ export const ReadRequest: MessageFns<ReadRequest> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<ReadRequest>, I>>(base?: I): ReadRequest {
-    return ReadRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<ReadRequest>, I>>(object: I): ReadRequest {
-    const message = createBaseReadRequest();
-    message.query = object.query ?? "";
-    return message;
-  },
 };
 
 function createBaseReadResponse(): ReadResponse {
-  return { user: undefined };
+  return {};
 }
 
 export const ReadResponse: MessageFns<ReadResponse> = {
@@ -1234,19 +1089,10 @@ export const ReadResponse: MessageFns<ReadResponse> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<ReadResponse>, I>>(base?: I): ReadResponse {
-    return ReadResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<ReadResponse>, I>>(object: I): ReadResponse {
-    const message = createBaseReadResponse();
-    message.user = (object.user !== undefined && object.user !== null) ? User.fromPartial(object.user) : undefined;
-    return message;
-  },
 };
 
 function createBaseUpdateRequest(): UpdateRequest {
-  return { user: undefined };
+  return {};
 }
 
 export const UpdateRequest: MessageFns<UpdateRequest> = {
@@ -1292,19 +1138,10 @@ export const UpdateRequest: MessageFns<UpdateRequest> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<UpdateRequest>, I>>(base?: I): UpdateRequest {
-    return UpdateRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<UpdateRequest>, I>>(object: I): UpdateRequest {
-    const message = createBaseUpdateRequest();
-    message.user = (object.user !== undefined && object.user !== null) ? User.fromPartial(object.user) : undefined;
-    return message;
-  },
 };
 
 function createBaseUpdateResponse(): UpdateResponse {
-  return { user: undefined };
+  return {};
 }
 
 export const UpdateResponse: MessageFns<UpdateResponse> = {
@@ -1349,15 +1186,6 @@ export const UpdateResponse: MessageFns<UpdateResponse> = {
       obj.user = User.toJSON(message.user);
     }
     return obj;
-  },
-
-  create<I extends Exact<DeepPartial<UpdateResponse>, I>>(base?: I): UpdateResponse {
-    return UpdateResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<UpdateResponse>, I>>(object: I): UpdateResponse {
-    const message = createBaseUpdateResponse();
-    message.user = (object.user !== undefined && object.user !== null) ? User.fromPartial(object.user) : undefined;
-    return message;
   },
 };
 
@@ -1455,18 +1283,6 @@ export const SearchRequest: MessageFns<SearchRequest> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<SearchRequest>, I>>(base?: I): SearchRequest {
-    return SearchRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<SearchRequest>, I>>(object: I): SearchRequest {
-    const message = createBaseSearchRequest();
-    message.username = object.username ?? "";
-    message.email = object.email ?? "";
-    message.limit = object.limit ?? 0;
-    message.offset = object.offset ?? 0;
-    return message;
-  },
 };
 
 function createBaseSearchResponse(): SearchResponse {
@@ -1516,37 +1332,7 @@ export const SearchResponse: MessageFns<SearchResponse> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<SearchResponse>, I>>(base?: I): SearchResponse {
-    return SearchResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<SearchResponse>, I>>(object: I): SearchResponse {
-    const message = createBaseSearchResponse();
-    message.users = object.users?.map((e) => User.fromPartial(e)) || [];
-    return message;
-  },
 };
-
-export interface DataLoaderOptions {
-  cache?: boolean;
-}
-
-export interface DataLoaders {
-  rpcDataLoaderOptions?: DataLoaderOptions;
-  getDataLoader<T>(identifier: string, constructorFn: () => T): T;
-}
-
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
-
-export type DeepPartial<T> = T extends Builtin ? T
-  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
-  : Partial<T>;
-
-type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function isObject(value: any): boolean {
   return typeof value === "object" && value !== null;
@@ -1561,6 +1347,4 @@ export interface MessageFns<T> {
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
   toJSON(message: T): unknown;
-  create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
 }

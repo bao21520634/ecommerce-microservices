@@ -5,7 +5,6 @@ package order;
 import "address.proto";
 import "common.proto";
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/wrappers.proto";
 import 'google/protobuf/any.proto';
 import 'google/protobuf/struct.proto';
 
@@ -30,24 +29,19 @@ enum ShippingStatus {
 
 message Order {
   string id = 1;
-  google.protobuf.Timestamp createdAt = 2;
-  google.protobuf.Timestamp updatedAt = 3;
-  google.protobuf.Timestamp deletedAt = 4;
-  google.protobuf.StringValue createdBy = 5;
-  google.protobuf.StringValue updatedBy = 6;
-  google.protobuf.StringValue deletedBy = 7;
-
-  string code = 8;
-  string customerId = 9;
-  float subTotal = 10;
-  float discount = 11;
-  float tax = 12;
-  float total = 13;
-  string note = 14;
-  address.Address address = 15;
-  OrderStatus orderStatus = 16;
-  PaymentStatus paymentStatus = 17;
-  ShippingStatus shippingStatus = 18;
+  string code = 2;
+  string customerId = 3;
+  float subTotal = 4;
+  float discount = 5;
+  float tax = 6;
+  float total = 7;
+  string note = 8;
+  address.Address address = 9;
+  OrderStatus orderStatus = 10;
+  PaymentStatus paymentStatus = 11;
+  ShippingStatus shippingStatus = 12;
+  google.protobuf.Timestamp createdAt = 13;
+  google.protobuf.Timestamp updatedAt = 14;
 }
 
 message Orders {

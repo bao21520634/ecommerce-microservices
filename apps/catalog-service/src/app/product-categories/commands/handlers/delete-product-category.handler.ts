@@ -26,11 +26,16 @@ export class DeleteProductCategoryHandler
 
             const result = await this.productCategoryRepo.store.delete({
                 where: {
-                    id: command.request.id,
+                    categoryId_productId: {
+                        categoryId: command.request.data.categoryId,
+                        productId: command.request.data.productId,
+                    },
                 },
             });
 
-            this.eventBus.publish(new ProductCategoryDeletedEvent(result));
+            await this.eventBus.publish(
+                new ProductCategoryDeletedEvent(result),
+            );
 
             return result;
         } catch (error) {

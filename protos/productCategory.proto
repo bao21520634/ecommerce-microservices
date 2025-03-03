@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package productCategory;
 
-import 'common.proto';
 import 'google/protobuf/any.proto';
 import 'google/protobuf/struct.proto';
 
@@ -10,28 +9,15 @@ message ProductCategory {
   string id = 1;
   string productId = 2;
   string categoryId = 3;
-  int32 sortOrder = 4;
 }
 
 message ProductCategories {
   repeated ProductCategory productCategories = 1;
 }
 
-message ProductCategoryEdge {
-  ProductCategories node = 1;
-  string cursor = 2;
-}
-
-message ProductCategoryConnection {
-  common.PageInfo pageInfo = 1;
-  int32 totalCount = 2;
-  repeated ProductCategoryEdge edges = 3;
-}
-
 message ProductCategoryInput {
   string productId = 1;
   string categoryId = 2;
-  int32 sortOrder = 3;
 }
 
 message CreateProductCategoryInput {
@@ -44,6 +30,10 @@ message CreateManyProductCategoriesInput {
 
 message UpdateProductCategoryInput {
   string id = 1;
+  ProductCategoryInput data = 2;
+}
+
+message DeleteProductCategoryInput {
   ProductCategoryInput data = 2;
 }
 

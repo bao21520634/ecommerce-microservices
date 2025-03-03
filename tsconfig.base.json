@@ -20,12 +20,12 @@
             "@ecommerce-microservices/event-store": [
                 "libs/event-store/src/index.ts"
             ],
+            "@ecommerce-microservices/graphql-query": [
+                "libs/graphql-query/src/index.ts"
+            ],
             "@ecommerce-microservices/prisma": ["libs/prisma/src/index.ts"],
             "@ecommerce-microservices/proto-schema": [
                 "libs/proto-schema/src/index.ts"
-            ],
-            "@ecommerce-microservices/repository": [
-                "libs/repository/src/index.ts"
             ]
         }
     },

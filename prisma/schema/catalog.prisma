@@ -16,13 +16,9 @@ enum CategoryStatus {
 }
 
 model Product {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  createdBy String?
-  updatedBy String?
-  deletedBy String?
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   name               String
   slug               String        @unique
@@ -60,13 +56,9 @@ model Product {
 }
 
 model Category {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  createdBy String?
-  updatedBy String?
-  deletedBy String?
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   name                           String
   slug                           String         @unique
@@ -87,7 +79,6 @@ model Category {
   limitedToStores                Boolean        @default(false)
   taxCategory                    String?
   pageSize                       Int?
-  pageSizeOption                 Int[]
   allowCustomersToSelectPageSize Boolean        @default(false)
   priceRangeFiltering            Boolean        @default(false)
   manuallyPriceRange             Boolean        @default(false)
@@ -104,7 +95,6 @@ model ProductCategory {
   categoryId String   @db.ObjectId
   product    Product  @relation(fields: [productId], references: [id])
   productId  String   @db.ObjectId
-  sortOrder  Int      @default(0)
 
   @@unique([categoryId, productId])
 }

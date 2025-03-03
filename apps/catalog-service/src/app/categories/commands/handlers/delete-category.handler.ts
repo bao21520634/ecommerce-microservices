@@ -29,7 +29,7 @@ export class DeleteCategoryHandler
                 },
             });
 
-            this.eventBus.publish(new CategoryDeletedEvent(result));
+            await this.eventBus.publish(new CategoryDeletedEvent(result));
 
             return {
                 ...result,

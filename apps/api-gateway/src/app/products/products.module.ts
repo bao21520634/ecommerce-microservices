@@ -1,11 +1,15 @@
-import { Module } from '@nestjs/common'
-import { ProductsService } from './graphql/products.service'
-import { ProductsResolver } from './graphql/products.resolver'
-import { ProductsController } from './rest/products.controller'
+import { Module } from '@nestjs/common';
+import { ProductsResolver } from './graphql/products.resolver';
+import { ProductsMutationResolver } from './graphql/products-mutation.resolver';
+import { CatalogsRpcClientService } from '@ecommerce-microservices/core';
 
 @Module({
-  providers: [ProductsResolver, ProductsService],
-  exports: [ProductsService],
-  controllers: [ProductsController],
+    providers: [
+        CatalogsRpcClientService,
+        ProductsResolver,
+        ProductsMutationResolver,
+    ],
+    exports: [CatalogsRpcClientService],
+    controllers: [],
 })
 export class ProductsModule {}

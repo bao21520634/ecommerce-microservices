@@ -1,49 +1,94 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
-import { ProductsService } from './products.service'
-import { Product } from './entity/product.entity'
-import { FindManyProductArgs, FindUniqueProductArgs } from './dtos/find.args'
-import { CreateProductInput } from './dtos/create-product.input'
-import { UpdateProductInput } from './dtos/update-product.input'
-import { checkRowLevelPermission } from 'src/common/auth/util'
-import { GetUserType } from 'src/common/types'
-import { AllowAuthenticated, GetUser } from 'src/common/auth/auth.decorator'
-import { PrismaService } from 'src/common/prisma/prisma.service'
+import { Args, Context, Int, Query, Resolver } from '@nestjs/graphql';
+import { Product as ProductDto } from './entity/products.entity';
+import { Product as PbProduct } from '@ecommerce-microservices/proto-schema';
+import { GqlContext, setRpcContext } from '@ecommerce-microservices/core';
+import {
+    mapEnum,
+    transformFindArgsToGrpcQuery,
+} from '@ecommerce-microservices/common';
+import {
+    ProductStatus as PrismaProductStatus,
+    ProductType as PrismaProductType,
+} from '@prisma/client';
+import { lastValueFrom } from 'rxjs';
+import { FindManyProductArgs } from './dtos/find-many-product.args';
 
-@Resolver(() => Product)
+@Resolver(() => ProductDto)
 export class ProductsResolver {
-  constructor(private readonly productsService: ProductsService,
-    private readonly prisma: PrismaService) {}
+    @Query(() => ProductDto, { nullable: true })
+    async product(
+        @Context() context: GqlContext,
+        @Args('id') id: string,
+    ): Promise<ProductDto> {
+        const grpcContext = setRpcContext(context);
 
-  @AllowAuthenticated()
-  @Mutation(() => Product)
-  createProduct(@Args('createProductInput') args: CreateProductInput, @GetUser() user: GetUserType) {
-    checkRowLevelPermission(user, args.uid)
-    return this.productsService.create(args)
-  }
+        const result = await lastValueFrom(
+            context.rpc.catalog.svc.product(
+                {
+                    id,
+                },
+                grpcContext,
+            ),
+        );
 
-  @Query(() => [Product], { name: 'products' })
-  findAll(@Args() args: FindManyProductArgs) {
-    return this.productsService.findAll(args)
-  }
+        return {
+            ...result.data,
+            status: mapEnum(
+                PrismaProductStatus,
+                PbProduct.ProductStatus,
+                result.data.status,
+            ),
+            productType: mapEnum(
+                PrismaProductType,
+                PbProduct.ProductType,
+                result.data.productType,
+            ),
+        } as ProductDto;
+    }
 
-  @Query(() => Product, { name: 'product' })
-  findOne(@Args() args: FindUniqueProductArgs) {
-    return this.productsService.findOne(args)
-  }
+    @Query(() => [ProductDto])
+    async products(
+        @Context() context: GqlContext,
+        @Args() args: FindManyProductArgs,
+    ): Promise<ProductDto[]> {
+        const grpcContext = setRpcContext(context);
 
-  @AllowAuthenticated()
-  @Mutation(() => Product)
-  async updateProduct(@Args('updateProductInput') args: UpdateProductInput, @GetUser() user: GetUserType) {
-    const product = await this.prisma.product.findUnique({ where: { id: args.id } })
-    checkRowLevelPermission(user, product.uid)
-    return this.productsService.update(args)
-  }
+        const products = await lastValueFrom(
+            context.rpc.catalog.svc.products(
+                transformFindArgsToGrpcQuery(args),
+                grpcContext,
+            ),
+        );
 
-  @AllowAuthenticated()
-  @Mutation(() => Product)
-  async removeProduct(@Args() args: FindUniqueProductArgs, @GetUser() user: GetUserType) {
-    const product = await this.prisma.product.findUnique(args)
-    checkRowLevelPermission(user, product.uid)
-    return this.productsService.remove(args)
-  }
+        return (products.products.map((product) => ({
+            ...product,
+            status: mapEnum(
+                PrismaProductStatus,
+                PbProduct.ProductStatus,
+                product.status,
+            ),
+            productType: mapEnum(
+                PrismaProductType,
+                PbProduct.ProductType,
+                product.productType,
+            ),
+        })) ?? []) as ProductDto[];
+    }
+
+    @Query(() => Int)
+    async productsTotal(
+        @Context() context: GqlContext,
+        @Args() args: FindManyProductArgs,
+    ): Promise<number> {
+        const grpcContext = setRpcContext(context);
+
+        const result = await lastValueFrom(
+            context.rpc.catalog.svc.productsTotal(
+                transformFindArgsToGrpcQuery(args),
+                grpcContext,
+            ),
+        );
+
+        return result.totalCount ?? 0;
+    }
 }

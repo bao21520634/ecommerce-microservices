@@ -25,7 +25,7 @@ export class CreateProductHandler
     async execute(command: CreateProductCommand): Promise<Product.Product> {
         this.logger.log(`execute create product command`);
         try {
-            console.log('command............', command.request.data);
+            console.log('command............', command);
 
             const product = command.request.data;
 
@@ -42,10 +42,16 @@ export class CreateProductHandler
                         Product.ProductStatus,
                         product.status,
                     ),
+                    attributes: product.attributes
+                        ? JSON.parse(product.attributes)
+                        : {},
+                    variantAttributes: product.variantAttributes
+                        ? JSON.parse(product.variantAttributes)
+                        : {},
                 },
             });
 
-            this.eventBus.publish(new ProductCreatedEvent(result));
+            await this.eventBus.publish(new ProductCreatedEvent(result));
 
             return {
                 ...result,

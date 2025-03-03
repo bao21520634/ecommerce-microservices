@@ -45,10 +45,16 @@ export class UpdateProductHandler
                         Product.ProductStatus,
                         product.status,
                     ),
+                    attributes: product.attributes
+                        ? JSON.parse(product.attributes)
+                        : {},
+                    variantAttributes: product.variantAttributes
+                        ? JSON.parse(product.variantAttributes)
+                        : {},
                 },
             });
 
-            this.eventBus.publish(new ProductUpdatedEvent(result));
+            await this.eventBus.publish(new ProductUpdatedEvent(result));
 
             return {
                 ...result,

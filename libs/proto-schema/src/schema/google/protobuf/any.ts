@@ -127,6 +127,8 @@ export interface Any {
   value: Uint8Array;
 }
 
+export const GOOGLE_PROTOBUF_PACKAGE_NAME = "google.protobuf";
+
 function createBaseAny(): Any {
   return { typeUrl: "", value: new Uint8Array(0) };
 }
@@ -191,26 +193,7 @@ export const Any: MessageFns<Any> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<Any>, I>>(base?: I): Any {
-    return Any.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<Any>, I>>(object: I): Any {
-    const message = createBaseAny();
-    message.typeUrl = object.typeUrl ?? "";
-    message.value = object.value ?? new Uint8Array(0);
-    return message;
-  },
 };
-
-export interface DataLoaderOptions {
-  cache?: boolean;
-}
-
-export interface DataLoaders {
-  rpcDataLoaderOptions?: DataLoaderOptions;
-  getDataLoader<T>(identifier: string, constructorFn: () => T): T;
-}
 
 function bytesFromBase64(b64: string): Uint8Array {
   if ((globalThis as any).Buffer) {
@@ -237,18 +220,6 @@ function base64FromBytes(arr: Uint8Array): string {
   }
 }
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
-
-export type DeepPartial<T> = T extends Builtin ? T
-  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
-  : Partial<T>;
-
-type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
-
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;
 }
@@ -258,6 +229,4 @@ export interface MessageFns<T> {
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
   toJSON(message: T): unknown;
-  create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
 }

@@ -15,7 +15,7 @@ export interface Id {
 
 export interface Query {
   filter: string;
-  paging: Paging | undefined;
+  paging?: Paging | undefined;
   sorting: Sort[];
 }
 
@@ -38,7 +38,6 @@ export interface Paging {
 export interface Sort {
   field: string;
   direction: Sort_SortDirection;
-  nulls: Sort_SortNulls;
 }
 
 export enum Sort_SortDirection {
@@ -74,42 +73,11 @@ export function sort_SortDirectionToJSON(object: Sort_SortDirection): string {
   }
 }
 
-export enum Sort_SortNulls {
-  NULLS_FIRST = 0,
-  NULLS_LAST = 1,
-  UNRECOGNIZED = -1,
-}
-
-export function sort_SortNullsFromJSON(object: any): Sort_SortNulls {
-  switch (object) {
-    case 0:
-    case "NULLS_FIRST":
-      return Sort_SortNulls.NULLS_FIRST;
-    case 1:
-    case "NULLS_LAST":
-      return Sort_SortNulls.NULLS_LAST;
-    case -1:
-    case "UNRECOGNIZED":
-    default:
-      return Sort_SortNulls.UNRECOGNIZED;
-  }
-}
-
-export function sort_SortNullsToJSON(object: Sort_SortNulls): string {
-  switch (object) {
-    case Sort_SortNulls.NULLS_FIRST:
-      return "NULLS_FIRST";
-    case Sort_SortNulls.NULLS_LAST:
-      return "NULLS_LAST";
-    case Sort_SortNulls.UNRECOGNIZED:
-    default:
-      return "UNRECOGNIZED";
-  }
-}
-
 export interface DeleteManyResponse {
   deletedCount: number;
 }
+
+export const COMMON_PACKAGE_NAME = "common";
 
 function createBaseId(): Id {
   return { id: "" };
@@ -158,19 +126,10 @@ export const Id: MessageFns<Id> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<Id>, I>>(base?: I): Id {
-    return Id.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<Id>, I>>(object: I): Id {
-    const message = createBaseId();
-    message.id = object.id ?? "";
-    return message;
-  },
 };
 
 function createBaseQuery(): Query {
-  return { filter: "", paging: undefined, sorting: [] };
+  return { filter: "", sorting: [] };
 }
 
 export const Query: MessageFns<Query> = {
@@ -247,19 +206,6 @@ export const Query: MessageFns<Query> = {
       obj.sorting = message.sorting.map((e) => Sort.toJSON(e));
     }
     return obj;
-  },
-
-  create<I extends Exact<DeepPartial<Query>, I>>(base?: I): Query {
-    return Query.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<Query>, I>>(object: I): Query {
-    const message = createBaseQuery();
-    message.filter = object.filter ?? "";
-    message.paging = (object.paging !== undefined && object.paging !== null)
-      ? Paging.fromPartial(object.paging)
-      : undefined;
-    message.sorting = object.sorting?.map((e) => Sort.fromPartial(e)) || [];
-    return message;
   },
 };
 
@@ -357,18 +303,6 @@ export const PageInfo: MessageFns<PageInfo> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<PageInfo>, I>>(base?: I): PageInfo {
-    return PageInfo.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<PageInfo>, I>>(object: I): PageInfo {
-    const message = createBasePageInfo();
-    message.startCursor = object.startCursor ?? "";
-    message.endCursor = object.endCursor ?? "";
-    message.hasNextPage = object.hasNextPage ?? false;
-    message.hasPreviousPage = object.hasPreviousPage ?? false;
-    return message;
-  },
 };
 
 function createBaseCount(): Count {
@@ -417,15 +351,6 @@ export const Count: MessageFns<Count> = {
       obj.totalCount = Math.round(message.totalCount);
     }
     return obj;
-  },
-
-  create<I extends Exact<DeepPartial<Count>, I>>(base?: I): Count {
-    return Count.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<Count>, I>>(object: I): Count {
-    const message = createBaseCount();
-    message.totalCount = object.totalCount ?? 0;
-    return message;
   },
 };
 
@@ -493,20 +418,10 @@ export const Paging: MessageFns<Paging> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<Paging>, I>>(base?: I): Paging {
-    return Paging.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<Paging>, I>>(object: I): Paging {
-    const message = createBasePaging();
-    message.limit = object.limit ?? 0;
-    message.offset = object.offset ?? 0;
-    return message;
-  },
 };
 
 function createBaseSort(): Sort {
-  return { field: "", direction: 0, nulls: 0 };
+  return { field: "", direction: 0 };
 }
 
 export const Sort: MessageFns<Sort> = {
@@ -516,9 +431,6 @@ export const Sort: MessageFns<Sort> = {
     }
     if (message.direction !== 0) {
       writer.uint32(16).int32(message.direction);
-    }
-    if (message.nulls !== 0) {
-      writer.uint32(24).int32(message.nulls);
     }
     return writer;
   },
@@ -546,14 +458,6 @@ export const Sort: MessageFns<Sort> = {
           message.direction = reader.int32() as any;
           continue;
         }
-        case 3: {
-          if (tag !== 24) {
-            break;
-          }
-
-          message.nulls = reader.int32() as any;
-          continue;
-        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -567,7 +471,6 @@ export const Sort: MessageFns<Sort> = {
     return {
       field: isSet(object.field) ? globalThis.String(object.field) : "",
       direction: isSet(object.direction) ? sort_SortDirectionFromJSON(object.direction) : 0,
-      nulls: isSet(object.nulls) ? sort_SortNullsFromJSON(object.nulls) : 0,
     };
   },
 
@@ -579,21 +482,7 @@ export const Sort: MessageFns<Sort> = {
     if (message.direction !== 0) {
       obj.direction = sort_SortDirectionToJSON(message.direction);
     }
-    if (message.nulls !== 0) {
-      obj.nulls = sort_SortNullsToJSON(message.nulls);
-    }
     return obj;
-  },
-
-  create<I extends Exact<DeepPartial<Sort>, I>>(base?: I): Sort {
-    return Sort.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<Sort>, I>>(object: I): Sort {
-    const message = createBaseSort();
-    message.field = object.field ?? "";
-    message.direction = object.direction ?? 0;
-    message.nulls = object.nulls ?? 0;
-    return message;
   },
 };
 
@@ -644,37 +533,7 @@ export const DeleteManyResponse: MessageFns<DeleteManyResponse> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<DeleteManyResponse>, I>>(base?: I): DeleteManyResponse {
-    return DeleteManyResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<DeleteManyResponse>, I>>(object: I): DeleteManyResponse {
-    const message = createBaseDeleteManyResponse();
-    message.deletedCount = object.deletedCount ?? 0;
-    return message;
-  },
 };
-
-export interface DataLoaderOptions {
-  cache?: boolean;
-}
-
-export interface DataLoaders {
-  rpcDataLoaderOptions?: DataLoaderOptions;
-  getDataLoader<T>(identifier: string, constructorFn: () => T): T;
-}
-
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
-
-export type DeepPartial<T> = T extends Builtin ? T
-  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
-  : Partial<T>;
-
-type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;
@@ -685,6 +544,4 @@ export interface MessageFns<T> {
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
   toJSON(message: T): unknown;
-  create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
 }

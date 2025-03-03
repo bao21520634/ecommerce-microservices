@@ -9,11 +9,12 @@ import { PrismaClient } from '@prisma/client';
 import { createPrismaQueryEventHandler } from 'prisma-query-log';
 import { PRISMA_OPTIONS, PrismaModuleOptions } from './prisma.provider';
 import { Keyv } from 'keyv';
+import superjson from 'superjson';
 
 @Injectable()
 export class PrismaRepository extends PrismaClient implements OnModuleInit {
     private readonly logger = new Logger();
-    private extendedClient: PrismaClient;
+    protected extendedClient: PrismaClient;
 
     constructor(
         @Inject(PRISMA_OPTIONS) options: PrismaModuleOptions,
@@ -66,7 +67,7 @@ export class PrismaRepository extends PrismaClient implements OnModuleInit {
         };
         sorting?: {
             field: string;
-            direction: number; // e.g. 0 for ASC, 1 for DESC
+            direction?: number; //  0 for ASC, 1 for DESC
         }[];
     }): {
         where?: any;
@@ -98,11 +99,15 @@ export class PrismaRepository extends PrismaClient implements OnModuleInit {
             prismaQuery.skip = query.paging.offset ?? undefined;
         }
 
-        // Sorting: map each sort field to Prisma's orderBy format
+        // Sorting: map to Prisma's expected format
         if (query.sorting?.length) {
-            prismaQuery.orderBy = query.sorting.map((sort) => ({
-                [sort.field]: sort.direction === 1 ? 'DESC' : 'ASC',
-            }));
+            const orderBy: any = {};
+
+            query.sorting.forEach((sort) => {
+                orderBy[sort.field] = sort.direction === 1 ? 'desc' : 'asc';
+            });
+
+            prismaQuery.orderBy = orderBy;
         }
 
         return prismaQuery;
@@ -115,57 +120,72 @@ export class PrismaRepository extends PrismaClient implements OnModuleInit {
         return client.$extends({
             query: {
                 $allModels: {
-                    async findUnique({ args, query }) {
+                    async findUnique({ args, query, model }) {
                         return await handleQueryWithCache(
+                            model,
                             'findUnique',
                             args,
                             query,
                         );
                     },
-                    async findFirst({ args, query }) {
+                    async findFirst({ args, query, model }) {
                         return await handleQueryWithCache(
+                            model,
                             'findFirst',
                             args,
                             query,
                         );
                     },
-                    async findMany({ args, query }) {
+                    async findMany({ args, query, model }) {
                         return await handleQueryWithCache(
+                            model,
                             'findMany',
                             args,
                             query,
                         );
                     },
-                    async aggregate({ args, query }) {
+                    async aggregate({ args, query, model }) {
                         return await handleQueryWithCache(
+                            model,
                             'aggregate',
                             args,
                             query,
                         );
                     },
-                    async groupBy({ args, query }) {
+                    async groupBy({ args, query, model }) {
                         return await handleQueryWithCache(
+                            model,
                             'groupBy',
                             args,
                             query,
                         );
                     },
-                    async count({ args, query }) {
-                        return await handleQueryWithCache('count', args, query);
+                    async count({ args, query, model }) {
+                        return await handleQueryWithCache(
+                            model,
+                            'count',
+                            args,
+                            query,
+                        );
                     },
-                    async create({ args, query }) {
+                    async create({ args, query, model }) {
                         const result = await query(args);
-                        await clearCache();
+                        await clearCache(model);
                         return result;
                     },
-                    async update({ args, query }) {
+                    async update({ args, query, model }) {
                         const result = await query(args);
-                        await clearCache();
+                        await clearCache(model);
                         return result;
                     },
-                    async delete({ args, query }) {
+                    async delete({ args, query, model }) {
                         const result = await query(args);
-                        await clearCache();
+                        await clearCache(model);
+                        return result;
+                    },
+                    async upsert({ args, query, model }) {
+                        const result = await query(args);
+                        await clearCache(model);
                         return result;
                     },
                 },
@@ -174,15 +194,20 @@ export class PrismaRepository extends PrismaClient implements OnModuleInit {
     }
 
     private async handleQueryWithCache(
+        model: string,
         operation: string,
         args: any,
         query: any,
     ) {
-        const cacheKey = this.generateCacheKey(operation, args);
+        const cacheKey = this.generateCacheKey(model, operation, args);
         const cached = await this.retrieveFromCache(cacheKey);
 
-        if (cached) return cached;
+        if (cached) {
+            this.logger.debug(`Cache hit for ${cacheKey}`);
+            return cached;
+        }
 
+        this.logger.debug(`Cache miss for ${cacheKey}`);
         const result = await query(args);
         if (result) {
             await this.saveToCache(cacheKey, result);
@@ -191,14 +216,22 @@ export class PrismaRepository extends PrismaClient implements OnModuleInit {
         return result;
     }
 
-    private generateCacheKey(operation: string, args: any): string {
-        return `prisma:${operation}:${JSON.stringify(args)}`;
+    private generateCacheKey(
+        model: string,
+        operation: string,
+        args: any,
+    ): string {
+        // Sort the keys to ensure consistent caching regardless of object key order
+        const stableArgs = JSON.stringify(args, Object.keys(args).sort());
+        return `prisma:${model}:${operation}:${stableArgs}`;
     }
 
     private async retrieveFromCache<T>(key: string): Promise<T | null> {
         try {
             const cached = await this.cache.get(key);
-            return cached ? (JSON.parse(cached) as T) : null;
+            if (!cached) return null;
+
+            return superjson.parse(cached) as T;
         } catch (error) {
             this.logger.error('Cache retrieval error:', error);
             return null;
@@ -211,15 +244,27 @@ export class PrismaRepository extends PrismaClient implements OnModuleInit {
         ttl?: number,
     ): Promise<void> {
         try {
-            await this.cache.set(key, JSON.stringify(data), ttl);
+            const value =
+                typeof data === 'string' ? data : superjson.stringify(data);
+            await this.cache.set(key, value, ttl);
         } catch (error) {
             this.logger.error('Cache save error:', error);
         }
     }
 
-    private async clearCache(): Promise<void> {
+    private async clearCache(model?: string): Promise<void> {
         try {
-            await this.cache.clear();
+            if (model) {
+                // Clear only the cache for the specific model
+                // This would require a more sophisticated approach with Keyv
+                // Since Keyv doesn't support wildcard deletions, we'd need to track model-specific keys
+                // For now, we'll clear the entire cache to ensure consistency
+                await this.cache.clear();
+                this.logger.debug(`Cleared cache for model: ${model}`);
+            } else {
+                await this.cache.clear();
+                this.logger.debug('Cleared entire cache');
+            }
         } catch (error) {
             this.logger.error('Cache clear error:', error);
         }

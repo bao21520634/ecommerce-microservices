@@ -6,12 +6,12 @@
 
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
+import { wrappers } from "protobufjs";
 import { Address } from "./address";
 import { PageInfo } from "./common";
 import { Any } from "./google/protobuf/any";
 import { NullValue, nullValueFromJSON, nullValueToJSON } from "./google/protobuf/struct";
 import { Timestamp } from "./google/protobuf/timestamp";
-import { StringValue } from "./google/protobuf/wrappers";
 
 export const protobufPackage = "order";
 
@@ -140,12 +140,6 @@ export function shippingStatusToJSON(object: ShippingStatus): string {
 
 export interface Order {
   id: string;
-  createdAt: Date | undefined;
-  updatedAt: Date | undefined;
-  deletedAt: Date | undefined;
-  createdBy: string | undefined;
-  updatedBy: string | undefined;
-  deletedBy: string | undefined;
   code: string;
   customerId: string;
   subTotal: number;
@@ -153,10 +147,12 @@ export interface Order {
   tax: number;
   total: number;
   note: string;
-  address: Address | undefined;
+  address?: Address | undefined;
   orderStatus: OrderStatus;
   paymentStatus: PaymentStatus;
   shippingStatus: ShippingStatus;
+  createdAt?: Date | undefined;
+  updatedAt?: Date | undefined;
 }
 
 export interface Orders {
@@ -167,12 +163,12 @@ export interface Orders {
 }
 
 export interface OrderEdge {
-  node: Orders | undefined;
+  node?: Orders | undefined;
   cursor: string;
 }
 
 export interface OrderConnection {
-  pageInfo: PageInfo | undefined;
+  pageInfo?: PageInfo | undefined;
   totalCount: number;
   edges: OrderEdge[];
 }
@@ -191,7 +187,7 @@ export interface OrderInput {
 }
 
 export interface CreateOrderInput {
-  data: OrderInput | undefined;
+  data?: OrderInput | undefined;
 }
 
 export interface CreateManyOrdersInput {
@@ -200,16 +196,16 @@ export interface CreateManyOrdersInput {
 
 export interface UpdateOrderInput {
   id: string;
-  data: OrderInput | undefined;
+  data?: OrderInput | undefined;
 }
 
 export interface UpdateManyOrdersInput {
-  filter: Any | undefined;
-  update: OrderInput | undefined;
+  filter?: Any | undefined;
+  update?: OrderInput | undefined;
 }
 
 export interface DeleteManyOrdersInput {
-  filter: Any | undefined;
+  filter?: Any | undefined;
 }
 
 export interface NullableOrder {
@@ -217,15 +213,20 @@ export interface NullableOrder {
   data?: Order | undefined;
 }
 
+export const ORDER_PACKAGE_NAME = "order";
+
+wrappers[".google.protobuf.Timestamp"] = {
+  fromObject(value: Date) {
+    return { seconds: value.getTime() / 1000, nanos: (value.getTime() % 1000) * 1e6 };
+  },
+  toObject(message: { seconds: number; nanos: number }) {
+    return new Date(message.seconds * 1000 + message.nanos / 1e6);
+  },
+} as any;
+
 function createBaseOrder(): Order {
   return {
     id: "",
-    createdAt: undefined,
-    updatedAt: undefined,
-    deletedAt: undefined,
-    createdBy: undefined,
-    updatedBy: undefined,
-    deletedBy: undefined,
     code: "",
     customerId: "",
     subTotal: 0,
@@ -233,7 +234,6 @@ function createBaseOrder(): Order {
     tax: 0,
     total: 0,
     note: "",
-    address: undefined,
     orderStatus: 0,
     paymentStatus: 0,
     shippingStatus: 0,
@@ -245,56 +245,44 @@ export const Order: MessageFns<Order> = {
     if (message.id !== "") {
       writer.uint32(10).string(message.id);
     }
-    if (message.createdAt !== undefined) {
-      Timestamp.encode(toTimestamp(message.createdAt), writer.uint32(18).fork()).join();
-    }
-    if (message.updatedAt !== undefined) {
-      Timestamp.encode(toTimestamp(message.updatedAt), writer.uint32(26).fork()).join();
-    }
-    if (message.deletedAt !== undefined) {
-      Timestamp.encode(toTimestamp(message.deletedAt), writer.uint32(34).fork()).join();
-    }
-    if (message.createdBy !== undefined) {
-      StringValue.encode({ value: message.createdBy! }, writer.uint32(42).fork()).join();
-    }
-    if (message.updatedBy !== undefined) {
-      StringValue.encode({ value: message.updatedBy! }, writer.uint32(50).fork()).join();
-    }
-    if (message.deletedBy !== undefined) {
-      StringValue.encode({ value: message.deletedBy! }, writer.uint32(58).fork()).join();
-    }
     if (message.code !== "") {
-      writer.uint32(66).string(message.code);
+      writer.uint32(18).string(message.code);
     }
     if (message.customerId !== "") {
-      writer.uint32(74).string(message.customerId);
+      writer.uint32(26).string(message.customerId);
     }
     if (message.subTotal !== 0) {
-      writer.uint32(85).float(message.subTotal);
+      writer.uint32(37).float(message.subTotal);
     }
     if (message.discount !== 0) {
-      writer.uint32(93).float(message.discount);
+      writer.uint32(45).float(message.discount);
     }
     if (message.tax !== 0) {
-      writer.uint32(101).float(message.tax);
+      writer.uint32(53).float(message.tax);
     }
     if (message.total !== 0) {
-      writer.uint32(109).float(message.total);
+      writer.uint32(61).float(message.total);
     }
     if (message.note !== "") {
-      writer.uint32(114).string(message.note);
+      writer.uint32(66).string(message.note);
     }
     if (message.address !== undefined) {
-      Address.encode(message.address, writer.uint32(122).fork()).join();
+      Address.encode(message.address, writer.uint32(74).fork()).join();
     }
     if (message.orderStatus !== 0) {
-      writer.uint32(128).int32(message.orderStatus);
+      writer.uint32(80).int32(message.orderStatus);
     }
     if (message.paymentStatus !== 0) {
-      writer.uint32(136).int32(message.paymentStatus);
+      writer.uint32(88).int32(message.paymentStatus);
     }
     if (message.shippingStatus !== 0) {
-      writer.uint32(144).int32(message.shippingStatus);
+      writer.uint32(96).int32(message.shippingStatus);
+    }
+    if (message.createdAt !== undefined) {
+      Timestamp.encode(toTimestamp(message.createdAt), writer.uint32(106).fork()).join();
+    }
+    if (message.updatedAt !== undefined) {
+      Timestamp.encode(toTimestamp(message.updatedAt), writer.uint32(114).fork()).join();
     }
     return writer;
   },
@@ -319,7 +307,7 @@ export const Order: MessageFns<Order> = {
             break;
           }
 
-          message.createdAt = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          message.code = reader.string();
           continue;
         }
         case 3: {
@@ -327,39 +315,39 @@ export const Order: MessageFns<Order> = {
             break;
           }
 
-          message.updatedAt = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          message.customerId = reader.string();
           continue;
         }
         case 4: {
-          if (tag !== 34) {
+          if (tag !== 37) {
             break;
           }
 
-          message.deletedAt = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          message.subTotal = reader.float();
           continue;
         }
         case 5: {
-          if (tag !== 42) {
+          if (tag !== 45) {
             break;
           }
 
-          message.createdBy = StringValue.decode(reader, reader.uint32()).value;
+          message.discount = reader.float();
           continue;
         }
         case 6: {
-          if (tag !== 50) {
+          if (tag !== 53) {
             break;
           }
 
-          message.updatedBy = StringValue.decode(reader, reader.uint32()).value;
+          message.tax = reader.float();
           continue;
         }
         case 7: {
-          if (tag !== 58) {
+          if (tag !== 61) {
             break;
           }
 
-          message.deletedBy = StringValue.decode(reader, reader.uint32()).value;
+          message.total = reader.float();
           continue;
         }
         case 8: {
@@ -367,7 +355,7 @@ export const Order: MessageFns<Order> = {
             break;
           }
 
-          message.code = reader.string();
+          message.note = reader.string();
           continue;
         }
         case 9: {
@@ -375,39 +363,39 @@ export const Order: MessageFns<Order> = {
             break;
           }
 
-          message.customerId = reader.string();
+          message.address = Address.decode(reader, reader.uint32());
           continue;
         }
         case 10: {
-          if (tag !== 85) {
+          if (tag !== 80) {
             break;
           }
 
-          message.subTotal = reader.float();
+          message.orderStatus = reader.int32() as any;
           continue;
         }
         case 11: {
-          if (tag !== 93) {
+          if (tag !== 88) {
             break;
           }
 
-          message.discount = reader.float();
+          message.paymentStatus = reader.int32() as any;
           continue;
         }
         case 12: {
-          if (tag !== 101) {
+          if (tag !== 96) {
             break;
           }
 
-          message.tax = reader.float();
+          message.shippingStatus = reader.int32() as any;
           continue;
         }
         case 13: {
-          if (tag !== 109) {
+          if (tag !== 106) {
             break;
           }
 
-          message.total = reader.float();
+          message.createdAt = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
           continue;
         }
         case 14: {
@@ -415,39 +403,7 @@ export const Order: MessageFns<Order> = {
             break;
           }
 
-          message.note = reader.string();
-          continue;
-        }
-        case 15: {
-          if (tag !== 122) {
-            break;
-          }
-
-          message.address = Address.decode(reader, reader.uint32());
-          continue;
-        }
-        case 16: {
-          if (tag !== 128) {
-            break;
-          }
-
-          message.orderStatus = reader.int32() as any;
-          continue;
-        }
-        case 17: {
-          if (tag !== 136) {
-            break;
-          }
-
-          message.paymentStatus = reader.int32() as any;
-          continue;
-        }
-        case 18: {
-          if (tag !== 144) {
-            break;
-          }
-
-          message.shippingStatus = reader.int32() as any;
+          message.updatedAt = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -462,12 +418,6 @@ export const Order: MessageFns<Order> = {
   fromJSON(object: any): Order {
     return {
       id: isSet(object.id) ? globalThis.String(object.id) : "",
-      createdAt: isSet(object.createdAt) ? fromJsonTimestamp(object.createdAt) : undefined,
-      updatedAt: isSet(object.updatedAt) ? fromJsonTimestamp(object.updatedAt) : undefined,
-      deletedAt: isSet(object.deletedAt) ? fromJsonTimestamp(object.deletedAt) : undefined,
-      createdBy: isSet(object.createdBy) ? String(object.createdBy) : undefined,
-      updatedBy: isSet(object.updatedBy) ? String(object.updatedBy) : undefined,
-      deletedBy: isSet(object.deletedBy) ? String(object.deletedBy) : undefined,
       code: isSet(object.code) ? globalThis.String(object.code) : "",
       customerId: isSet(object.customerId) ? globalThis.String(object.customerId) : "",
       subTotal: isSet(object.subTotal) ? globalThis.Number(object.subTotal) : 0,
@@ -479,6 +429,8 @@ export const Order: MessageFns<Order> = {
       orderStatus: isSet(object.orderStatus) ? orderStatusFromJSON(object.orderStatus) : 0,
       paymentStatus: isSet(object.paymentStatus) ? paymentStatusFromJSON(object.paymentStatus) : 0,
       shippingStatus: isSet(object.shippingStatus) ? shippingStatusFromJSON(object.shippingStatus) : 0,
+      createdAt: isSet(object.createdAt) ? fromJsonTimestamp(object.createdAt) : undefined,
+      updatedAt: isSet(object.updatedAt) ? fromJsonTimestamp(object.updatedAt) : undefined,
     };
   },
 
@@ -486,24 +438,6 @@ export const Order: MessageFns<Order> = {
     const obj: any = {};
     if (message.id !== "") {
       obj.id = message.id;
-    }
-    if (message.createdAt !== undefined) {
-      obj.createdAt = message.createdAt.toISOString();
-    }
-    if (message.updatedAt !== undefined) {
-      obj.updatedAt = message.updatedAt.toISOString();
-    }
-    if (message.deletedAt !== undefined) {
-      obj.deletedAt = message.deletedAt.toISOString();
-    }
-    if (message.createdBy !== undefined) {
-      obj.createdBy = message.createdBy;
-    }
-    if (message.updatedBy !== undefined) {
-      obj.updatedBy = message.updatedBy;
-    }
-    if (message.deletedBy !== undefined) {
-      obj.deletedBy = message.deletedBy;
     }
     if (message.code !== "") {
       obj.code = message.code;
@@ -538,35 +472,13 @@ export const Order: MessageFns<Order> = {
     if (message.shippingStatus !== 0) {
       obj.shippingStatus = shippingStatusToJSON(message.shippingStatus);
     }
+    if (message.createdAt !== undefined) {
+      obj.createdAt = message.createdAt.toISOString();
+    }
+    if (message.updatedAt !== undefined) {
+      obj.updatedAt = message.updatedAt.toISOString();
+    }
     return obj;
-  },
-
-  create<I extends Exact<DeepPartial<Order>, I>>(base?: I): Order {
-    return Order.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<Order>, I>>(object: I): Order {
-    const message = createBaseOrder();
-    message.id = object.id ?? "";
-    message.createdAt = object.createdAt ?? undefined;
-    message.updatedAt = object.updatedAt ?? undefined;
-    message.deletedAt = object.deletedAt ?? undefined;
-    message.createdBy = object.createdBy ?? undefined;
-    message.updatedBy = object.updatedBy ?? undefined;
-    message.deletedBy = object.deletedBy ?? undefined;
-    message.code = object.code ?? "";
-    message.customerId = object.customerId ?? "";
-    message.subTotal = object.subTotal ?? 0;
-    message.discount = object.discount ?? 0;
-    message.tax = object.tax ?? 0;
-    message.total = object.total ?? 0;
-    message.note = object.note ?? "";
-    message.address = (object.address !== undefined && object.address !== null)
-      ? Address.fromPartial(object.address)
-      : undefined;
-    message.orderStatus = object.orderStatus ?? 0;
-    message.paymentStatus = object.paymentStatus ?? 0;
-    message.shippingStatus = object.shippingStatus ?? 0;
-    return message;
   },
 };
 
@@ -664,22 +576,10 @@ export const Orders: MessageFns<Orders> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<Orders>, I>>(base?: I): Orders {
-    return Orders.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<Orders>, I>>(object: I): Orders {
-    const message = createBaseOrders();
-    message.orders = object.orders?.map((e) => Order.fromPartial(e)) || [];
-    message.totalCount = object.totalCount ?? 0;
-    message.page = object.page ?? 0;
-    message.pageSize = object.pageSize ?? 0;
-    return message;
-  },
 };
 
 function createBaseOrderEdge(): OrderEdge {
-  return { node: undefined, cursor: "" };
+  return { cursor: "" };
 }
 
 export const OrderEdge: MessageFns<OrderEdge> = {
@@ -742,20 +642,10 @@ export const OrderEdge: MessageFns<OrderEdge> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<OrderEdge>, I>>(base?: I): OrderEdge {
-    return OrderEdge.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<OrderEdge>, I>>(object: I): OrderEdge {
-    const message = createBaseOrderEdge();
-    message.node = (object.node !== undefined && object.node !== null) ? Orders.fromPartial(object.node) : undefined;
-    message.cursor = object.cursor ?? "";
-    return message;
-  },
 };
 
 function createBaseOrderConnection(): OrderConnection {
-  return { pageInfo: undefined, totalCount: 0, edges: [] };
+  return { totalCount: 0, edges: [] };
 }
 
 export const OrderConnection: MessageFns<OrderConnection> = {
@@ -832,19 +722,6 @@ export const OrderConnection: MessageFns<OrderConnection> = {
       obj.edges = message.edges.map((e) => OrderEdge.toJSON(e));
     }
     return obj;
-  },
-
-  create<I extends Exact<DeepPartial<OrderConnection>, I>>(base?: I): OrderConnection {
-    return OrderConnection.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<OrderConnection>, I>>(object: I): OrderConnection {
-    const message = createBaseOrderConnection();
-    message.pageInfo = (object.pageInfo !== undefined && object.pageInfo !== null)
-      ? PageInfo.fromPartial(object.pageInfo)
-      : undefined;
-    message.totalCount = object.totalCount ?? 0;
-    message.edges = object.edges?.map((e) => OrderEdge.fromPartial(e)) || [];
-    return message;
   },
 };
 
@@ -1043,28 +920,10 @@ export const OrderInput: MessageFns<OrderInput> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<OrderInput>, I>>(base?: I): OrderInput {
-    return OrderInput.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<OrderInput>, I>>(object: I): OrderInput {
-    const message = createBaseOrderInput();
-    message.code = object.code ?? "";
-    message.customerId = object.customerId ?? "";
-    message.subTotal = object.subTotal ?? 0;
-    message.discount = object.discount ?? 0;
-    message.tax = object.tax ?? 0;
-    message.total = object.total ?? 0;
-    message.note = object.note ?? "";
-    message.orderStatus = object.orderStatus ?? 0;
-    message.paymentStatus = object.paymentStatus ?? 0;
-    message.shippingStatus = object.shippingStatus ?? 0;
-    return message;
-  },
 };
 
 function createBaseCreateOrderInput(): CreateOrderInput {
-  return { data: undefined };
+  return {};
 }
 
 export const CreateOrderInput: MessageFns<CreateOrderInput> = {
@@ -1109,17 +968,6 @@ export const CreateOrderInput: MessageFns<CreateOrderInput> = {
       obj.data = OrderInput.toJSON(message.data);
     }
     return obj;
-  },
-
-  create<I extends Exact<DeepPartial<CreateOrderInput>, I>>(base?: I): CreateOrderInput {
-    return CreateOrderInput.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<CreateOrderInput>, I>>(object: I): CreateOrderInput {
-    const message = createBaseCreateOrderInput();
-    message.data = (object.data !== undefined && object.data !== null)
-      ? OrderInput.fromPartial(object.data)
-      : undefined;
-    return message;
   },
 };
 
@@ -1172,19 +1020,10 @@ export const CreateManyOrdersInput: MessageFns<CreateManyOrdersInput> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<CreateManyOrdersInput>, I>>(base?: I): CreateManyOrdersInput {
-    return CreateManyOrdersInput.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<CreateManyOrdersInput>, I>>(object: I): CreateManyOrdersInput {
-    const message = createBaseCreateManyOrdersInput();
-    message.orders = object.orders?.map((e) => OrderInput.fromPartial(e)) || [];
-    return message;
-  },
 };
 
 function createBaseUpdateOrderInput(): UpdateOrderInput {
-  return { id: "", data: undefined };
+  return { id: "" };
 }
 
 export const UpdateOrderInput: MessageFns<UpdateOrderInput> = {
@@ -1247,22 +1086,10 @@ export const UpdateOrderInput: MessageFns<UpdateOrderInput> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<UpdateOrderInput>, I>>(base?: I): UpdateOrderInput {
-    return UpdateOrderInput.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<UpdateOrderInput>, I>>(object: I): UpdateOrderInput {
-    const message = createBaseUpdateOrderInput();
-    message.id = object.id ?? "";
-    message.data = (object.data !== undefined && object.data !== null)
-      ? OrderInput.fromPartial(object.data)
-      : undefined;
-    return message;
-  },
 };
 
 function createBaseUpdateManyOrdersInput(): UpdateManyOrdersInput {
-  return { filter: undefined, update: undefined };
+  return {};
 }
 
 export const UpdateManyOrdersInput: MessageFns<UpdateManyOrdersInput> = {
@@ -1325,24 +1152,10 @@ export const UpdateManyOrdersInput: MessageFns<UpdateManyOrdersInput> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<UpdateManyOrdersInput>, I>>(base?: I): UpdateManyOrdersInput {
-    return UpdateManyOrdersInput.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<UpdateManyOrdersInput>, I>>(object: I): UpdateManyOrdersInput {
-    const message = createBaseUpdateManyOrdersInput();
-    message.filter = (object.filter !== undefined && object.filter !== null)
-      ? Any.fromPartial(object.filter)
-      : undefined;
-    message.update = (object.update !== undefined && object.update !== null)
-      ? OrderInput.fromPartial(object.update)
-      : undefined;
-    return message;
-  },
 };
 
 function createBaseDeleteManyOrdersInput(): DeleteManyOrdersInput {
-  return { filter: undefined };
+  return {};
 }
 
 export const DeleteManyOrdersInput: MessageFns<DeleteManyOrdersInput> = {
@@ -1388,21 +1201,10 @@ export const DeleteManyOrdersInput: MessageFns<DeleteManyOrdersInput> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<DeleteManyOrdersInput>, I>>(base?: I): DeleteManyOrdersInput {
-    return DeleteManyOrdersInput.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<DeleteManyOrdersInput>, I>>(object: I): DeleteManyOrdersInput {
-    const message = createBaseDeleteManyOrdersInput();
-    message.filter = (object.filter !== undefined && object.filter !== null)
-      ? Any.fromPartial(object.filter)
-      : undefined;
-    return message;
-  },
 };
 
 function createBaseNullableOrder(): NullableOrder {
-  return { null: undefined, data: undefined };
+  return {};
 }
 
 export const NullableOrder: MessageFns<NullableOrder> = {
@@ -1465,38 +1267,7 @@ export const NullableOrder: MessageFns<NullableOrder> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<NullableOrder>, I>>(base?: I): NullableOrder {
-    return NullableOrder.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<NullableOrder>, I>>(object: I): NullableOrder {
-    const message = createBaseNullableOrder();
-    message.null = object.null ?? undefined;
-    message.data = (object.data !== undefined && object.data !== null) ? Order.fromPartial(object.data) : undefined;
-    return message;
-  },
 };
-
-export interface DataLoaderOptions {
-  cache?: boolean;
-}
-
-export interface DataLoaders {
-  rpcDataLoaderOptions?: DataLoaderOptions;
-  getDataLoader<T>(identifier: string, constructorFn: () => T): T;
-}
-
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
-
-export type DeepPartial<T> = T extends Builtin ? T
-  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
-  : Partial<T>;
-
-type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function toTimestamp(date: Date): Timestamp {
   const seconds = Math.trunc(date.getTime() / 1_000);
@@ -1529,6 +1300,4 @@ export interface MessageFns<T> {
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
   toJSON(message: T): unknown;
-  create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
 }

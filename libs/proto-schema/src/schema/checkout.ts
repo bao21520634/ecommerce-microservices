@@ -83,24 +83,26 @@ export interface CheckoutRequest {
 export interface CheckoutResponse {
   checkoutId: string;
   status: CheckoutStatus;
-  order: Order | undefined;
-  chargeResponse: ChargeResponse | undefined;
+  order?: Order | undefined;
+  chargeResponse?: ChargeResponse | undefined;
 }
 
 export interface PlaceOrderRequest {
-  checkout: CheckoutRequest | undefined;
+  checkout?: CheckoutRequest | undefined;
   shippingAddressId: string;
 }
 
 export interface PlaceOrderResponse {
   orderId: string;
-  order: Order | undefined;
-  chargeResponse: ChargeResponse | undefined;
+  order?: Order | undefined;
+  chargeResponse?: ChargeResponse | undefined;
 }
 
 export interface CancelCheckoutRequest {
   checkoutId: string;
 }
+
+export const CHECKOUT_PACKAGE_NAME = "checkout";
 
 function createBaseCheckoutItem(): CheckoutItem {
   return { productId: "", name: "", unitPrice: 0, quantity: 0, totalPrice: 0 };
@@ -210,19 +212,6 @@ export const CheckoutItem: MessageFns<CheckoutItem> = {
       obj.totalPrice = message.totalPrice;
     }
     return obj;
-  },
-
-  create<I extends Exact<DeepPartial<CheckoutItem>, I>>(base?: I): CheckoutItem {
-    return CheckoutItem.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<CheckoutItem>, I>>(object: I): CheckoutItem {
-    const message = createBaseCheckoutItem();
-    message.productId = object.productId ?? "";
-    message.name = object.name ?? "";
-    message.unitPrice = object.unitPrice ?? 0;
-    message.quantity = object.quantity ?? 0;
-    message.totalPrice = object.totalPrice ?? 0;
-    return message;
   },
 };
 
@@ -365,25 +354,10 @@ export const CheckoutRequest: MessageFns<CheckoutRequest> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<CheckoutRequest>, I>>(base?: I): CheckoutRequest {
-    return CheckoutRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<CheckoutRequest>, I>>(object: I): CheckoutRequest {
-    const message = createBaseCheckoutRequest();
-    message.customerId = object.customerId ?? "";
-    message.items = object.items?.map((e) => CheckoutItem.fromPartial(e)) || [];
-    message.subTotal = object.subTotal ?? 0;
-    message.tax = object.tax ?? 0;
-    message.discount = object.discount ?? 0;
-    message.total = object.total ?? 0;
-    message.paymentMethod = object.paymentMethod ?? 0;
-    return message;
-  },
 };
 
 function createBaseCheckoutResponse(): CheckoutResponse {
-  return { checkoutId: "", status: 0, order: undefined, chargeResponse: undefined };
+  return { checkoutId: "", status: 0 };
 }
 
 export const CheckoutResponse: MessageFns<CheckoutResponse> = {
@@ -476,24 +450,10 @@ export const CheckoutResponse: MessageFns<CheckoutResponse> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<CheckoutResponse>, I>>(base?: I): CheckoutResponse {
-    return CheckoutResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<CheckoutResponse>, I>>(object: I): CheckoutResponse {
-    const message = createBaseCheckoutResponse();
-    message.checkoutId = object.checkoutId ?? "";
-    message.status = object.status ?? 0;
-    message.order = (object.order !== undefined && object.order !== null) ? Order.fromPartial(object.order) : undefined;
-    message.chargeResponse = (object.chargeResponse !== undefined && object.chargeResponse !== null)
-      ? ChargeResponse.fromPartial(object.chargeResponse)
-      : undefined;
-    return message;
-  },
 };
 
 function createBasePlaceOrderRequest(): PlaceOrderRequest {
-  return { checkout: undefined, shippingAddressId: "" };
+  return { shippingAddressId: "" };
 }
 
 export const PlaceOrderRequest: MessageFns<PlaceOrderRequest> = {
@@ -556,22 +516,10 @@ export const PlaceOrderRequest: MessageFns<PlaceOrderRequest> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<PlaceOrderRequest>, I>>(base?: I): PlaceOrderRequest {
-    return PlaceOrderRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<PlaceOrderRequest>, I>>(object: I): PlaceOrderRequest {
-    const message = createBasePlaceOrderRequest();
-    message.checkout = (object.checkout !== undefined && object.checkout !== null)
-      ? CheckoutRequest.fromPartial(object.checkout)
-      : undefined;
-    message.shippingAddressId = object.shippingAddressId ?? "";
-    return message;
-  },
 };
 
 function createBasePlaceOrderResponse(): PlaceOrderResponse {
-  return { orderId: "", order: undefined, chargeResponse: undefined };
+  return { orderId: "" };
 }
 
 export const PlaceOrderResponse: MessageFns<PlaceOrderResponse> = {
@@ -649,19 +597,6 @@ export const PlaceOrderResponse: MessageFns<PlaceOrderResponse> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<PlaceOrderResponse>, I>>(base?: I): PlaceOrderResponse {
-    return PlaceOrderResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<PlaceOrderResponse>, I>>(object: I): PlaceOrderResponse {
-    const message = createBasePlaceOrderResponse();
-    message.orderId = object.orderId ?? "";
-    message.order = (object.order !== undefined && object.order !== null) ? Order.fromPartial(object.order) : undefined;
-    message.chargeResponse = (object.chargeResponse !== undefined && object.chargeResponse !== null)
-      ? ChargeResponse.fromPartial(object.chargeResponse)
-      : undefined;
-    return message;
-  },
 };
 
 function createBaseCancelCheckoutRequest(): CancelCheckoutRequest {
@@ -711,37 +646,7 @@ export const CancelCheckoutRequest: MessageFns<CancelCheckoutRequest> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<CancelCheckoutRequest>, I>>(base?: I): CancelCheckoutRequest {
-    return CancelCheckoutRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<CancelCheckoutRequest>, I>>(object: I): CancelCheckoutRequest {
-    const message = createBaseCancelCheckoutRequest();
-    message.checkoutId = object.checkoutId ?? "";
-    return message;
-  },
 };
-
-export interface DataLoaderOptions {
-  cache?: boolean;
-}
-
-export interface DataLoaders {
-  rpcDataLoaderOptions?: DataLoaderOptions;
-  getDataLoader<T>(identifier: string, constructorFn: () => T): T;
-}
-
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
-
-export type DeepPartial<T> = T extends Builtin ? T
-  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
-  : Partial<T>;
-
-type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;
@@ -752,6 +657,4 @@ export interface MessageFns<T> {
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
   toJSON(message: T): unknown;
-  create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
 }

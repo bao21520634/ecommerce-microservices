@@ -7,3 +7,9 @@ generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["relationJoins", "prismaSchemaFolder"]
 }
+
+generator nestgraphql {
+  provider = "node node_modules/prisma-nestjs-graphql"
+  output   = "../../generated/graphql-query/"
+  reExport = All
+}

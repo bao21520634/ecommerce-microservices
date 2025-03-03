@@ -1,6 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { CacheModule } from '@nestjs/cache-manager';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EventStoreModule } from '@ecommerce-microservices/event-store';
 import { TerminusModule } from '@nestjs/terminus';
@@ -9,7 +9,6 @@ import * as yaml from 'js-yaml';
 import { resolve } from 'path';
 
 import { CacheStoreConfigService, EventStoreConfigService } from '../services';
-import { ClerkAuthGuard } from '@ecommerce-microservices/common';
 
 @Global()
 @Module({
@@ -81,15 +80,6 @@ import { ClerkAuthGuard } from '@ecommerce-microservices/common';
                 throw new Error('Cache stores are not properly configured');
             },
             inject: [CacheStoreConfigService],
-        },
-        {
-            provide: 'CLERK_INIT',
-            useFactory: (configService: ConfigService) => {
-                process.env['CLERK_SECRET_KEY'] =
-                    configService.get<string>('clerk.secret');
-                return true;
-            },
-            inject: [ConfigService],
         },
     ],
 })

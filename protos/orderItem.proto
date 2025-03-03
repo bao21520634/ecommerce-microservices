@@ -5,28 +5,22 @@ package orderItem;
 import 'common.proto';
 import 'google/protobuf/any.proto';
 import "google/protobuf/timestamp.proto";
-import 'google/protobuf/wrappers.proto';
 import 'google/protobuf/struct.proto';
 
 message OrderItem {
   string id = 1;
-  google.protobuf.Timestamp createdAt = 2;
-  google.protobuf.Timestamp updatedAt = 3;
-  google.protobuf.Timestamp deletedAt = 4;
-  google.protobuf.StringValue createdBy = 5;
-  google.protobuf.StringValue updatedBy = 6;
-  google.protobuf.StringValue deletedBy = 7;
-
-  string productVariantId = 8;
-  string orderId = 9;
-  string displayName = 10;
-  float priceInclTax = 11;
-  float priceExclTax = 12;
-  int32 quantity = 13;
-  float subTotal = 14;
-  float discount = 15;
-  float tax = 16;
-  float total = 17;
+  string productVariantId = 2;
+  string orderId = 3;
+  string displayName = 4;
+  float priceInclTax = 5;
+  float priceExclTax = 6;
+  int32 quantity = 7;
+  float subTotal = 8;
+  float discount = 9;
+  float tax = 10;
+  float total = 11;
+  google.protobuf.Timestamp createdAt = 12;
+  google.protobuf.Timestamp updatedAt = 13;
 }
 
 message OrderItems {

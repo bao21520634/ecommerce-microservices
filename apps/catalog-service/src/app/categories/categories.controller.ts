@@ -3,7 +3,7 @@ import {
     Category,
     Common,
 } from '@ecommerce-microservices/proto-schema';
-import { Controller, UseGuards } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GrpcMethod, RpcException } from '@nestjs/microservices';
 import {
@@ -16,12 +16,10 @@ import {
     DeleteCategoryCommand,
     UpdateCategoryCommand,
 } from './commands';
-import { ClerkAuthGuard } from '@ecommerce-microservices/common';
 
 @Controller('categories')
-// @UseGuards(ClerkAuthGuard)
 export class CategoriesController
-    implements Partial<CatalogService.CatalogService<any>>
+    implements Partial<CatalogService.CatalogServiceController>
 {
     constructor(private commandBus: CommandBus, private queryBus: QueryBus) {}
 
@@ -33,7 +31,7 @@ export class CategoriesController
         try {
             return this.queryBus.execute(new GetCategoryQuery(request.id));
         } catch (e) {
-            console.log('e controller............', e);
+            console.log('e controller...........', e);
             throw new RpcException(e);
         }
     }

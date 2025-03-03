@@ -31,7 +31,7 @@ export class DeleteProductHandler
                 },
             });
 
-            this.eventBus.publish(new ProductDeletedEvent(result));
+            await this.eventBus.publish(new ProductDeletedEvent(result));
 
             return {
                 ...result,

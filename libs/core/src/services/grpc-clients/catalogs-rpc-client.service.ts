@@ -16,30 +16,17 @@ export class CatalogsRpcClientService implements OnModuleInit {
     })
     private readonly client!: ClientGrpc;
 
-    public svc!: CatalogService.CatalogService<any>;
+    public svc!: CatalogService.CatalogServiceClient;
 
     constructor(private readonly configService: ConfigService) {}
 
     onModuleInit() {
-        // Get service configuration
-        const serviceHost = this.configService.get<string>(
-            'service.discoveryHost',
-        );
-        const servicePort = this.configService.get<number>('service.port');
+        console.log('Initializing gRPC client...');
 
-        // Override client options with configuration
-        const clientOptions = {
-            transport: Transport.GRPC,
-            options: {
-                package: SERVICE_LIST.catalog.package,
-                protoPath: SERVICE_LIST.catalog.protoPath,
-                url: `${serviceHost}:${servicePort}`,
-            },
-        };
-
-        // Initialize the client with the service interface
-        this.svc = this.client.getService<CatalogService.CatalogService<any>>(
+        this.svc = this.client.getService<CatalogService.CatalogServiceClient>(
             SERVICE_LIST.catalog.service,
         );
+
+        console.log('gRPC Client Initialized:', this.svc);
     }
 }

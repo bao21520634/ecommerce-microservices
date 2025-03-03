@@ -25,13 +25,15 @@ export interface PaymentHistoryResponse {
 }
 
 export interface OrderPaymentDetailsResponse {
-  order: Order | undefined;
-  chargeDetails: ChargeResponse | undefined;
+  order?: Order | undefined;
+  chargeDetails?: ChargeResponse | undefined;
 }
 
 export interface GetOrderPaymentDetailsRequest {
   orderId: string;
 }
+
+export const PAYMENT_HISTORY_PACKAGE_NAME = "paymentHistory";
 
 function createBasePaymentHistoryRequest(): PaymentHistoryRequest {
   return { customerId: "", page: 0, pageSize: 0 };
@@ -111,17 +113,6 @@ export const PaymentHistoryRequest: MessageFns<PaymentHistoryRequest> = {
       obj.pageSize = Math.round(message.pageSize);
     }
     return obj;
-  },
-
-  create<I extends Exact<DeepPartial<PaymentHistoryRequest>, I>>(base?: I): PaymentHistoryRequest {
-    return PaymentHistoryRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<PaymentHistoryRequest>, I>>(object: I): PaymentHistoryRequest {
-    const message = createBasePaymentHistoryRequest();
-    message.customerId = object.customerId ?? "";
-    message.page = object.page ?? 0;
-    message.pageSize = object.pageSize ?? 0;
-    return message;
   },
 };
 
@@ -221,22 +212,10 @@ export const PaymentHistoryResponse: MessageFns<PaymentHistoryResponse> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<PaymentHistoryResponse>, I>>(base?: I): PaymentHistoryResponse {
-    return PaymentHistoryResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<PaymentHistoryResponse>, I>>(object: I): PaymentHistoryResponse {
-    const message = createBasePaymentHistoryResponse();
-    message.charges = object.charges?.map((e) => ChargeResponse.fromPartial(e)) || [];
-    message.totalCount = object.totalCount ?? 0;
-    message.page = object.page ?? 0;
-    message.pageSize = object.pageSize ?? 0;
-    return message;
-  },
 };
 
 function createBaseOrderPaymentDetailsResponse(): OrderPaymentDetailsResponse {
-  return { order: undefined, chargeDetails: undefined };
+  return {};
 }
 
 export const OrderPaymentDetailsResponse: MessageFns<OrderPaymentDetailsResponse> = {
@@ -299,18 +278,6 @@ export const OrderPaymentDetailsResponse: MessageFns<OrderPaymentDetailsResponse
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<OrderPaymentDetailsResponse>, I>>(base?: I): OrderPaymentDetailsResponse {
-    return OrderPaymentDetailsResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<OrderPaymentDetailsResponse>, I>>(object: I): OrderPaymentDetailsResponse {
-    const message = createBaseOrderPaymentDetailsResponse();
-    message.order = (object.order !== undefined && object.order !== null) ? Order.fromPartial(object.order) : undefined;
-    message.chargeDetails = (object.chargeDetails !== undefined && object.chargeDetails !== null)
-      ? ChargeResponse.fromPartial(object.chargeDetails)
-      : undefined;
-    return message;
-  },
 };
 
 function createBaseGetOrderPaymentDetailsRequest(): GetOrderPaymentDetailsRequest {
@@ -360,39 +327,7 @@ export const GetOrderPaymentDetailsRequest: MessageFns<GetOrderPaymentDetailsReq
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<GetOrderPaymentDetailsRequest>, I>>(base?: I): GetOrderPaymentDetailsRequest {
-    return GetOrderPaymentDetailsRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<GetOrderPaymentDetailsRequest>, I>>(
-    object: I,
-  ): GetOrderPaymentDetailsRequest {
-    const message = createBaseGetOrderPaymentDetailsRequest();
-    message.orderId = object.orderId ?? "";
-    return message;
-  },
 };
-
-export interface DataLoaderOptions {
-  cache?: boolean;
-}
-
-export interface DataLoaders {
-  rpcDataLoaderOptions?: DataLoaderOptions;
-  getDataLoader<T>(identifier: string, constructorFn: () => T): T;
-}
-
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
-
-export type DeepPartial<T> = T extends Builtin ? T
-  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
-  : Partial<T>;
-
-type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;
@@ -403,6 +338,4 @@ export interface MessageFns<T> {
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
   toJSON(message: T): unknown;
-  create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
 }

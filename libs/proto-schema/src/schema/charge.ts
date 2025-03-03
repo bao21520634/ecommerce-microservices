@@ -105,7 +105,7 @@ export interface ChargeRequest {
   amount: number;
   currency: string;
   paymentMethod: PaymentMethod;
-  creditCard: CreditCardInfo | undefined;
+  creditCard?: CreditCardInfo | undefined;
   customerId: string;
   orderId: string;
 }
@@ -118,6 +118,8 @@ export interface ChargeResponse {
   description: string;
   errorMessage: string;
 }
+
+export const CHARGE_PACKAGE_NAME = "charge";
 
 function createBaseCreditCardInfo(): CreditCardInfo {
   return { cardNumber: "", cardHolderName: "", expirationMonth: "", expirationYear: "", cvv: "" };
@@ -228,23 +230,10 @@ export const CreditCardInfo: MessageFns<CreditCardInfo> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<CreditCardInfo>, I>>(base?: I): CreditCardInfo {
-    return CreditCardInfo.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<CreditCardInfo>, I>>(object: I): CreditCardInfo {
-    const message = createBaseCreditCardInfo();
-    message.cardNumber = object.cardNumber ?? "";
-    message.cardHolderName = object.cardHolderName ?? "";
-    message.expirationMonth = object.expirationMonth ?? "";
-    message.expirationYear = object.expirationYear ?? "";
-    message.cvv = object.cvv ?? "";
-    return message;
-  },
 };
 
 function createBaseChargeRequest(): ChargeRequest {
-  return { amount: 0, currency: "", paymentMethod: 0, creditCard: undefined, customerId: "", orderId: "" };
+  return { amount: 0, currency: "", paymentMethod: 0, customerId: "", orderId: "" };
 }
 
 export const ChargeRequest: MessageFns<ChargeRequest> = {
@@ -366,22 +355,6 @@ export const ChargeRequest: MessageFns<ChargeRequest> = {
       obj.orderId = message.orderId;
     }
     return obj;
-  },
-
-  create<I extends Exact<DeepPartial<ChargeRequest>, I>>(base?: I): ChargeRequest {
-    return ChargeRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<ChargeRequest>, I>>(object: I): ChargeRequest {
-    const message = createBaseChargeRequest();
-    message.amount = object.amount ?? 0;
-    message.currency = object.currency ?? "";
-    message.paymentMethod = object.paymentMethod ?? 0;
-    message.creditCard = (object.creditCard !== undefined && object.creditCard !== null)
-      ? CreditCardInfo.fromPartial(object.creditCard)
-      : undefined;
-    message.customerId = object.customerId ?? "";
-    message.orderId = object.orderId ?? "";
-    return message;
   },
 };
 
@@ -509,42 +482,7 @@ export const ChargeResponse: MessageFns<ChargeResponse> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<ChargeResponse>, I>>(base?: I): ChargeResponse {
-    return ChargeResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<ChargeResponse>, I>>(object: I): ChargeResponse {
-    const message = createBaseChargeResponse();
-    message.chargeId = object.chargeId ?? "";
-    message.status = object.status ?? 0;
-    message.amount = object.amount ?? 0;
-    message.currency = object.currency ?? "";
-    message.description = object.description ?? "";
-    message.errorMessage = object.errorMessage ?? "";
-    return message;
-  },
 };
-
-export interface DataLoaderOptions {
-  cache?: boolean;
-}
-
-export interface DataLoaders {
-  rpcDataLoaderOptions?: DataLoaderOptions;
-  getDataLoader<T>(identifier: string, constructorFn: () => T): T;
-}
-
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
-
-export type DeepPartial<T> = T extends Builtin ? T
-  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
-  : Partial<T>;
-
-type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;
@@ -555,6 +493,4 @@ export interface MessageFns<T> {
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
   toJSON(message: T): unknown;
-  create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
 }

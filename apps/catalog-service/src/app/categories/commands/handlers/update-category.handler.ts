@@ -39,7 +39,7 @@ export class UpdateCategoryHandler
                 },
             });
 
-            this.eventBus.publish(new CategoryUpdatedEvent(result));
+            await this.eventBus.publish(new CategoryUpdatedEvent(result));
 
             return {
                 ...result,

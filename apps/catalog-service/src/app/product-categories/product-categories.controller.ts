@@ -14,24 +14,21 @@ import {
 import {
     CreateProductCategoryCommand,
     DeleteProductCategoryCommand,
-    UpdateProductCategoryCommand,
 } from './commands';
 
 @Controller('product-categories')
 export class ProductCategoriesController
-    implements Partial<CatalogService.CatalogService<any>>
+    implements Partial<CatalogService.CatalogServiceController>
 {
     constructor(private commandBus: CommandBus, private queryBus: QueryBus) {}
 
     @GrpcMethod('CatalogService', 'productCategory')
     async productCategory(
-        request: Common.Id,
+        request: ProductCategory.ProductCategoryInput,
         ctx: any,
     ): Promise<ProductCategory.NullableProductCategory> {
         try {
-            return this.queryBus.execute(
-                new GetProductCategoryQuery(request.id),
-            );
+            return this.queryBus.execute(new GetProductCategoryQuery(request));
         } catch (e) {
             console.log('e controller............', e);
             throw new RpcException(e);
@@ -91,23 +88,9 @@ export class ProductCategoriesController
         }
     }
 
-    @GrpcMethod('CatalogService', 'updateProductCategory')
-    async updateProductCategory(
-        request: ProductCategory.UpdateProductCategoryInput,
-        ctx: any,
-    ): Promise<ProductCategory.ProductCategory> {
-        try {
-            return await this.commandBus.execute(
-                new UpdateProductCategoryCommand(request),
-            );
-        } catch (errors) {
-            throw new RpcException(errors);
-        }
-    }
-
     @GrpcMethod('CatalogService', 'deleteProductCategory')
     async deleteProductCategory(
-        request: Common.Id,
+        request: ProductCategory.DeleteProductCategoryInput,
         ctx: any,
     ): Promise<ProductCategory.ProductCategory> {
         try {

@@ -6,6 +6,7 @@
 
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
+import { wrappers } from "protobufjs";
 
 export const protobufPackage = "google.protobuf";
 
@@ -60,7 +61,7 @@ export interface Struct {
 
 export interface Struct_FieldsEntry {
   key: string;
-  value: any | undefined;
+  value?: any | undefined;
 }
 
 /**
@@ -105,6 +106,8 @@ export interface ListValue {
   /** Repeated field of dynamically typed values. */
   values: any[];
 }
+
+export const GOOGLE_PROTOBUF_PACKAGE_NAME = "google.protobuf";
 
 function createBaseStruct(): Struct {
   return { fields: {} };
@@ -172,29 +175,12 @@ export const Struct: MessageFns<Struct> & StructWrapperFns = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<Struct>, I>>(base?: I): Struct {
-    return Struct.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<Struct>, I>>(object: I): Struct {
-    const message = createBaseStruct();
-    message.fields = Object.entries(object.fields ?? {}).reduce<{ [key: string]: any | undefined }>(
-      (acc, [key, value]) => {
-        if (value !== undefined) {
-          acc[key] = value;
-        }
-        return acc;
-      },
-      {},
-    );
-    return message;
-  },
-
   wrap(object: { [key: string]: any } | undefined): Struct {
     const struct = createBaseStruct();
 
     if (object !== undefined) {
       for (const key of Object.keys(object)) {
-        struct.fields[key] = object[key];
+        struct.fields[key] = Value.wrap(object[key]);
       }
     }
     return struct;
@@ -204,7 +190,7 @@ export const Struct: MessageFns<Struct> & StructWrapperFns = {
     const object: { [key: string]: any } = {};
     if (message.fields) {
       for (const key of Object.keys(message.fields)) {
-        object[key] = message.fields[key];
+        object[key] = Value.unwrap(message.fields[key]);
       }
     }
     return object;
@@ -212,7 +198,7 @@ export const Struct: MessageFns<Struct> & StructWrapperFns = {
 };
 
 function createBaseStruct_FieldsEntry(): Struct_FieldsEntry {
-  return { key: "", value: undefined };
+  return { key: "" };
 }
 
 export const Struct_FieldsEntry: MessageFns<Struct_FieldsEntry> = {
@@ -275,27 +261,10 @@ export const Struct_FieldsEntry: MessageFns<Struct_FieldsEntry> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<Struct_FieldsEntry>, I>>(base?: I): Struct_FieldsEntry {
-    return Struct_FieldsEntry.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<Struct_FieldsEntry>, I>>(object: I): Struct_FieldsEntry {
-    const message = createBaseStruct_FieldsEntry();
-    message.key = object.key ?? "";
-    message.value = object.value ?? undefined;
-    return message;
-  },
 };
 
 function createBaseValue(): Value {
-  return {
-    nullValue: undefined,
-    numberValue: undefined,
-    stringValue: undefined,
-    boolValue: undefined,
-    structValue: undefined,
-    listValue: undefined,
-  };
+  return {};
 }
 
 export const Value: MessageFns<Value> & AnyValueWrapperFns = {
@@ -419,22 +388,8 @@ export const Value: MessageFns<Value> & AnyValueWrapperFns = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<Value>, I>>(base?: I): Value {
-    return Value.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<Value>, I>>(object: I): Value {
-    const message = createBaseValue();
-    message.nullValue = object.nullValue ?? undefined;
-    message.numberValue = object.numberValue ?? undefined;
-    message.stringValue = object.stringValue ?? undefined;
-    message.boolValue = object.boolValue ?? undefined;
-    message.structValue = object.structValue ?? undefined;
-    message.listValue = object.listValue ?? undefined;
-    return message;
-  },
-
   wrap(value: any): Value {
-    const result = createBaseValue();
+    const result = {} as any;
     if (value === null) {
       result.nullValue = NullValue.NULL_VALUE;
     } else if (typeof value === "boolean") {
@@ -444,9 +399,9 @@ export const Value: MessageFns<Value> & AnyValueWrapperFns = {
     } else if (typeof value === "string") {
       result.stringValue = value;
     } else if (globalThis.Array.isArray(value)) {
-      result.listValue = value;
+      result.listValue = ListValue.wrap(value);
     } else if (typeof value === "object") {
-      result.structValue = value;
+      result.structValue = Struct.wrap(value);
     } else if (typeof value !== "undefined") {
       throw new globalThis.Error("Unsupported any value type: " + typeof value);
     }
@@ -454,17 +409,17 @@ export const Value: MessageFns<Value> & AnyValueWrapperFns = {
   },
 
   unwrap(message: any): string | number | boolean | Object | null | Array<any> | undefined {
-    if (message.stringValue !== undefined) {
+    if (message?.hasOwnProperty("stringValue") && message.stringValue !== undefined) {
       return message.stringValue;
-    } else if (message?.numberValue !== undefined) {
+    } else if (message?.hasOwnProperty("numberValue") && message?.numberValue !== undefined) {
       return message.numberValue;
-    } else if (message?.boolValue !== undefined) {
+    } else if (message?.hasOwnProperty("boolValue") && message?.boolValue !== undefined) {
       return message.boolValue;
-    } else if (message?.structValue !== undefined) {
-      return message.structValue as any;
-    } else if (message?.listValue !== undefined) {
-      return message.listValue;
-    } else if (message?.nullValue !== undefined) {
+    } else if (message?.hasOwnProperty("structValue") && message?.structValue !== undefined) {
+      return Struct.unwrap(message.structValue as any);
+    } else if (message?.hasOwnProperty("listValue") && message?.listValue !== undefined) {
+      return ListValue.unwrap(message.listValue);
+    } else if (message?.hasOwnProperty("nullValue") && message?.nullValue !== undefined) {
       return null;
     }
     return undefined;
@@ -519,50 +474,22 @@ export const ListValue: MessageFns<ListValue> & ListValueWrapperFns = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<ListValue>, I>>(base?: I): ListValue {
-    return ListValue.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<ListValue>, I>>(object: I): ListValue {
-    const message = createBaseListValue();
-    message.values = object.values?.map((e) => e) || [];
-    return message;
-  },
-
   wrap(array: Array<any> | undefined): ListValue {
     const result = createBaseListValue();
-    result.values = array ?? [];
+    result.values = (array ?? []).map(Value.wrap);
     return result;
   },
 
   unwrap(message: ListValue): Array<any> {
     if (message?.hasOwnProperty("values") && globalThis.Array.isArray(message.values)) {
-      return message.values;
+      return message.values.map(Value.unwrap);
     } else {
       return message as any;
     }
   },
 };
 
-export interface DataLoaderOptions {
-  cache?: boolean;
-}
-
-export interface DataLoaders {
-  rpcDataLoaderOptions?: DataLoaderOptions;
-  getDataLoader<T>(identifier: string, constructorFn: () => T): T;
-}
-
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
-
-export type DeepPartial<T> = T extends Builtin ? T
-  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
-  : Partial<T>;
-
-type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+wrappers[".google.protobuf.Struct"] = { fromObject: Struct.wrap, toObject: Struct.unwrap } as any;
 
 function isObject(value: any): boolean {
   return typeof value === "object" && value !== null;
@@ -577,8 +504,6 @@ export interface MessageFns<T> {
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
   toJSON(message: T): unknown;
-  create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
 }
 
 export interface StructWrapperFns {

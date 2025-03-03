@@ -11,12 +11,13 @@ export class GetProductCategoryHandler
     constructor(private readonly productRepo: ProductCategoryRepository) {}
 
     async execute(
-        query: GetProductCategoryQuery,
+        data: GetProductCategoryQuery,
     ): Promise<ProductCategory.NullableProductCategory> {
         try {
             const result = await this.productRepo.store.findFirst({
                 where: {
-                    id: query.id,
+                    productId: data.query.productId,
+                    categoryId: data.query.categoryId,
                 },
             });
 

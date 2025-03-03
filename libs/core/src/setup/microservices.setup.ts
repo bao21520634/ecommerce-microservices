@@ -39,17 +39,14 @@ export async function microserviceSetup(
     }
 
     // Connect gRPC Microservice
-    app.connectMicroservice(
-        {
-            transport: Transport.GRPC,
-            options: {
-                url: `${hostname}:${servicePort}`,
-                package: serviceName,
-                protoPath,
-            },
+    app.connectMicroservice({
+        transport: Transport.GRPC,
+        options: {
+            url: `${hostname}:${servicePort}`,
+            package: serviceName,
+            protoPath,
         },
-        { inheritAppConfig: true },
-    );
+    });
 
     // Optional MQTT Microservice
     if (enableMqtt) {

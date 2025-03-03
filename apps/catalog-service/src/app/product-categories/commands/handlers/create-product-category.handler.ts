@@ -28,7 +28,9 @@ export class CreateProductCategoryHandler
                 data: command.request.data,
             });
 
-            this.eventBus.publish(new ProductCategoryCreatedEvent(result));
+            await this.eventBus.publish(
+                new ProductCategoryCreatedEvent(result),
+            );
 
             return result;
         } catch (error) {

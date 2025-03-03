@@ -2,10 +2,8 @@ syntax = "proto3";
 
 package product;
 
-import 'common.proto';
 import 'google/protobuf/any.proto';
 import "google/protobuf/timestamp.proto";
-import 'google/protobuf/wrappers.proto';
 import 'google/protobuf/struct.proto';
 
 enum ProductType {
@@ -21,93 +19,77 @@ enum ProductStatus {
 
 message Product {
   string id = 1;
-  google.protobuf.Timestamp createdAt = 2;
-  google.protobuf.Timestamp updatedAt = 3;
-  google.protobuf.Timestamp deletedAt = 4;
-  google.protobuf.StringValue createdBy = 5;
-  google.protobuf.StringValue updatedBy = 6;
-  google.protobuf.StringValue deletedBy = 7;
-
-  string name = 8;
-  string slug = 9;
-  google.protobuf.StringValue shortDescription = 10;
-  google.protobuf.StringValue longDescription = 11;
-  google.protobuf.StringValue thumbnailUrl = 12;
-  ProductType productType = 13;
-  google.protobuf.StringValue productTemplateId = 14;
-  google.protobuf.StringValue manufacturerId = 15;
-  int32 sortOrder = 16;
-  google.protobuf.StringValue metaTitle = 17;
-  google.protobuf.StringValue metaDescription = 18;
-  google.protobuf.StringValue metaKeywords = 19;
-  google.protobuf.StringValue tags = 20;
-  bool allowCustomMetaTag = 21;
-  bool limitedToLocations = 22;
-  bool limitedToStores = 23;
-  ProductStatus status = 24;
-  bool displayPrice = 25;
-  bool shippable = 26;
-  float weight = 27;
-  float length = 28;
-  float width = 29;
-  float height = 30;
-  string taxCategory = 31;
-  float taxPercent = 32;
-  float priceExclTax = 33;
-  float priceInclTax = 34;
-  string unit = 35;
-  int32 stockAvailability = 36;
-  string attributes = 37;
-  string variantAttributes = 38;
+  string name = 2;
+  string slug = 3;
+  optional string shortDescription = 4;
+  optional string longDescription = 5;
+  optional string thumbnailUrl = 6;
+  optional ProductType productType = 7;
+  optional string productTemplateId = 8;
+  optional string manufacturerId = 9;
+  optional int32 sortOrder = 10;
+  optional string metaTitle = 11;
+  optional string metaDescription = 12;
+  optional string metaKeywords = 13;
+  optional string tags = 14;
+  optional bool allowCustomMetaTag = 15;
+  optional bool limitedToLocations = 16;
+  optional bool limitedToStores = 17;
+  optional ProductStatus status = 18;
+  optional bool displayPrice = 19;
+  optional bool shippable = 20;
+  optional float weight = 21;
+  optional float length = 22;
+  optional float width = 23;
+  optional float height = 24;
+  optional string taxCategory = 25;
+  optional float taxPercent = 26;
+  float priceExclTax = 27;
+  float priceInclTax = 28;
+  optional string unit = 29;
+  optional int32 stockAvailability = 30;
+  optional string attributes = 31;
+  optional string variantAttributes = 32;
+  google.protobuf.Timestamp createdAt = 33;
+  google.protobuf.Timestamp updatedAt = 34;
 }
 
 message Products {
   repeated Product products = 1;
 }
 
-message ProductEdge {
-  Products node = 1;
-  string cursor = 2;
-}
-
-message ProductConnection {
-  common.PageInfo pageInfo = 1;
-  int32 totalCount = 2;
-  repeated ProductEdge edges = 3;
-}
-
 message ProductInput {
-  string name = 8;
-  string slug = 9;
-  string shortDescription = 10;
-  string longDescription = 11;
-  string thumbnailUrl = 12;
-  ProductType productType = 13;
-  string productTemplateId = 14;
-  string manufacturerId = 15;
-  int32 sortOrder = 16;
-  string metaTitle = 17;
-  string metaDescription = 18;
-  string metaKeywords = 19;
-  string tags = 20;
-  bool allowCustomMetaTag = 21;
-  bool limitedToLocations = 22;
-  bool limitedToStores = 23;
-  ProductStatus status = 24;
-  bool displayPrice = 25;
-  bool shippable = 26;
-  float weight = 27;
-  float length = 28;
-  float width = 29;
-  float height = 30;
-  string taxCategory = 31;
-  float taxPercent = 32;
-  float priceExclTax = 33;
-  float priceInclTax = 34;
-  string unit = 35;
-  int32 stockAvailability = 36;
-  string attributes = 37;
-  string variantAttributes = 38;
+  string name = 1;
+  string slug = 2;
+  optional string shortDescription = 3;
+  optional string longDescription = 4;
+  optional string thumbnailUrl = 5;
+  optional ProductType productType = 6;
+  optional string productTemplateId = 7;
+  optional string manufacturerId = 8;
+  optional int32 sortOrder = 9;
+  optional string metaTitle = 10;
+  optional string metaDescription = 11;
+  optional string metaKeywords = 12;
+  optional string tags = 13;
+  optional bool allowCustomMetaTag = 14;
+  optional bool limitedToLocations = 15;
+  optional bool limitedToStores = 16;
+  optional ProductStatus status = 17;
+  optional bool displayPrice = 18;
+  optional bool shippable = 19;
+  optional float weight = 20;
+  optional float length = 21;
+  optional float width = 22;
+  optional float height = 23;
+  optional string taxCategory = 24;
+  optional float taxPercent = 25;
+  float priceExclTax = 26;
+  float priceInclTax = 27;
+  optional string unit = 28;
+  optional int32 stockAvailability = 29;
+  optional string attributes = 30;
+  optional string variantAttributes = 31;
 }
 
 message CreateProductInput {

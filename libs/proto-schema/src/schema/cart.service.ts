@@ -5,6 +5,9 @@
 // source: cart.service.proto
 
 /* eslint-disable */
+import { Metadata } from "@grpc/grpc-js";
+import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
+import { Observable } from "rxjs";
 import { Count, DeleteManyResponse, Id, Query } from "./common";
 import {
   CreateManyOrdersInput,
@@ -29,34 +32,145 @@ import {
 
 export const protobufPackage = "cart";
 
-export interface CartService<Context extends DataLoaders> {
+export const CART_PACKAGE_NAME = "cart";
+
+export interface CartServiceClient {
   /** Order */
-  order(ctx: Context, request: Id): Promise<NullableOrder>;
-  orders(ctx: Context, request: Query): Promise<Orders>;
-  ordersTotal(ctx: Context, request: Query): Promise<Count>;
-  createOrder(ctx: Context, request: CreateOrderInput): Promise<Order>;
-  createManyOrders(ctx: Context, request: CreateManyOrdersInput): Promise<Orders>;
-  updateOrder(ctx: Context, request: UpdateOrderInput): Promise<Order>;
-  updateManyOrders(ctx: Context, request: UpdateManyOrdersInput): Promise<Orders>;
-  deleteOrder(ctx: Context, request: Id): Promise<Order>;
-  deleteManyOrders(ctx: Context, request: DeleteManyOrdersInput): Promise<DeleteManyResponse>;
+
+  order(request: Id, metadata?: Metadata): Observable<NullableOrder>;
+
+  orders(request: Query, metadata?: Metadata): Observable<Orders>;
+
+  ordersTotal(request: Query, metadata?: Metadata): Observable<Count>;
+
+  createOrder(request: CreateOrderInput, metadata?: Metadata): Observable<Order>;
+
+  createManyOrders(request: CreateManyOrdersInput, metadata?: Metadata): Observable<Orders>;
+
+  updateOrder(request: UpdateOrderInput, metadata?: Metadata): Observable<Order>;
+
+  updateManyOrders(request: UpdateManyOrdersInput, metadata?: Metadata): Observable<Orders>;
+
+  deleteOrder(request: Id, metadata?: Metadata): Observable<Order>;
+
+  deleteManyOrders(request: DeleteManyOrdersInput, metadata?: Metadata): Observable<DeleteManyResponse>;
+
   /** OrderItem */
-  orderItem(ctx: Context, request: Id): Promise<NullableOrderItem>;
-  orderItems(ctx: Context, request: Query): Promise<OrderItems>;
-  orderItemsTotal(ctx: Context, request: Query): Promise<Count>;
-  createOrderItem(ctx: Context, request: CreateOrderItemInput): Promise<OrderItem>;
-  createManyOrderItems(ctx: Context, request: CreateManyOrderItemsInput): Promise<OrderItems>;
-  updateOrderItem(ctx: Context, request: UpdateOrderItemInput): Promise<OrderItem>;
-  updateManyOrderItems(ctx: Context, request: UpdateManyOrderItemsInput): Promise<OrderItems>;
-  deleteOrderItem(ctx: Context, request: Id): Promise<OrderItem>;
-  deleteManyOrderItems(ctx: Context, request: DeleteManyOrderItemsInput): Promise<DeleteManyResponse>;
+
+  orderItem(request: Id, metadata?: Metadata): Observable<NullableOrderItem>;
+
+  orderItems(request: Query, metadata?: Metadata): Observable<OrderItems>;
+
+  orderItemsTotal(request: Query, metadata?: Metadata): Observable<Count>;
+
+  createOrderItem(request: CreateOrderItemInput, metadata?: Metadata): Observable<OrderItem>;
+
+  createManyOrderItems(request: CreateManyOrderItemsInput, metadata?: Metadata): Observable<OrderItems>;
+
+  updateOrderItem(request: UpdateOrderItemInput, metadata?: Metadata): Observable<OrderItem>;
+
+  updateManyOrderItems(request: UpdateManyOrderItemsInput, metadata?: Metadata): Observable<OrderItems>;
+
+  deleteOrderItem(request: Id, metadata?: Metadata): Observable<OrderItem>;
+
+  deleteManyOrderItems(request: DeleteManyOrderItemsInput, metadata?: Metadata): Observable<DeleteManyResponse>;
 }
 
-export interface DataLoaderOptions {
-  cache?: boolean;
+export interface CartServiceController {
+  /** Order */
+
+  order(request: Id, metadata?: Metadata): Promise<NullableOrder> | Observable<NullableOrder> | NullableOrder;
+
+  orders(request: Query, metadata?: Metadata): Promise<Orders> | Observable<Orders> | Orders;
+
+  ordersTotal(request: Query, metadata?: Metadata): Promise<Count> | Observable<Count> | Count;
+
+  createOrder(request: CreateOrderInput, metadata?: Metadata): Promise<Order> | Observable<Order> | Order;
+
+  createManyOrders(request: CreateManyOrdersInput, metadata?: Metadata): Promise<Orders> | Observable<Orders> | Orders;
+
+  updateOrder(request: UpdateOrderInput, metadata?: Metadata): Promise<Order> | Observable<Order> | Order;
+
+  updateManyOrders(request: UpdateManyOrdersInput, metadata?: Metadata): Promise<Orders> | Observable<Orders> | Orders;
+
+  deleteOrder(request: Id, metadata?: Metadata): Promise<Order> | Observable<Order> | Order;
+
+  deleteManyOrders(
+    request: DeleteManyOrdersInput,
+    metadata?: Metadata,
+  ): Promise<DeleteManyResponse> | Observable<DeleteManyResponse> | DeleteManyResponse;
+
+  /** OrderItem */
+
+  orderItem(
+    request: Id,
+    metadata?: Metadata,
+  ): Promise<NullableOrderItem> | Observable<NullableOrderItem> | NullableOrderItem;
+
+  orderItems(request: Query, metadata?: Metadata): Promise<OrderItems> | Observable<OrderItems> | OrderItems;
+
+  orderItemsTotal(request: Query, metadata?: Metadata): Promise<Count> | Observable<Count> | Count;
+
+  createOrderItem(
+    request: CreateOrderItemInput,
+    metadata?: Metadata,
+  ): Promise<OrderItem> | Observable<OrderItem> | OrderItem;
+
+  createManyOrderItems(
+    request: CreateManyOrderItemsInput,
+    metadata?: Metadata,
+  ): Promise<OrderItems> | Observable<OrderItems> | OrderItems;
+
+  updateOrderItem(
+    request: UpdateOrderItemInput,
+    metadata?: Metadata,
+  ): Promise<OrderItem> | Observable<OrderItem> | OrderItem;
+
+  updateManyOrderItems(
+    request: UpdateManyOrderItemsInput,
+    metadata?: Metadata,
+  ): Promise<OrderItems> | Observable<OrderItems> | OrderItems;
+
+  deleteOrderItem(request: Id, metadata?: Metadata): Promise<OrderItem> | Observable<OrderItem> | OrderItem;
+
+  deleteManyOrderItems(
+    request: DeleteManyOrderItemsInput,
+    metadata?: Metadata,
+  ): Promise<DeleteManyResponse> | Observable<DeleteManyResponse> | DeleteManyResponse;
 }
 
-export interface DataLoaders {
-  rpcDataLoaderOptions?: DataLoaderOptions;
-  getDataLoader<T>(identifier: string, constructorFn: () => T): T;
+export function CartServiceControllerMethods() {
+  return function (constructor: Function) {
+    const grpcMethods: string[] = [
+      "order",
+      "orders",
+      "ordersTotal",
+      "createOrder",
+      "createManyOrders",
+      "updateOrder",
+      "updateManyOrders",
+      "deleteOrder",
+      "deleteManyOrders",
+      "orderItem",
+      "orderItems",
+      "orderItemsTotal",
+      "createOrderItem",
+      "createManyOrderItems",
+      "updateOrderItem",
+      "updateManyOrderItems",
+      "deleteOrderItem",
+      "deleteManyOrderItems",
+    ];
+    for (const method of grpcMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod("CartService", method)(constructor.prototype[method], method, descriptor);
+    }
+    const grpcStreamMethods: string[] = [];
+    for (const method of grpcStreamMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod("CartService", method)(constructor.prototype[method], method, descriptor);
+    }
+  };
 }
+
+export const CART_SERVICE_NAME = "CartService";

@@ -5,6 +5,9 @@
 // source: account.service.proto
 
 /* eslint-disable */
+import { Metadata } from "@grpc/grpc-js";
+import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
+import { Observable } from "rxjs";
 import {
   ForgotPasswordRequest,
   ForgotPasswordResponse,
@@ -38,31 +41,149 @@ import {
 
 export const protobufPackage = "account";
 
-export interface AccountService<Context extends DataLoaders> {
+export const ACCOUNT_PACKAGE_NAME = "account";
+
+export interface AccountServiceClient {
   /** User Management RPCs */
-  CreateUser(ctx: Context, request: CreateRequest): Promise<CreateResponse>;
-  ReadUser(ctx: Context, request: ReadRequest): Promise<ReadResponse>;
-  UpdateUser(ctx: Context, request: UpdateRequest): Promise<UpdateResponse>;
-  DeleteUser(ctx: Context, request: DeleteRequest): Promise<DeleteResponse>;
-  SearchUser(ctx: Context, request: SearchRequest): Promise<SearchResponse>;
+
+  createUser(request: CreateRequest, metadata?: Metadata): Observable<CreateResponse>;
+
+  readUser(request: ReadRequest, metadata?: Metadata): Observable<ReadResponse>;
+
+  updateUser(request: UpdateRequest, metadata?: Metadata): Observable<UpdateResponse>;
+
+  deleteUser(request: DeleteRequest, metadata?: Metadata): Observable<DeleteResponse>;
+
+  searchUser(request: SearchRequest, metadata?: Metadata): Observable<SearchResponse>;
+
   /** Authentication RPCs */
-  Login(ctx: Context, request: LoginRequest): Promise<LoginResponse>;
-  Logout(ctx: Context, request: LogoutRequest): Promise<LogoutResponse>;
-  ReadSession(ctx: Context, request: ReadSessionRequest): Promise<ReadSessionResponse>;
+
+  login(request: LoginRequest, metadata?: Metadata): Observable<LoginResponse>;
+
+  logout(request: LogoutRequest, metadata?: Metadata): Observable<LogoutResponse>;
+
+  readSession(request: ReadSessionRequest, metadata?: Metadata): Observable<ReadSessionResponse>;
+
   /** Account Verification RPCs */
-  VerifyAccount(ctx: Context, request: VerifyAccountRequest): Promise<VerifyAccountResponse>;
-  ResendVerificationCode(ctx: Context, request: ResendVerificationCodeRequest): Promise<ResendVerificationCodeResponse>;
-  VerifyActivationLink(ctx: Context, request: VerifyActivationLinkRequest): Promise<VerifyActivationLinkResponse>;
+
+  verifyAccount(request: VerifyAccountRequest, metadata?: Metadata): Observable<VerifyAccountResponse>;
+
+  resendVerificationCode(
+    request: ResendVerificationCodeRequest,
+    metadata?: Metadata,
+  ): Observable<ResendVerificationCodeResponse>;
+
+  verifyActivationLink(
+    request: VerifyActivationLinkRequest,
+    metadata?: Metadata,
+  ): Observable<VerifyActivationLinkResponse>;
+
   /** Password Management RPCs */
-  ForgotPassword(ctx: Context, request: ForgotPasswordRequest): Promise<ForgotPasswordResponse>;
-  UpdatePassword(ctx: Context, request: UpdatePasswordRequest): Promise<UpdatePasswordResponse>;
+
+  forgotPassword(request: ForgotPasswordRequest, metadata?: Metadata): Observable<ForgotPasswordResponse>;
+
+  updatePassword(request: UpdatePasswordRequest, metadata?: Metadata): Observable<UpdatePasswordResponse>;
 }
 
-export interface DataLoaderOptions {
-  cache?: boolean;
+export interface AccountServiceController {
+  /** User Management RPCs */
+
+  createUser(
+    request: CreateRequest,
+    metadata?: Metadata,
+  ): Promise<CreateResponse> | Observable<CreateResponse> | CreateResponse;
+
+  readUser(request: ReadRequest, metadata?: Metadata): Promise<ReadResponse> | Observable<ReadResponse> | ReadResponse;
+
+  updateUser(
+    request: UpdateRequest,
+    metadata?: Metadata,
+  ): Promise<UpdateResponse> | Observable<UpdateResponse> | UpdateResponse;
+
+  deleteUser(
+    request: DeleteRequest,
+    metadata?: Metadata,
+  ): Promise<DeleteResponse> | Observable<DeleteResponse> | DeleteResponse;
+
+  searchUser(
+    request: SearchRequest,
+    metadata?: Metadata,
+  ): Promise<SearchResponse> | Observable<SearchResponse> | SearchResponse;
+
+  /** Authentication RPCs */
+
+  login(request: LoginRequest, metadata?: Metadata): Promise<LoginResponse> | Observable<LoginResponse> | LoginResponse;
+
+  logout(
+    request: LogoutRequest,
+    metadata?: Metadata,
+  ): Promise<LogoutResponse> | Observable<LogoutResponse> | LogoutResponse;
+
+  readSession(
+    request: ReadSessionRequest,
+    metadata?: Metadata,
+  ): Promise<ReadSessionResponse> | Observable<ReadSessionResponse> | ReadSessionResponse;
+
+  /** Account Verification RPCs */
+
+  verifyAccount(
+    request: VerifyAccountRequest,
+    metadata?: Metadata,
+  ): Promise<VerifyAccountResponse> | Observable<VerifyAccountResponse> | VerifyAccountResponse;
+
+  resendVerificationCode(
+    request: ResendVerificationCodeRequest,
+    metadata?: Metadata,
+  ):
+    | Promise<ResendVerificationCodeResponse>
+    | Observable<ResendVerificationCodeResponse>
+    | ResendVerificationCodeResponse;
+
+  verifyActivationLink(
+    request: VerifyActivationLinkRequest,
+    metadata?: Metadata,
+  ): Promise<VerifyActivationLinkResponse> | Observable<VerifyActivationLinkResponse> | VerifyActivationLinkResponse;
+
+  /** Password Management RPCs */
+
+  forgotPassword(
+    request: ForgotPasswordRequest,
+    metadata?: Metadata,
+  ): Promise<ForgotPasswordResponse> | Observable<ForgotPasswordResponse> | ForgotPasswordResponse;
+
+  updatePassword(
+    request: UpdatePasswordRequest,
+    metadata?: Metadata,
+  ): Promise<UpdatePasswordResponse> | Observable<UpdatePasswordResponse> | UpdatePasswordResponse;
 }
 
-export interface DataLoaders {
-  rpcDataLoaderOptions?: DataLoaderOptions;
-  getDataLoader<T>(identifier: string, constructorFn: () => T): T;
+export function AccountServiceControllerMethods() {
+  return function (constructor: Function) {
+    const grpcMethods: string[] = [
+      "createUser",
+      "readUser",
+      "updateUser",
+      "deleteUser",
+      "searchUser",
+      "login",
+      "logout",
+      "readSession",
+      "verifyAccount",
+      "resendVerificationCode",
+      "verifyActivationLink",
+      "forgotPassword",
+      "updatePassword",
+    ];
+    for (const method of grpcMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod("AccountService", method)(constructor.prototype[method], method, descriptor);
+    }
+    const grpcStreamMethods: string[] = [];
+    for (const method of grpcStreamMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod("AccountService", method)(constructor.prototype[method], method, descriptor);
+    }
+  };
 }
+
+export const ACCOUNT_SERVICE_NAME = "AccountService";

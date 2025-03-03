@@ -16,5 +16,6 @@ export class ProductRepository extends PrismaRepository {
         @Inject('CACHE_INSTANCE') cache: Keyv,
     ) {
         super(options, cache);
+        this.store = this.extendedClient.product;
     }
 }

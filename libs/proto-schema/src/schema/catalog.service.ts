@@ -5,6 +5,9 @@
 // source: catalog.service.proto
 
 /* eslint-disable */
+import { Metadata } from "@grpc/grpc-js";
+import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
+import { Observable } from "rxjs";
 import {
   Categories,
   Category,
@@ -30,53 +33,223 @@ import {
   CreateManyProductCategoriesInput,
   CreateProductCategoryInput,
   DeleteManyProductCategoriesInput,
+  DeleteProductCategoryInput,
   NullableProductCategory,
   ProductCategories,
   ProductCategory,
-  UpdateManyProductCategoriesInput,
-  UpdateProductCategoryInput,
+  ProductCategoryInput,
 } from "./productCategory";
 
 export const protobufPackage = "catalog";
 
-export interface CatalogService<Context extends DataLoaders> {
+export const CATALOG_PACKAGE_NAME = "catalog";
+
+export interface CatalogServiceClient {
   /** category */
-  category(ctx: Context, request: Id): Promise<NullableCategory>;
-  categories(ctx: Context, request: Query): Promise<Categories>;
-  categoriesTotal(ctx: Context, request: Query): Promise<Count>;
-  createCategory(ctx: Context, request: CreateCategoryInput): Promise<Category>;
-  createManyCategories(ctx: Context, request: CreateManyCategoriesInput): Promise<Categories>;
-  updateCategory(ctx: Context, request: UpdateCategoryInput): Promise<Category>;
-  updateManyCategories(ctx: Context, request: UpdateManyCategoriesInput): Promise<Categories>;
-  deleteCategory(ctx: Context, request: Id): Promise<Category>;
-  deleteManyCategories(ctx: Context, request: DeleteManyCategoriesInput): Promise<DeleteManyResponse>;
+
+  category(request: Id, metadata?: Metadata): Observable<NullableCategory>;
+
+  categories(request: Query, metadata?: Metadata): Observable<Categories>;
+
+  categoriesTotal(request: Query, metadata?: Metadata): Observable<Count>;
+
+  createCategory(request: CreateCategoryInput, metadata?: Metadata): Observable<Category>;
+
+  createManyCategories(request: CreateManyCategoriesInput, metadata?: Metadata): Observable<Categories>;
+
+  updateCategory(request: UpdateCategoryInput, metadata?: Metadata): Observable<Category>;
+
+  updateManyCategories(request: UpdateManyCategoriesInput, metadata?: Metadata): Observable<Categories>;
+
+  deleteCategory(request: Id, metadata?: Metadata): Observable<Category>;
+
+  deleteManyCategories(request: DeleteManyCategoriesInput, metadata?: Metadata): Observable<DeleteManyResponse>;
+
   /** product */
-  product(ctx: Context, request: Id): Promise<NullableProduct>;
-  products(ctx: Context, request: Query): Promise<Products>;
-  productsTotal(ctx: Context, request: Query): Promise<Count>;
-  createProduct(ctx: Context, request: CreateProductInput): Promise<Product>;
-  createManyProducts(ctx: Context, request: CreateManyProductsInput): Promise<Products>;
-  updateProduct(ctx: Context, request: UpdateProductInput): Promise<Product>;
-  updateManyProducts(ctx: Context, request: UpdateManyProductsInput): Promise<Products>;
-  deleteProduct(ctx: Context, request: Id): Promise<Product>;
-  deleteManyProducts(ctx: Context, request: DeleteManyProductsInput): Promise<DeleteManyResponse>;
+
+  product(request: Id, metadata?: Metadata): Observable<NullableProduct>;
+
+  products(request: Query, metadata?: Metadata): Observable<Products>;
+
+  productsTotal(request: Query, metadata?: Metadata): Observable<Count>;
+
+  createProduct(request: CreateProductInput, metadata?: Metadata): Observable<Product>;
+
+  createManyProducts(request: CreateManyProductsInput, metadata?: Metadata): Observable<Products>;
+
+  updateProduct(request: UpdateProductInput, metadata?: Metadata): Observable<Product>;
+
+  updateManyProducts(request: UpdateManyProductsInput, metadata?: Metadata): Observable<Products>;
+
+  deleteProduct(request: Id, metadata?: Metadata): Observable<Product>;
+
+  deleteManyProducts(request: DeleteManyProductsInput, metadata?: Metadata): Observable<DeleteManyResponse>;
+
   /** product category */
-  productCategory(ctx: Context, request: Id): Promise<NullableProductCategory>;
-  productCategories(ctx: Context, request: Query): Promise<ProductCategories>;
-  productCategoriesTotal(ctx: Context, request: Query): Promise<Count>;
-  createProductCategory(ctx: Context, request: CreateProductCategoryInput): Promise<ProductCategory>;
-  createManyProductCategories(ctx: Context, request: CreateManyProductCategoriesInput): Promise<ProductCategory>;
-  updateProductCategory(ctx: Context, request: UpdateProductCategoryInput): Promise<ProductCategory>;
-  updateManyProductCategories(ctx: Context, request: UpdateManyProductCategoriesInput): Promise<ProductCategories>;
-  deleteProductCategory(ctx: Context, request: Id): Promise<ProductCategory>;
-  deleteManyProductCategories(ctx: Context, request: DeleteManyProductCategoriesInput): Promise<DeleteManyResponse>;
+
+  productCategory(request: ProductCategoryInput, metadata?: Metadata): Observable<NullableProductCategory>;
+
+  productCategories(request: Query, metadata?: Metadata): Observable<ProductCategories>;
+
+  productCategoriesTotal(request: Query, metadata?: Metadata): Observable<Count>;
+
+  createProductCategory(request: CreateProductCategoryInput, metadata?: Metadata): Observable<ProductCategory>;
+
+  createManyProductCategories(
+    request: CreateManyProductCategoriesInput,
+    metadata?: Metadata,
+  ): Observable<ProductCategory>;
+
+  deleteProductCategory(request: DeleteProductCategoryInput, metadata?: Metadata): Observable<ProductCategory>;
+
+  deleteManyProductCategories(
+    request: DeleteManyProductCategoriesInput,
+    metadata?: Metadata,
+  ): Observable<DeleteManyResponse>;
 }
 
-export interface DataLoaderOptions {
-  cache?: boolean;
+export interface CatalogServiceController {
+  /** category */
+
+  category(
+    request: Id,
+    metadata?: Metadata,
+  ): Promise<NullableCategory> | Observable<NullableCategory> | NullableCategory;
+
+  categories(request: Query, metadata?: Metadata): Promise<Categories> | Observable<Categories> | Categories;
+
+  categoriesTotal(request: Query, metadata?: Metadata): Promise<Count> | Observable<Count> | Count;
+
+  createCategory(
+    request: CreateCategoryInput,
+    metadata?: Metadata,
+  ): Promise<Category> | Observable<Category> | Category;
+
+  createManyCategories(
+    request: CreateManyCategoriesInput,
+    metadata?: Metadata,
+  ): Promise<Categories> | Observable<Categories> | Categories;
+
+  updateCategory(
+    request: UpdateCategoryInput,
+    metadata?: Metadata,
+  ): Promise<Category> | Observable<Category> | Category;
+
+  updateManyCategories(
+    request: UpdateManyCategoriesInput,
+    metadata?: Metadata,
+  ): Promise<Categories> | Observable<Categories> | Categories;
+
+  deleteCategory(request: Id, metadata?: Metadata): Promise<Category> | Observable<Category> | Category;
+
+  deleteManyCategories(
+    request: DeleteManyCategoriesInput,
+    metadata?: Metadata,
+  ): Promise<DeleteManyResponse> | Observable<DeleteManyResponse> | DeleteManyResponse;
+
+  /** product */
+
+  product(request: Id, metadata?: Metadata): Promise<NullableProduct> | Observable<NullableProduct> | NullableProduct;
+
+  products(request: Query, metadata?: Metadata): Promise<Products> | Observable<Products> | Products;
+
+  productsTotal(request: Query, metadata?: Metadata): Promise<Count> | Observable<Count> | Count;
+
+  createProduct(request: CreateProductInput, metadata?: Metadata): Promise<Product> | Observable<Product> | Product;
+
+  createManyProducts(
+    request: CreateManyProductsInput,
+    metadata?: Metadata,
+  ): Promise<Products> | Observable<Products> | Products;
+
+  updateProduct(request: UpdateProductInput, metadata?: Metadata): Promise<Product> | Observable<Product> | Product;
+
+  updateManyProducts(
+    request: UpdateManyProductsInput,
+    metadata?: Metadata,
+  ): Promise<Products> | Observable<Products> | Products;
+
+  deleteProduct(request: Id, metadata?: Metadata): Promise<Product> | Observable<Product> | Product;
+
+  deleteManyProducts(
+    request: DeleteManyProductsInput,
+    metadata?: Metadata,
+  ): Promise<DeleteManyResponse> | Observable<DeleteManyResponse> | DeleteManyResponse;
+
+  /** product category */
+
+  productCategory(
+    request: ProductCategoryInput,
+    metadata?: Metadata,
+  ): Promise<NullableProductCategory> | Observable<NullableProductCategory> | NullableProductCategory;
+
+  productCategories(
+    request: Query,
+    metadata?: Metadata,
+  ): Promise<ProductCategories> | Observable<ProductCategories> | ProductCategories;
+
+  productCategoriesTotal(request: Query, metadata?: Metadata): Promise<Count> | Observable<Count> | Count;
+
+  createProductCategory(
+    request: CreateProductCategoryInput,
+    metadata?: Metadata,
+  ): Promise<ProductCategory> | Observable<ProductCategory> | ProductCategory;
+
+  createManyProductCategories(
+    request: CreateManyProductCategoriesInput,
+    metadata?: Metadata,
+  ): Promise<ProductCategory> | Observable<ProductCategory> | ProductCategory;
+
+  deleteProductCategory(
+    request: DeleteProductCategoryInput,
+    metadata?: Metadata,
+  ): Promise<ProductCategory> | Observable<ProductCategory> | ProductCategory;
+
+  deleteManyProductCategories(
+    request: DeleteManyProductCategoriesInput,
+    metadata?: Metadata,
+  ): Promise<DeleteManyResponse> | Observable<DeleteManyResponse> | DeleteManyResponse;
 }
 
-export interface DataLoaders {
-  rpcDataLoaderOptions?: DataLoaderOptions;
-  getDataLoader<T>(identifier: string, constructorFn: () => T): T;
+export function CatalogServiceControllerMethods() {
+  return function (constructor: Function) {
+    const grpcMethods: string[] = [
+      "category",
+      "categories",
+      "categoriesTotal",
+      "createCategory",
+      "createManyCategories",
+      "updateCategory",
+      "updateManyCategories",
+      "deleteCategory",
+      "deleteManyCategories",
+      "product",
+      "products",
+      "productsTotal",
+      "createProduct",
+      "createManyProducts",
+      "updateProduct",
+      "updateManyProducts",
+      "deleteProduct",
+      "deleteManyProducts",
+      "productCategory",
+      "productCategories",
+      "productCategoriesTotal",
+      "createProductCategory",
+      "createManyProductCategories",
+      "deleteProductCategory",
+      "deleteManyProductCategories",
+    ];
+    for (const method of grpcMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod("CatalogService", method)(constructor.prototype[method], method, descriptor);
+    }
+    const grpcStreamMethods: string[] = [];
+    for (const method of grpcStreamMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod("CatalogService", method)(constructor.prototype[method], method, descriptor);
+    }
+  };
 }
+
+export const CATALOG_SERVICE_NAME = "CatalogService";

@@ -1,10 +1,9 @@
-import { SERVICE_LIST } from '@ecommerce-microservices/core';
 import {
     CatalogService,
     Common,
     Product,
 } from '@ecommerce-microservices/proto-schema';
-import { Controller, UseGuards } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GrpcMethod, RpcException } from '@nestjs/microservices';
 import {
@@ -17,12 +16,10 @@ import {
     DeleteProductCommand,
     UpdateProductCommand,
 } from './commands';
-import { ClerkAuthGuard } from '@ecommerce-microservices/common';
 
 @Controller('products')
-// @UseGuards(ClerkAuthGuard)
 export class ProductsController
-    implements Partial<CatalogService.CatalogService<any>>
+    implements Partial<CatalogService.CatalogServiceController>
 {
     constructor(private commandBus: CommandBus, private queryBus: QueryBus) {}
 

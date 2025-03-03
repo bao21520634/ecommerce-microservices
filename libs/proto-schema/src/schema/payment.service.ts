@@ -5,6 +5,9 @@
 // source: payment.service.proto
 
 /* eslint-disable */
+import { Metadata } from "@grpc/grpc-js";
+import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
+import { Observable } from "rxjs";
 import { ChargeRequest, ChargeResponse } from "./charge";
 import {
   CancelCheckoutRequest,
@@ -22,23 +25,89 @@ import {
 
 export const protobufPackage = "payment";
 
-export interface PaymentService<Context extends DataLoaders> {
+export const PAYMENT_PACKAGE_NAME = "payment";
+
+export interface PaymentServiceClient {
   /** Checkout and Order Management */
-  InitiateCheckout(ctx: Context, request: CheckoutRequest): Promise<CheckoutResponse>;
-  PlaceOrder(ctx: Context, request: PlaceOrderRequest): Promise<PlaceOrderResponse>;
-  CancelCheckout(ctx: Context, request: CancelCheckoutRequest): Promise<CheckoutResponse>;
+
+  initiateCheckout(request: CheckoutRequest, metadata?: Metadata): Observable<CheckoutResponse>;
+
+  placeOrder(request: PlaceOrderRequest, metadata?: Metadata): Observable<PlaceOrderResponse>;
+
+  cancelCheckout(request: CancelCheckoutRequest, metadata?: Metadata): Observable<CheckoutResponse>;
+
   /** Payment Processing */
-  CreateCharge(ctx: Context, request: ChargeRequest): Promise<ChargeResponse>;
+
+  createCharge(request: ChargeRequest, metadata?: Metadata): Observable<ChargeResponse>;
+
   /** Payment and Order Queries */
-  GetPaymentHistory(ctx: Context, request: PaymentHistoryRequest): Promise<PaymentHistoryResponse>;
-  GetOrderPaymentDetails(ctx: Context, request: GetOrderPaymentDetailsRequest): Promise<OrderPaymentDetailsResponse>;
+
+  getPaymentHistory(request: PaymentHistoryRequest, metadata?: Metadata): Observable<PaymentHistoryResponse>;
+
+  getOrderPaymentDetails(
+    request: GetOrderPaymentDetailsRequest,
+    metadata?: Metadata,
+  ): Observable<OrderPaymentDetailsResponse>;
 }
 
-export interface DataLoaderOptions {
-  cache?: boolean;
+export interface PaymentServiceController {
+  /** Checkout and Order Management */
+
+  initiateCheckout(
+    request: CheckoutRequest,
+    metadata?: Metadata,
+  ): Promise<CheckoutResponse> | Observable<CheckoutResponse> | CheckoutResponse;
+
+  placeOrder(
+    request: PlaceOrderRequest,
+    metadata?: Metadata,
+  ): Promise<PlaceOrderResponse> | Observable<PlaceOrderResponse> | PlaceOrderResponse;
+
+  cancelCheckout(
+    request: CancelCheckoutRequest,
+    metadata?: Metadata,
+  ): Promise<CheckoutResponse> | Observable<CheckoutResponse> | CheckoutResponse;
+
+  /** Payment Processing */
+
+  createCharge(
+    request: ChargeRequest,
+    metadata?: Metadata,
+  ): Promise<ChargeResponse> | Observable<ChargeResponse> | ChargeResponse;
+
+  /** Payment and Order Queries */
+
+  getPaymentHistory(
+    request: PaymentHistoryRequest,
+    metadata?: Metadata,
+  ): Promise<PaymentHistoryResponse> | Observable<PaymentHistoryResponse> | PaymentHistoryResponse;
+
+  getOrderPaymentDetails(
+    request: GetOrderPaymentDetailsRequest,
+    metadata?: Metadata,
+  ): Promise<OrderPaymentDetailsResponse> | Observable<OrderPaymentDetailsResponse> | OrderPaymentDetailsResponse;
 }
 
-export interface DataLoaders {
-  rpcDataLoaderOptions?: DataLoaderOptions;
-  getDataLoader<T>(identifier: string, constructorFn: () => T): T;
+export function PaymentServiceControllerMethods() {
+  return function (constructor: Function) {
+    const grpcMethods: string[] = [
+      "initiateCheckout",
+      "placeOrder",
+      "cancelCheckout",
+      "createCharge",
+      "getPaymentHistory",
+      "getOrderPaymentDetails",
+    ];
+    for (const method of grpcMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod("PaymentService", method)(constructor.prototype[method], method, descriptor);
+    }
+    const grpcStreamMethods: string[] = [];
+    for (const method of grpcStreamMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod("PaymentService", method)(constructor.prototype[method], method, descriptor);
+    }
+  };
 }
+
+export const PAYMENT_SERVICE_NAME = "PaymentService";

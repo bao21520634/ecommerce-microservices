@@ -10,7 +10,7 @@ PROTO_INCLUDE="/usr/include/google/protobuf"
 #   --plugin=protoc-gen-ts_proto=node_modules/ts-proto/protoc-gen-ts_proto \
 #   -I=${PROTO_INCLUDE} \
 #   -I=${PROTO_DIR} \
-#   --ts_proto_opt=outputEncodeMethods=true,useEnumNames=false,asClass=false,outputJsonMethods=true,context=true,outputNestJs=true,outputClientImpl=false \
+#   --ts_proto_opt=outputEncodeMethods=true,useEnumNames=false,asClass=false,outputJsonMethods=true,context=true,outputNestJs=true,outputClientImpl=false,useOptionals=messages \
 #   --ts_proto_out=${TS_OUTPUT_DIR} \
 #   --java_out=${JAVA_OUTPUT_DIR} \
 #   ${PROTO_DIR}/*.proto
@@ -38,6 +38,6 @@ protoc \
   --plugin=protoc-gen-ts_proto=node_modules/ts-proto/protoc-gen-ts_proto \
   -I=${PROTO_INCLUDE} \
   -I=${PROTO_DIR} \
-  --ts_proto_opt=outputEncodeMethods=true,useEnumNames=false,asClass=false,outputJsonMethods=true,context=true,outputNestJs=true,outputClientImpl=false \
+  --ts_proto_opt=outputEncodeMethods=true,useEnumNames=false,asClass=false,outputJsonMethods=true,nestJs=true,addGrpcMetadata=true,outputNestJs=true,outputClientImpl=false,useOptionals=messages,useDate=true \
   --ts_proto_out="libs/proto-schema/src/schema" \
   ${PROTO_DIR}/*.proto

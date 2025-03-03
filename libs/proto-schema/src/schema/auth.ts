@@ -59,12 +59,12 @@ export interface LoginTypeParams {
 
 export interface LoginRequest {
   service: LoginServiceTypes;
-  params: LoginTypeParams | undefined;
+  params?: LoginTypeParams | undefined;
 }
 
 export interface LoginResponse {
-  session: Session | undefined;
-  user: User | undefined;
+  session?: Session | undefined;
+  user?: User | undefined;
 }
 
 export interface LogoutRequest {
@@ -127,8 +127,10 @@ export interface ReadSessionRequest {
 }
 
 export interface ReadSessionResponse {
-  session: Session | undefined;
+  session?: Session | undefined;
 }
+
+export const AUTH_PACKAGE_NAME = "auth";
 
 function createBaseSession(): Session {
   return { id: "", email: "", created: 0, expires: 0 };
@@ -223,18 +225,6 @@ export const Session: MessageFns<Session> = {
       obj.expires = Math.round(message.expires);
     }
     return obj;
-  },
-
-  create<I extends Exact<DeepPartial<Session>, I>>(base?: I): Session {
-    return Session.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<Session>, I>>(object: I): Session {
-    const message = createBaseSession();
-    message.id = object.id ?? "";
-    message.email = object.email ?? "";
-    message.created = object.created ?? 0;
-    message.expires = object.expires ?? 0;
-    return message;
   },
 };
 
@@ -332,22 +322,10 @@ export const LoginTypeParams: MessageFns<LoginTypeParams> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<LoginTypeParams>, I>>(base?: I): LoginTypeParams {
-    return LoginTypeParams.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<LoginTypeParams>, I>>(object: I): LoginTypeParams {
-    const message = createBaseLoginTypeParams();
-    message.accessToken = object.accessToken ?? "";
-    message.userId = object.userId ?? "";
-    message.password = object.password ?? "";
-    message.email = object.email ?? "";
-    return message;
-  },
 };
 
 function createBaseLoginRequest(): LoginRequest {
-  return { service: 0, params: undefined };
+  return { service: 0 };
 }
 
 export const LoginRequest: MessageFns<LoginRequest> = {
@@ -410,22 +388,10 @@ export const LoginRequest: MessageFns<LoginRequest> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<LoginRequest>, I>>(base?: I): LoginRequest {
-    return LoginRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<LoginRequest>, I>>(object: I): LoginRequest {
-    const message = createBaseLoginRequest();
-    message.service = object.service ?? 0;
-    message.params = (object.params !== undefined && object.params !== null)
-      ? LoginTypeParams.fromPartial(object.params)
-      : undefined;
-    return message;
-  },
 };
 
 function createBaseLoginResponse(): LoginResponse {
-  return { session: undefined, user: undefined };
+  return {};
 }
 
 export const LoginResponse: MessageFns<LoginResponse> = {
@@ -488,18 +454,6 @@ export const LoginResponse: MessageFns<LoginResponse> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<LoginResponse>, I>>(base?: I): LoginResponse {
-    return LoginResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<LoginResponse>, I>>(object: I): LoginResponse {
-    const message = createBaseLoginResponse();
-    message.session = (object.session !== undefined && object.session !== null)
-      ? Session.fromPartial(object.session)
-      : undefined;
-    message.user = (object.user !== undefined && object.user !== null) ? User.fromPartial(object.user) : undefined;
-    return message;
-  },
 };
 
 function createBaseLogoutRequest(): LogoutRequest {
@@ -549,15 +503,6 @@ export const LogoutRequest: MessageFns<LogoutRequest> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<LogoutRequest>, I>>(base?: I): LogoutRequest {
-    return LogoutRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<LogoutRequest>, I>>(object: I): LogoutRequest {
-    const message = createBaseLogoutRequest();
-    message.sessionId = object.sessionId ?? "";
-    return message;
-  },
 };
 
 function createBaseLogoutResponse(): LogoutResponse {
@@ -606,15 +551,6 @@ export const LogoutResponse: MessageFns<LogoutResponse> = {
       obj.success = message.success;
     }
     return obj;
-  },
-
-  create<I extends Exact<DeepPartial<LogoutResponse>, I>>(base?: I): LogoutResponse {
-    return LogoutResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<LogoutResponse>, I>>(object: I): LogoutResponse {
-    const message = createBaseLogoutResponse();
-    message.success = object.success ?? false;
-    return message;
   },
 };
 
@@ -712,18 +648,6 @@ export const UpdatePasswordRequest: MessageFns<UpdatePasswordRequest> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<UpdatePasswordRequest>, I>>(base?: I): UpdatePasswordRequest {
-    return UpdatePasswordRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<UpdatePasswordRequest>, I>>(object: I): UpdatePasswordRequest {
-    const message = createBaseUpdatePasswordRequest();
-    message.userId = object.userId ?? "";
-    message.oldPassword = object.oldPassword ?? "";
-    message.newPassword = object.newPassword ?? "";
-    message.confirmPassword = object.confirmPassword ?? "";
-    return message;
-  },
 };
 
 function createBaseUpdatePasswordResponse(): UpdatePasswordResponse {
@@ -772,15 +696,6 @@ export const UpdatePasswordResponse: MessageFns<UpdatePasswordResponse> = {
       obj.success = message.success;
     }
     return obj;
-  },
-
-  create<I extends Exact<DeepPartial<UpdatePasswordResponse>, I>>(base?: I): UpdatePasswordResponse {
-    return UpdatePasswordResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<UpdatePasswordResponse>, I>>(object: I): UpdatePasswordResponse {
-    const message = createBaseUpdatePasswordResponse();
-    message.success = object.success ?? false;
-    return message;
   },
 };
 
@@ -831,15 +746,6 @@ export const ForgotPasswordRequest: MessageFns<ForgotPasswordRequest> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<ForgotPasswordRequest>, I>>(base?: I): ForgotPasswordRequest {
-    return ForgotPasswordRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<ForgotPasswordRequest>, I>>(object: I): ForgotPasswordRequest {
-    const message = createBaseForgotPasswordRequest();
-    message.email = object.email ?? "";
-    return message;
-  },
 };
 
 function createBaseForgotPasswordResponse(): ForgotPasswordResponse {
@@ -888,15 +794,6 @@ export const ForgotPasswordResponse: MessageFns<ForgotPasswordResponse> = {
       obj.success = message.success;
     }
     return obj;
-  },
-
-  create<I extends Exact<DeepPartial<ForgotPasswordResponse>, I>>(base?: I): ForgotPasswordResponse {
-    return ForgotPasswordResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<ForgotPasswordResponse>, I>>(object: I): ForgotPasswordResponse {
-    const message = createBaseForgotPasswordResponse();
-    message.success = object.success ?? false;
-    return message;
   },
 };
 
@@ -964,16 +861,6 @@ export const VerifyAccountRequest: MessageFns<VerifyAccountRequest> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<VerifyAccountRequest>, I>>(base?: I): VerifyAccountRequest {
-    return VerifyAccountRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<VerifyAccountRequest>, I>>(object: I): VerifyAccountRequest {
-    const message = createBaseVerifyAccountRequest();
-    message.email = object.email ?? "";
-    message.verificationCode = object.verificationCode ?? "";
-    return message;
-  },
 };
 
 function createBaseVerifyAccountResponse(): VerifyAccountResponse {
@@ -1022,15 +909,6 @@ export const VerifyAccountResponse: MessageFns<VerifyAccountResponse> = {
       obj.success = message.success;
     }
     return obj;
-  },
-
-  create<I extends Exact<DeepPartial<VerifyAccountResponse>, I>>(base?: I): VerifyAccountResponse {
-    return VerifyAccountResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<VerifyAccountResponse>, I>>(object: I): VerifyAccountResponse {
-    const message = createBaseVerifyAccountResponse();
-    message.success = object.success ?? false;
-    return message;
   },
 };
 
@@ -1081,17 +959,6 @@ export const ResendVerificationCodeRequest: MessageFns<ResendVerificationCodeReq
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<ResendVerificationCodeRequest>, I>>(base?: I): ResendVerificationCodeRequest {
-    return ResendVerificationCodeRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<ResendVerificationCodeRequest>, I>>(
-    object: I,
-  ): ResendVerificationCodeRequest {
-    const message = createBaseResendVerificationCodeRequest();
-    message.email = object.email ?? "";
-    return message;
-  },
 };
 
 function createBaseResendVerificationCodeResponse(): ResendVerificationCodeResponse {
@@ -1141,17 +1008,6 @@ export const ResendVerificationCodeResponse: MessageFns<ResendVerificationCodeRe
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<ResendVerificationCodeResponse>, I>>(base?: I): ResendVerificationCodeResponse {
-    return ResendVerificationCodeResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<ResendVerificationCodeResponse>, I>>(
-    object: I,
-  ): ResendVerificationCodeResponse {
-    const message = createBaseResendVerificationCodeResponse();
-    message.success = object.success ?? false;
-    return message;
-  },
 };
 
 function createBaseVerifyActivationLinkRequest(): VerifyActivationLinkRequest {
@@ -1200,15 +1056,6 @@ export const VerifyActivationLinkRequest: MessageFns<VerifyActivationLinkRequest
       obj.token = message.token;
     }
     return obj;
-  },
-
-  create<I extends Exact<DeepPartial<VerifyActivationLinkRequest>, I>>(base?: I): VerifyActivationLinkRequest {
-    return VerifyActivationLinkRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<VerifyActivationLinkRequest>, I>>(object: I): VerifyActivationLinkRequest {
-    const message = createBaseVerifyActivationLinkRequest();
-    message.token = object.token ?? "";
-    return message;
   },
 };
 
@@ -1276,16 +1123,6 @@ export const VerifyActivationLinkResponse: MessageFns<VerifyActivationLinkRespon
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<VerifyActivationLinkResponse>, I>>(base?: I): VerifyActivationLinkResponse {
-    return VerifyActivationLinkResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<VerifyActivationLinkResponse>, I>>(object: I): VerifyActivationLinkResponse {
-    const message = createBaseVerifyActivationLinkResponse();
-    message.email = object.email ?? "";
-    message.verificationCode = object.verificationCode ?? "";
-    return message;
-  },
 };
 
 function createBaseReadSessionRequest(): ReadSessionRequest {
@@ -1335,19 +1172,10 @@ export const ReadSessionRequest: MessageFns<ReadSessionRequest> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<ReadSessionRequest>, I>>(base?: I): ReadSessionRequest {
-    return ReadSessionRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<ReadSessionRequest>, I>>(object: I): ReadSessionRequest {
-    const message = createBaseReadSessionRequest();
-    message.sessionId = object.sessionId ?? "";
-    return message;
-  },
 };
 
 function createBaseReadSessionResponse(): ReadSessionResponse {
-  return { session: undefined };
+  return {};
 }
 
 export const ReadSessionResponse: MessageFns<ReadSessionResponse> = {
@@ -1393,39 +1221,7 @@ export const ReadSessionResponse: MessageFns<ReadSessionResponse> = {
     }
     return obj;
   },
-
-  create<I extends Exact<DeepPartial<ReadSessionResponse>, I>>(base?: I): ReadSessionResponse {
-    return ReadSessionResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<ReadSessionResponse>, I>>(object: I): ReadSessionResponse {
-    const message = createBaseReadSessionResponse();
-    message.session = (object.session !== undefined && object.session !== null)
-      ? Session.fromPartial(object.session)
-      : undefined;
-    return message;
-  },
 };
-
-export interface DataLoaderOptions {
-  cache?: boolean;
-}
-
-export interface DataLoaders {
-  rpcDataLoaderOptions?: DataLoaderOptions;
-  getDataLoader<T>(identifier: string, constructorFn: () => T): T;
-}
-
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
-
-export type DeepPartial<T> = T extends Builtin ? T
-  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
-  : Partial<T>;
-
-type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;
@@ -1436,6 +1232,4 @@ export interface MessageFns<T> {
   decode(input: BinaryReader | Uint8Array, length?: number): T;
   fromJSON(object: any): T;
   toJSON(message: T): unknown;
-  create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
 }

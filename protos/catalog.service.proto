@@ -31,13 +31,11 @@ service CatalogService {
     rpc deleteManyProducts (product.DeleteManyProductsInput) returns (common.DeleteManyResponse) {}
 
     // product category
-    rpc productCategory(common.Id) returns (productCategory.NullableProductCategory){}
+    rpc productCategory(productCategory.ProductCategoryInput) returns (productCategory.NullableProductCategory){}
     rpc productCategories(common.Query) returns (productCategory.ProductCategories){}
     rpc productCategoriesTotal(common.Query) returns (common.Count){}
     rpc createProductCategory (productCategory.CreateProductCategoryInput) returns (productCategory.ProductCategory) {}
     rpc createManyProductCategories (productCategory.CreateManyProductCategoriesInput) returns (productCategory.ProductCategory) {}
-    rpc updateProductCategory (productCategory.UpdateProductCategoryInput) returns (productCategory.ProductCategory) {}
-    rpc updateManyProductCategories (productCategory.UpdateManyProductCategoriesInput) returns (productCategory.ProductCategories) {}
-    rpc deleteProductCategory (common.Id) returns (productCategory.ProductCategory) {}
+    rpc deleteProductCategory (productCategory.DeleteProductCategoryInput) returns (productCategory.ProductCategory) {}
     rpc deleteManyProductCategories (productCategory.DeleteManyProductCategoriesInput) returns (common.DeleteManyResponse) {}
 }

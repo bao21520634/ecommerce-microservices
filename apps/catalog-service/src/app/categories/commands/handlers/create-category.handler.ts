@@ -36,7 +36,7 @@ export class CreateCategoryHandler
                 },
             });
 
-            this.eventBus.publish(new CategoryCreatedEvent(result));
+            await this.eventBus.publish(new CategoryCreatedEvent(result));
 
             return {
                 ...result,
