@@ -25,6 +25,16 @@ services:
         networks:
             - app-network
 
+    nats:
+        container_name: nats
+        image: nats:2.10.9-alpine
+        ports:
+            - '4222:4222' # Client connections
+            - '8222:8222' # HTTP management
+            - '6222:6222' # Clustering
+        networks:
+            - app-network
+
 networks:
     app-network:
         driver: bridge

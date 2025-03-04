@@ -13,7 +13,7 @@ async function bootstrap() {
     );
 
     await microserviceSetup(app, SERVICE_LIST.catalog.protoPath, {
-        enableNats: false,
+        enableNats: true,
         enableMqtt: false,
     });
 }

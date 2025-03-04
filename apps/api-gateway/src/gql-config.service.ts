@@ -1,12 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { GqlModuleOptions, GqlOptionsFactory } from '@nestjs/graphql';
 import { join } from 'path';
-import { CatalogsRpcClientService } from '@ecommerce-microservices/core';
+import {
+    CatalogsRpcClientService,
+    GqlContext,
+} from '@ecommerce-microservices/core';
 import { ApolloDriver } from '@nestjs/apollo';
+import { FirebaseAuthService } from '@ecommerce-microservices/firebase-auth';
 
 @Injectable()
 export class GqlConfigService implements GqlOptionsFactory {
-    constructor(private readonly catalog: CatalogsRpcClientService) {}
+    constructor(
+        private firebaseAuthService: FirebaseAuthService,
+        private readonly catalog: CatalogsRpcClientService,
+    ) {}
 
     createGqlOptions(): Promise<GqlModuleOptions> | GqlModuleOptions {
         const schemaPath = join(
@@ -23,7 +30,31 @@ export class GqlConfigService implements GqlOptionsFactory {
             debug: true,
             introspection: true,
             path: '/graphql',
-            context: ({ req, res, payload, connection }) => {
+            context: async ({
+                req,
+                res,
+                payload,
+                connection,
+            }): Promise<GqlContext> => {
+                const token = req.headers.authorization?.split('Bearer ')[1];
+                let user = null;
+
+                if (token) {
+                    try {
+                        // Verify and decode the Firebase token
+                        const decodedToken =
+                            await this.firebaseAuthService.verifyToken(token);
+                        user = await this.firebaseAuthService.getUser(
+                            decodedToken.uid,
+                        );
+                    } catch (error) {
+                        console.error(
+                            'Token verification failed:',
+                            error.message,
+                        );
+                    }
+                }
+
                 return {
                     payload,
                     connection,
@@ -31,6 +62,7 @@ export class GqlConfigService implements GqlOptionsFactory {
                     rpc: {
                         catalog: this.catalog,
                     },
+                    user,
                 };
             },
         };

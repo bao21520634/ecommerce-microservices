@@ -10,21 +10,20 @@ import { lastValueFrom } from 'rxjs';
 import { Product as ProductDto } from './entity/products.entity';
 import { CreateOneProductArgs } from './dtos/create-one-product.args';
 import { UpdateOneProductArgs } from './dtos/update-one-product.args';
+import { UseGuards } from '@nestjs/common';
+import { FirebaseAuthGuard } from '@ecommerce-microservices/firebase-auth';
 
 @Resolver(() => ProductDto)
+@UseGuards(FirebaseAuthGuard)
 export class ProductsMutationResolver {
     @Mutation(() => ProductDto, { nullable: true })
     async createProduct(
         @Context() context: GqlContext,
         @Args() input: CreateOneProductArgs,
     ): Promise<ProductDto> {
-        console.log('CreateProduct Input:', JSON.stringify(input, null, 2));
         const grpcContext = setRpcContext(context);
-        console.log('gRPC Metadata:', grpcContext);
 
         const data = input.data;
-
-        console.log('payload data:', data);
 
         try {
             const result = await lastValueFrom(
@@ -51,8 +50,6 @@ export class ProductsMutationResolver {
                     grpcContext,
                 ),
             );
-
-            console.log('gRPC Response:', JSON.stringify(result, null, 2));
 
             return {
                 ...result,

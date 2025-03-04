@@ -9,6 +9,8 @@ import * as yaml from 'js-yaml';
 import { resolve } from 'path';
 
 import { CacheStoreConfigService, EventStoreConfigService } from '../services';
+import { FirebaseAuthModule } from '@ecommerce-microservices/firebase-auth';
+import { FirebaseAuthConfigService } from '../services/configs/firebase-auth-config.service';
 
 @Global()
 @Module({
@@ -41,24 +43,29 @@ import { CacheStoreConfigService, EventStoreConfigService } from '../services';
             ],
         }),
         ScheduleModule.forRoot(),
+        TerminusModule,
         EventStoreModule.registerAsync({
             type: 'event-store',
             useClass: EventStoreConfigService,
         }),
-        TerminusModule,
         CacheModule.registerAsync({
             imports: [ConfigModule],
             useClass: CacheStoreConfigService,
+        }),
+        FirebaseAuthModule.registerAsync({
+            imports: [ConfigModule],
+            useClass: FirebaseAuthConfigService,
         }),
     ],
     exports: [
         ConfigModule,
         ScheduleModule,
+        TerminusModule,
+        FirebaseAuthModule,
         EventStoreModule.registerAsync({
             type: 'event-store',
             useClass: EventStoreConfigService,
         }),
-        TerminusModule,
         CacheModule.registerAsync({
             imports: [ConfigModule],
             useClass: CacheStoreConfigService,
@@ -67,6 +74,7 @@ import { CacheStoreConfigService, EventStoreConfigService } from '../services';
     providers: [
         CacheStoreConfigService,
         EventStoreConfigService,
+        FirebaseAuthConfigService,
         {
             provide: 'CACHE_INSTANCE',
             useFactory: (cacheConfig: CacheStoreConfigService) => {

@@ -21,12 +21,8 @@ export class CatalogsRpcClientService implements OnModuleInit {
     constructor(private readonly configService: ConfigService) {}
 
     onModuleInit() {
-        console.log('Initializing gRPC client...');
-
         this.svc = this.client.getService<CatalogService.CatalogServiceClient>(
             SERVICE_LIST.catalog.service,
         );
-
-        console.log('gRPC Client Initialized:', this.svc);
     }
 }
