@@ -1,23 +1,7 @@
-export interface ServiceConfig {
-    app: AppConfig;
-    database: DatabaseConfig;
-}
-
-export interface AppConfig {
-    port: number;
-    grpcPort: number;
-}
-
-export interface DatabaseConfig {
-    mongodb: MongodbConfig;
-    eventstore: EventstoreConfig;
-    redis: RedisConfig;
-}
-
 export interface MongodbConfig {
     uri: string;
-    name: string;
-    options: string;
+    name?: string;
+    options?: string;
 }
 
 export interface EventstoreConfig {
@@ -37,4 +21,12 @@ export interface RedisConfig {
     host: string;
     port: string;
     password: string;
+}
+
+export interface ElasticsearchConfig {
+    node: string;
+    username: string;
+    password: string;
+    requestTimeout?: number;
+    maxRetries?: number;
 }

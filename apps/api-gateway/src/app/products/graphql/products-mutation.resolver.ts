@@ -11,12 +11,19 @@ import { Product as ProductDto } from './entity/products.entity';
 import { CreateOneProductArgs } from './dtos/create-one-product.args';
 import { UpdateOneProductArgs } from './dtos/update-one-product.args';
 import { UseGuards } from '@nestjs/common';
-import { FirebaseAuthGuard } from '@ecommerce-microservices/firebase-auth';
+import {
+    FirebaseAuthGuard,
+    PermissionGuard,
+    RequirePermission,
+    RoleGuard,
+    Roles,
+} from '@ecommerce-microservices/firebase-auth';
 
 @Resolver(() => ProductDto)
-@UseGuards(FirebaseAuthGuard)
 export class ProductsMutationResolver {
     @Mutation(() => ProductDto, { nullable: true })
+    @UseGuards(FirebaseAuthGuard, PermissionGuard)
+    @RequirePermission('product', 'create')
     async createProduct(
         @Context() context: GqlContext,
         @Args() input: CreateOneProductArgs,
@@ -73,6 +80,8 @@ export class ProductsMutationResolver {
     }
 
     @Mutation(() => ProductDto, { nullable: true })
+    @UseGuards(FirebaseAuthGuard, PermissionGuard)
+    @RequirePermission('product', 'update')
     async updateProduct(
         @Context() context: GqlContext,
         @Args() input: UpdateOneProductArgs,
@@ -129,6 +138,8 @@ export class ProductsMutationResolver {
     }
 
     @Mutation(() => ProductDto, { nullable: true })
+    @UseGuards(FirebaseAuthGuard, RoleGuard)
+    @Roles('admin')
     async deleteProduct(
         @Context() context: GqlContext,
         @Args('id') id: string,

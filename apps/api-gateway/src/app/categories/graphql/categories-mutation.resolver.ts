@@ -7,7 +7,10 @@ import { lastValueFrom } from 'rxjs';
 import { Category as CategoryDto } from './entity/categories.entity';
 import { CreateOneCategoryArgs } from './dtos/create-one-category.args';
 import { UpdateOneCategoryArgs } from './dtos/update-one-category.args';
+import { FirebaseAuthGuard } from '@ecommerce-microservices/firebase-auth';
+import { UseGuards } from '@nestjs/common';
 
+@UseGuards(FirebaseAuthGuard)
 @Resolver(() => CategoryDto)
 export class CategoriesMutationResolver {
     @Mutation(() => CategoryDto, { nullable: true })

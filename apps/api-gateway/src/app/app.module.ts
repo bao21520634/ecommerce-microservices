@@ -3,6 +3,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import {
     CatalogsRpcClientService,
     CoreModule,
+    RoleModule,
     ServiceRegistryModule,
 } from '@ecommerce-microservices/core';
 import { GqlConfigService } from '../gql-config.service';
@@ -20,6 +21,7 @@ import { CategoriesMutationResolver } from './categories/graphql/categories-muta
 @Module({
     imports: [
         CoreModule,
+        RoleModule,
         ServiceRegistryModule,
         GraphQLModule.forRootAsync<ApolloDriverConfig>({
             driver: ApolloDriver,

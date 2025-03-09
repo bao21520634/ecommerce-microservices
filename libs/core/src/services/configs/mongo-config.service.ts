@@ -1,4 +1,4 @@
-import { DatabaseConfig } from '@ecommerce-microservices/common';
+import { MongodbConfig } from '@ecommerce-microservices/common';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
@@ -14,15 +14,15 @@ export class MongoConfigService implements MongooseOptionsFactory {
     createMongooseOptions():
         | Promise<MongooseModuleOptions>
         | MongooseModuleOptions {
-        const mongoConfig = this.configService.get<DatabaseConfig>('database');
+        const mongoConfig = this.configService.get<MongodbConfig>('mongodb');
 
         if (!mongoConfig) {
             throw new Error('MongoDB configuration not found');
         }
 
         return {
-            uri: `${mongoConfig?.mongodb.uri}${mongoConfig?.mongodb.name}`,
-            dbName: mongoConfig?.mongodb.name,
+            uri: `${mongoConfig?.uri}${mongoConfig?.name}`,
+            dbName: mongoConfig?.name,
         };
     }
 }

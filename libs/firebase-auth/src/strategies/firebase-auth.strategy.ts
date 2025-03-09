@@ -1,14 +1,18 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-firebase-jwt';
-import { FirebaseAuthService } from '../firebase-auth.service';
+import { FirebaseAuthService } from '../services';
+import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class FirebaseAuthStrategy extends PassportStrategy(
     Strategy,
     'firebase-auth',
 ) {
-    constructor(private firebaseAuthService: FirebaseAuthService) {
+    constructor(
+        private firebaseAuthService: FirebaseAuthService,
+        private prisma: PrismaClient,
+    ) {
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
         });
@@ -19,20 +23,59 @@ export class FirebaseAuthStrategy extends PassportStrategy(
             const decodedToken = await this.firebaseAuthService.verifyToken(
                 token,
             );
-            // You can enrich user data here if needed
-            const user = await this.firebaseAuthService.getUser(
+
+            const firebaseUser = await this.firebaseAuthService.getUser(
                 decodedToken.uid,
             );
+
+            let user = await this.prisma.user.findUnique({
+                where: { firebaseUid: decodedToken.uid },
+                include: {
+                    roles: {
+                        include: {
+                            permissions: true,
+                        },
+                    },
+                },
+            });
+
+            if (!user) {
+                user = await this.prisma.user.create({
+                    data: {
+                        firebaseUid: decodedToken.uid,
+                        metadata: {
+                            firebaseCreationTime:
+                                firebaseUser.metadata.creationTime,
+                            firebaseLastSignInTime:
+                                firebaseUser.metadata.lastSignInTime,
+                        },
+                    },
+                    include: {
+                        roles: {
+                            include: {
+                                permissions: true,
+                            },
+                        },
+                    },
+                });
+            }
+
+            const roles = user.roles.map((role: any) => role.name);
+            const permissions = user.roles.flatMap((role: any) =>
+                role.permissions.map((permission: any) => ({
+                    resource: permission.resource,
+                    action: permission.action,
+                })),
+            );
+
             return {
                 uid: decodedToken.uid,
                 email: decodedToken.email,
                 emailVerified: decodedToken.email_verified,
-                roles: decodedToken['roles'] || [],
-                claims: decodedToken,
-                metadata: {
-                    creationTime: user.metadata.creationTime,
-                    lastSignInTime: user.metadata.lastSignInTime,
-                },
+                firebaseClaims: decodedToken,
+                roles,
+                permissions,
+                databaseId: user.id,
             };
         } catch (error) {
             throw new UnauthorizedException('Invalid token');

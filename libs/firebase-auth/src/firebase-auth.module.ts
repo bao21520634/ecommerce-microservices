@@ -1,5 +1,5 @@
 import { Module, DynamicModule, Provider, Global, Type } from '@nestjs/common';
-import { FirebaseAuthService } from './firebase-auth.service';
+import { FirebaseAuthService } from './services/firebase-auth.service';
 import { FirebaseAuthGuard } from './guards/firebase-auth.guard';
 import { FirebaseAuthStrategy } from './strategies/firebase-auth.strategy';
 import {
@@ -8,6 +8,7 @@ import {
     FirebaseAuthOptionsFactory,
 } from './interfaces';
 import { FIREBASE_AUTH_OPTIONS } from './constants';
+import { PrismaClient } from '@prisma/client';
 
 @Global()
 @Module({})
@@ -25,6 +26,7 @@ export class FirebaseAuthModule {
                 FirebaseAuthService,
                 FirebaseAuthGuard,
                 FirebaseAuthStrategy,
+                PrismaClient,
             ],
             exports: [FirebaseAuthService, FirebaseAuthGuard],
         };
@@ -43,6 +45,7 @@ export class FirebaseAuthModule {
                 FirebaseAuthService,
                 FirebaseAuthGuard,
                 FirebaseAuthStrategy,
+                PrismaClient,
             ],
             exports: [FirebaseAuthService, FirebaseAuthGuard],
         };

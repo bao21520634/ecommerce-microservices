@@ -4,7 +4,6 @@ import { ConfigService } from '@nestjs/config';
 import { AppUtils } from '@ecommerce-microservices/common';
 
 interface MicroserviceSetupOptions {
-    enableMqtt?: boolean;
     enableNats?: boolean;
     hostname?: string;
 }
@@ -15,11 +14,7 @@ export async function microserviceSetup(
     options: MicroserviceSetupOptions = {},
 ) {
     const configService = app.get(ConfigService);
-    const {
-        hostname = 'localhost',
-        enableMqtt = false,
-        enableNats = false,
-    } = options;
+    const { hostname = 'localhost', enableNats = false } = options;
 
     // Graceful shutdown
     AppUtils.killAppWithGrace(app);
@@ -47,27 +42,6 @@ export async function microserviceSetup(
             protoPath,
         },
     });
-
-    // Optional MQTT Microservice
-    if (enableMqtt) {
-        const mqttUrl = configService.get<string>('mqtt.url');
-        if (!mqttUrl) {
-            Logger.error(
-                'Missing MQTT URL in configuration.',
-                'MicroserviceSetup',
-            );
-        } else {
-            app.connectMicroservice({
-                transport: Transport.MQTT,
-                options: {
-                    url: mqttUrl,
-                    clientId: `${serviceName}-${Math.random()
-                        .toString(16)
-                        .substring(2, 10)}`,
-                },
-            });
-        }
-    }
 
     // Optional NATS Microservice
     if (enableNats) {

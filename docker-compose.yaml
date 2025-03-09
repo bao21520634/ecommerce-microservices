@@ -29,9 +29,60 @@ services:
         container_name: nats
         image: nats:2.10.9-alpine
         ports:
-            - '4222:4222' # Client connections
-            - '8222:8222' # HTTP management
-            - '6222:6222' # Clustering
+            - '4222:4222'
+            - '8222:8222'
+            - '6222:6222'
+        networks:
+            - app-network
+
+    elasticsearch:
+        container_name: elasticsearch
+        image: docker.elastic.co/elasticsearch/elasticsearch:8.17.1
+        environment:
+            - discovery.type=single-node
+            - 'ES_JAVA_OPTS=-Xms1g -Xmx1g'
+            - ELASTIC_PASSWORD=changeme
+            - xpack.security.enabled=false
+        mem_limit: 2g
+        ulimits:
+            memlock:
+                soft: -1
+                hard: -1
+        restart: unless-stopped
+        ports:
+            - '9200:9200'
+            - '9300:9300'
+        healthcheck:
+            test: ['CMD', 'curl', '-f', 'http://localhost:9200/_cluster/health']
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            start_period: 30s
+        networks:
+            - app-network
+
+    kibana:
+        image: docker.elastic.co/kibana/kibana:8.17.1
+        container_name: kibana
+        depends_on:
+            - elasticsearch
+        environment:
+            - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+        ports:
+            - '5601:5601'
+        networks:
+            - app-network
+
+    monstache:
+        image: rwynn/monstache:6.7.21
+        container_name: monstache
+        depends_on:
+            elasticsearch:
+                condition: service_healthy
+        volumes:
+            - ./monstache.config.toml:/monstache.config.toml
+        command: ['-f', '/monstache.config.toml']
+        restart: on-failure
         networks:
             - app-network
 

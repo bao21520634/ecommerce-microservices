@@ -1,1 +1,1 @@
-export * from './consul-service-config.interface';
+export * from './service-config.interface';

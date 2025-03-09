@@ -1,7 +1,7 @@
 import { Injectable, Inject, UnauthorizedException } from '@nestjs/common';
 import * as admin from 'firebase-admin';
-import { FirebaseAuthOptions } from './interfaces/firebase-auth-options.interface';
-import { FIREBASE_AUTH_OPTIONS } from './constants';
+import { FirebaseAuthOptions } from '../interfaces/firebase-auth-options.interface';
+import { FIREBASE_AUTH_OPTIONS } from '../constants';
 
 @Injectable()
 export class FirebaseAuthService {
@@ -71,6 +71,4 @@ export class FirebaseAuthService {
             throw new Error(`Failed to delete user: ${error}`);
         }
     }
-
-    // Add more Firebase Auth methods as needed
 }

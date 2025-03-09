@@ -1,73 +1,43 @@
-enum UserRoles {
-  ADMIN
-  USER
-}
-
-enum AuthServiceTypes {
-  PASSWORD
-  GOOGLE
-}
-
-type LocalAuthStruct {
-  hashed String
-}
-
-type SocialAuthStruct {
-  userId      String
-  email       String
-  accessToken String?
-}
-
-type AuthServices {
-  password LocalAuthStruct?
-  google   SocialAuthStruct?
-}
-
-type Settings {
-  stripeId String?
-}
-
 model User {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  firebaseUid String @unique
+
+  roles   Role[]   @relation(fields: [roleIds], references: [id])
+  roleIds String[] @db.ObjectId
+
+  metadata  Json?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  username     String
-  primaryEmail String    @unique
-  fullName     String
-  phone        String?
-  address      Address?  @relation(fields: [addressId], references: [id])
-  addressId    String?   @db.ObjectId
-  sex          String?
-  dob          String?
-  bio          String?
-  role         UserRoles @default(USER)
-
-  emails   Email[]
-  sessions Session[]
-
-  services AuthServices // Changed from Json? to AuthServices type
-  settings Settings? // Changed from Json? to Settings type
+  address   Address? @relation(fields: [addressId], references: [id])
+  addressId String?  @db.ObjectId
 }
 
-model Email {
-  id               String   @id @default(auto()) @map("_id") @db.ObjectId
-  address          String   @unique
-  verified         Boolean  @default(false)
-  primary          Boolean  @default(false)
-  verificationCode String?
-  user             User     @relation(fields: [userId], references: [id])
-  userId           String   @db.ObjectId
-  createdAt        DateTime @default(now())
+model Role {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  permissions   Permission[] @relation(fields: [permissionIds], references: [id])
+  permissionIds String[]     @db.ObjectId
+
+  users   User[]   @relation(fields: [userIds], references: [id])
+  userIds String[] @db.ObjectId
 }
 
-model Session {
-  id        String @id @default(auto()) @map("_id") @db.ObjectId
-  email     String
-  createdAt Int // Changed to Int to match proto definition
-  expiresAt Int // Changed to Int to match proto definition
-  user      User   @relation(fields: [userId], references: [id])
-  userId    String @db.ObjectId
+model Permission {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  description String?
+  resource    String
+  action      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  roles   Role[]   @relation(fields: [roleIds], references: [id])
+  roleIds String[] @db.ObjectId
 }
 
 model Address {
