@@ -33,7 +33,7 @@ export class ProductCategoriesMutationResolver {
     async deleteProductCategory(
         @Context() context: GqlContext,
         @Args() input: DeleteOneProductCategoryArgs,
-    ): Promise<ProductCategoryDto> {
+    ) {
         const grpcContext = setRpcContext(context);
 
         const result = await lastValueFrom(
@@ -45,6 +45,6 @@ export class ProductCategoriesMutationResolver {
             ),
         );
 
-        return result as ProductCategoryDto;
+        return !!result;
     }
 }

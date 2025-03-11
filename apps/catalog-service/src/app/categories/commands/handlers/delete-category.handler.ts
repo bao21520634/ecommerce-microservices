@@ -2,10 +2,8 @@ import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { DeleteCategoryCommand } from '../impl';
 import { Logger } from '@nestjs/common';
 import { CategoryRepository } from '../../repositories';
-import { Category } from '@ecommerce-microservices/proto-schema';
+import { Common } from '@ecommerce-microservices/proto-schema';
 import { RpcException } from '@nestjs/microservices';
-import { CategoryStatus as PrismaCategoryStatus } from '@prisma/client';
-import { mapEnum } from '@ecommerce-microservices/common';
 import { CategoryDeletedEvent } from '../../events';
 
 @CommandHandler(DeleteCategoryCommand)
@@ -19,7 +17,9 @@ export class DeleteCategoryHandler
         private readonly categoryRepo: CategoryRepository,
     ) {}
 
-    async execute(command: DeleteCategoryCommand): Promise<Category.Category> {
+    async execute(
+        command: DeleteCategoryCommand,
+    ): Promise<Common.DeleteResponse> {
         this.logger.log(`execute delete category command`);
 
         try {
@@ -32,12 +32,7 @@ export class DeleteCategoryHandler
             await this.eventBus.publish(new CategoryDeletedEvent(result));
 
             return {
-                ...result,
-                status: mapEnum(
-                    Category.CategoryStatus,
-                    PrismaCategoryStatus,
-                    result.status,
-                ),
+                success: true,
             };
         } catch (error) {
             this.logger.error(error);

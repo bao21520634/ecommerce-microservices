@@ -7,7 +7,6 @@
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 import { wrappers } from "protobufjs";
-import { PageInfo } from "./common";
 import { Any } from "./google/protobuf/any";
 import { NullValue, nullValueFromJSON, nullValueToJSON } from "./google/protobuf/struct";
 import { Timestamp } from "./google/protobuf/timestamp";
@@ -37,12 +36,6 @@ export interface OrderItems {
 export interface OrderItemEdge {
   node?: OrderItems | undefined;
   cursor: string;
-}
-
-export interface OrderItemConnection {
-  pageInfo?: PageInfo | undefined;
-  totalCount: number;
-  edges: OrderItemEdge[];
 }
 
 export interface OrderItemInput {
@@ -453,87 +446,6 @@ export const OrderItemEdge: MessageFns<OrderItemEdge> = {
     }
     if (message.cursor !== "") {
       obj.cursor = message.cursor;
-    }
-    return obj;
-  },
-};
-
-function createBaseOrderItemConnection(): OrderItemConnection {
-  return { totalCount: 0, edges: [] };
-}
-
-export const OrderItemConnection: MessageFns<OrderItemConnection> = {
-  encode(message: OrderItemConnection, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.pageInfo !== undefined) {
-      PageInfo.encode(message.pageInfo, writer.uint32(10).fork()).join();
-    }
-    if (message.totalCount !== 0) {
-      writer.uint32(16).int32(message.totalCount);
-    }
-    for (const v of message.edges) {
-      OrderItemEdge.encode(v!, writer.uint32(26).fork()).join();
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): OrderItemConnection {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseOrderItemConnection();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
-
-          message.pageInfo = PageInfo.decode(reader, reader.uint32());
-          continue;
-        }
-        case 2: {
-          if (tag !== 16) {
-            break;
-          }
-
-          message.totalCount = reader.int32();
-          continue;
-        }
-        case 3: {
-          if (tag !== 26) {
-            break;
-          }
-
-          message.edges.push(OrderItemEdge.decode(reader, reader.uint32()));
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): OrderItemConnection {
-    return {
-      pageInfo: isSet(object.pageInfo) ? PageInfo.fromJSON(object.pageInfo) : undefined,
-      totalCount: isSet(object.totalCount) ? globalThis.Number(object.totalCount) : 0,
-      edges: globalThis.Array.isArray(object?.edges) ? object.edges.map((e: any) => OrderItemEdge.fromJSON(e)) : [],
-    };
-  },
-
-  toJSON(message: OrderItemConnection): unknown {
-    const obj: any = {};
-    if (message.pageInfo !== undefined) {
-      obj.pageInfo = PageInfo.toJSON(message.pageInfo);
-    }
-    if (message.totalCount !== 0) {
-      obj.totalCount = Math.round(message.totalCount);
-    }
-    if (message.edges?.length) {
-      obj.edges = message.edges.map((e) => OrderItemEdge.toJSON(e));
     }
     return obj;
   },

@@ -4,6 +4,7 @@ import { join } from 'path';
 import {
     CatalogsRpcClientService,
     GqlContext,
+    SearchsRpcClientService,
 } from '@ecommerce-microservices/core';
 import { ApolloDriver } from '@nestjs/apollo';
 import { FirebaseAuthService } from '@ecommerce-microservices/firebase-auth';
@@ -13,6 +14,7 @@ export class GqlConfigService implements GqlOptionsFactory {
     constructor(
         private firebaseAuthService: FirebaseAuthService,
         private readonly catalog: CatalogsRpcClientService,
+        private readonly search: SearchsRpcClientService,
     ) {}
 
     createGqlOptions(): Promise<GqlModuleOptions> | GqlModuleOptions {
@@ -61,6 +63,7 @@ export class GqlConfigService implements GqlOptionsFactory {
                     req,
                     rpc: {
                         catalog: this.catalog,
+                        search: this.search,
                     },
                     user,
                 };

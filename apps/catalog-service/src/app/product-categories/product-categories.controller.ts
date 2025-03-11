@@ -92,7 +92,7 @@ export class ProductCategoriesController
     async deleteProductCategory(
         request: ProductCategory.DeleteProductCategoryInput,
         ctx: any,
-    ): Promise<ProductCategory.ProductCategory> {
+    ): Promise<Common.DeleteResponse> {
         try {
             return await this.commandBus.execute(
                 new DeleteProductCategoryCommand(request),

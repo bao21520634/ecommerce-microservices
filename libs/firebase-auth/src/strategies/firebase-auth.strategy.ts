@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-firebase-jwt';
 import { FirebaseAuthService } from '../services';
 import { PrismaClient } from '@prisma/client';
+import { DEFAULT_USER } from '../constants';
 
 @Injectable()
 export class FirebaseAuthStrategy extends PassportStrategy(
@@ -48,6 +49,14 @@ export class FirebaseAuthStrategy extends PassportStrategy(
                                 firebaseUser.metadata.creationTime,
                             firebaseLastSignInTime:
                                 firebaseUser.metadata.lastSignInTime,
+                        },
+                        roles: {
+                            connectOrCreate: {
+                                where: { name: DEFAULT_USER },
+                                create: {
+                                    name: DEFAULT_USER,
+                                },
+                            },
                         },
                     },
                     include: {

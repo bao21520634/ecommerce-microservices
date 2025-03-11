@@ -16,7 +16,7 @@ service CatalogService {
     rpc createManyCategories (category.CreateManyCategoriesInput) returns (category.Categories) {}
     rpc updateCategory (category.UpdateCategoryInput) returns (category.Category) {}
     rpc updateManyCategories (category.UpdateManyCategoriesInput) returns (category.Categories) {}
-    rpc deleteCategory (common.Id) returns (category.Category) {}
+    rpc deleteCategory (common.Id) returns (common.DeleteResponse) {}
     rpc deleteManyCategories (category.DeleteManyCategoriesInput) returns (common.DeleteManyResponse) {}
 
     // product
@@ -27,7 +27,7 @@ service CatalogService {
     rpc createManyProducts (product.CreateManyProductsInput) returns (product.Products) {}
     rpc updateProduct (product.UpdateProductInput) returns (product.Product) {}
     rpc updateManyProducts (product.UpdateManyProductsInput) returns (product.Products) {}
-    rpc deleteProduct (common.Id) returns (product.Product) {}
+    rpc deleteProduct (common.Id) returns (common.DeleteResponse) {}
     rpc deleteManyProducts (product.DeleteManyProductsInput) returns (common.DeleteManyResponse) {}
 
     // product category
@@ -36,6 +36,6 @@ service CatalogService {
     rpc productCategoriesTotal(common.Query) returns (common.Count){}
     rpc createProductCategory (productCategory.CreateProductCategoryInput) returns (productCategory.ProductCategory) {}
     rpc createManyProductCategories (productCategory.CreateManyProductCategoriesInput) returns (productCategory.ProductCategory) {}
-    rpc deleteProductCategory (productCategory.DeleteProductCategoryInput) returns (productCategory.ProductCategory) {}
+    rpc deleteProductCategory (productCategory.DeleteProductCategoryInput) returns (common.DeleteResponse) {}
     rpc deleteManyProductCategories (productCategory.DeleteManyProductCategoriesInput) returns (common.DeleteManyResponse) {}
 }

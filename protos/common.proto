@@ -12,13 +12,6 @@ message Query {
   repeated Sort sorting = 3;
 }
 
-message PageInfo {
-  string startCursor = 1;
-  string endCursor = 2;
-  bool hasNextPage = 3;
-  bool hasPreviousPage = 4;
-}
-
 message Count {
   int32 totalCount = 1;
 }
@@ -37,6 +30,52 @@ message Sort {
   SortDirection  direction = 2;
 }
 
+message DeleteResponse {
+  bool  success = 1;
+}
+
 message DeleteManyResponse {
   int32  deletedCount = 1;
+}
+
+// Common elasticsearch
+
+message SearchMetadata {
+  int32 total_results = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+  int32 total_pages = 4;
+}
+
+message SearchParams {
+  string query_string = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+  repeated string filters = 4; // Format: "field:value"
+  repeated string sort_by = 5; // Format: "field:asc" or "field:desc"
+}
+
+message SearchHit {
+  string id = 1;
+  float score = 2;
+  string index_name = 3;
+  bytes document = 4; // JSON blob of the hit
+  map<string, string> highlights = 5;
+}
+
+message SearchResponse {
+  SearchMetadata metadata = 1;
+  repeated SearchHit hits = 2;
+  map<string, bytes> aggregations = 3; // JSON blobs of aggregations
+}
+
+message SuggestionRequest {
+  string prefix = 1;
+  string index_name = 2;
+  string field_name = 3;
+  int32 size = 4;
+}
+
+message SuggestionResponse {
+  repeated string suggestions = 1;
 }

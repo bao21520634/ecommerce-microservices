@@ -11,8 +11,6 @@ import { resolve } from 'path';
 import { CacheStoreConfigService, EventStoreConfigService } from '../services';
 import { FirebaseAuthModule } from '@ecommerce-microservices/firebase-auth';
 import { FirebaseAuthConfigService } from '../services/configs/firebase-auth-config.service';
-import { ElasticsearchModule } from '@nestjs/elasticsearch';
-import { ElasticsearchConfigService } from '../services/configs/elasticsearch-config.service';
 
 @Global()
 @Module({
@@ -58,9 +56,6 @@ import { ElasticsearchConfigService } from '../services/configs/elasticsearch-co
             imports: [ConfigModule],
             useClass: FirebaseAuthConfigService,
         }),
-        ElasticsearchModule.registerAsync({
-            useClass: ElasticsearchConfigService,
-        }),
     ],
     exports: [
         ConfigModule,
@@ -75,15 +70,11 @@ import { ElasticsearchConfigService } from '../services/configs/elasticsearch-co
             imports: [ConfigModule],
             useClass: CacheStoreConfigService,
         }),
-        ElasticsearchModule.registerAsync({
-            useClass: ElasticsearchConfigService,
-        }),
     ],
     providers: [
         CacheStoreConfigService,
         EventStoreConfigService,
         FirebaseAuthConfigService,
-        ElasticsearchConfigService,
         {
             provide: 'CACHE_INSTANCE',
             useFactory: (cacheConfig: CacheStoreConfigService) => {

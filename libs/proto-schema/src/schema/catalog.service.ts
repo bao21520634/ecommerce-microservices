@@ -18,7 +18,7 @@ import {
   UpdateCategoryInput,
   UpdateManyCategoriesInput,
 } from "./category";
-import { Count, DeleteManyResponse, Id, Query } from "./common";
+import { Count, DeleteManyResponse, DeleteResponse, Id, Query } from "./common";
 import {
   CreateManyProductsInput,
   CreateProductInput,
@@ -61,7 +61,7 @@ export interface CatalogServiceClient {
 
   updateManyCategories(request: UpdateManyCategoriesInput, metadata?: Metadata): Observable<Categories>;
 
-  deleteCategory(request: Id, metadata?: Metadata): Observable<Category>;
+  deleteCategory(request: Id, metadata?: Metadata): Observable<DeleteResponse>;
 
   deleteManyCategories(request: DeleteManyCategoriesInput, metadata?: Metadata): Observable<DeleteManyResponse>;
 
@@ -81,7 +81,7 @@ export interface CatalogServiceClient {
 
   updateManyProducts(request: UpdateManyProductsInput, metadata?: Metadata): Observable<Products>;
 
-  deleteProduct(request: Id, metadata?: Metadata): Observable<Product>;
+  deleteProduct(request: Id, metadata?: Metadata): Observable<DeleteResponse>;
 
   deleteManyProducts(request: DeleteManyProductsInput, metadata?: Metadata): Observable<DeleteManyResponse>;
 
@@ -100,7 +100,7 @@ export interface CatalogServiceClient {
     metadata?: Metadata,
   ): Observable<ProductCategory>;
 
-  deleteProductCategory(request: DeleteProductCategoryInput, metadata?: Metadata): Observable<ProductCategory>;
+  deleteProductCategory(request: DeleteProductCategoryInput, metadata?: Metadata): Observable<DeleteResponse>;
 
   deleteManyProductCategories(
     request: DeleteManyProductCategoriesInput,
@@ -140,7 +140,10 @@ export interface CatalogServiceController {
     metadata?: Metadata,
   ): Promise<Categories> | Observable<Categories> | Categories;
 
-  deleteCategory(request: Id, metadata?: Metadata): Promise<Category> | Observable<Category> | Category;
+  deleteCategory(
+    request: Id,
+    metadata?: Metadata,
+  ): Promise<DeleteResponse> | Observable<DeleteResponse> | DeleteResponse;
 
   deleteManyCategories(
     request: DeleteManyCategoriesInput,
@@ -169,7 +172,10 @@ export interface CatalogServiceController {
     metadata?: Metadata,
   ): Promise<Products> | Observable<Products> | Products;
 
-  deleteProduct(request: Id, metadata?: Metadata): Promise<Product> | Observable<Product> | Product;
+  deleteProduct(
+    request: Id,
+    metadata?: Metadata,
+  ): Promise<DeleteResponse> | Observable<DeleteResponse> | DeleteResponse;
 
   deleteManyProducts(
     request: DeleteManyProductsInput,
@@ -203,7 +209,7 @@ export interface CatalogServiceController {
   deleteProductCategory(
     request: DeleteProductCategoryInput,
     metadata?: Metadata,
-  ): Promise<ProductCategory> | Observable<ProductCategory> | ProductCategory;
+  ): Promise<DeleteResponse> | Observable<DeleteResponse> | DeleteResponse;
 
   deleteManyProductCategories(
     request: DeleteManyProductCategoriesInput,

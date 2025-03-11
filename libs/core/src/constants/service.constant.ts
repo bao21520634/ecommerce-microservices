@@ -22,11 +22,18 @@ export const SERVICE_LIST = {
         protoPath: baseUrl + 'cart.service.proto',
         url: 'localhost:50053',
     },
-    checkout: {
-        package: 'checkout',
-        consulName: 'checkout',
-        service: 'CheckoutService',
-        protoPath: baseUrl + 'checkout.service.proto',
+    payment: {
+        package: 'payment',
+        consulName: 'payment',
+        service: 'PaymentService',
+        protoPath: baseUrl + 'payment.service.proto',
         url: 'localhost:50054',
+    },
+    search: {
+        package: 'search',
+        consulName: 'search',
+        service: 'SearchService',
+        protoPath: baseUrl + 'search.service.proto',
+        url: 'localhost:50055',
     },
 };

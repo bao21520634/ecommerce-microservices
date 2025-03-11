@@ -4,7 +4,7 @@
     "license": "MIT",
     "scripts": {
         "generate:proto": "sh gen-proto.sh",
-        "setup": "sh gen-proto.sh && cp -r protos dist/protos"
+        "setup": "sh gen-proto.sh && cp -r protos dist"
     },
     "private": true,
     "dependencies": {

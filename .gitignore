@@ -48,4 +48,4 @@ out
 /generated
 /apps/api-gateway/src/schema.gql
 bootstrap-development.yaml
-*.config.toml
+*config.toml

@@ -99,7 +99,7 @@ export class ProductsController
     async deleteProduct(
         request: Common.Id,
         ctx: any,
-    ): Promise<Product.Product> {
+    ): Promise<Common.DeleteResponse> {
         try {
             return await this.commandBus.execute(
                 new DeleteProductCommand(request),

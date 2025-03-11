@@ -143,27 +143,13 @@ export class ProductsMutationResolver {
     async deleteProduct(
         @Context() context: GqlContext,
         @Args('id') id: string,
-    ): Promise<ProductDto> {
+    ) {
         const grpcContext = setRpcContext(context);
 
         const result = await lastValueFrom(
             context.rpc.catalog.svc.deleteProduct({ id }, grpcContext),
         );
 
-        return {
-            ...result,
-            status: mapEnum(
-                PrismaProductStatus,
-                PbProduct.ProductStatus,
-                result.status,
-            ),
-            productType: mapEnum(
-                PrismaProductType,
-                PbProduct.ProductType,
-                result.productType,
-            ),
-            attributes: result.attributes,
-            variantAttributes: result.variantAttributes,
-        } as ProductDto;
+        return !!result;
     }
 }

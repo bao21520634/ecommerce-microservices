@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package search;
+
+import 'common.proto';
+
+service SearchService {
+    rpc search(common.SearchParams) returns (common.SearchResponse) {}
+    rpc getSuggestions(common.SuggestionRequest) returns (common.SuggestionResponse) {}
+}

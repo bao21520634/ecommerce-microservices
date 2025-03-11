@@ -76,12 +76,13 @@ services:
     monstache:
         image: rwynn/monstache:6.7.21
         container_name: monstache
+        working_dir: /monstache
         depends_on:
             elasticsearch:
                 condition: service_healthy
         volumes:
-            - ./monstache.config.toml:/monstache.config.toml
-        command: ['-f', '/monstache.config.toml']
+            - ./monstache:/monstache
+        command: ['-f', './config.toml']
         restart: on-failure
         networks:
             - app-network

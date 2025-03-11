@@ -5,7 +5,6 @@ import {
     FloatNullableFilter,
     IntFilter,
     IntNullableFilter,
-    IntNullableListFilter,
     StringFilter,
     StringNullableFilter,
 } from '@ecommerce-microservices/graphql-query';
@@ -82,9 +81,6 @@ export class CategoryWhereInput {
 
     @Field(() => IntNullableFilter, { nullable: true })
     pageSize?: IntNullableFilter;
-
-    @Field(() => IntNullableListFilter, { nullable: true })
-    pageSizeOption?: IntNullableListFilter;
 
     @Field(() => BoolFilter, { nullable: true })
     allowCustomersToSelectPageSize?: BoolFilter;

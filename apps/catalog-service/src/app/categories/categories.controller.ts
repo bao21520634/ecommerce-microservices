@@ -102,7 +102,7 @@ export class CategoriesController
     async deleteCategory(
         request: Common.Id,
         ctx: any,
-    ): Promise<Category.Category> {
+    ): Promise<Common.DeleteResponse> {
         try {
             return await this.commandBus.execute(
                 new DeleteCategoryCommand(request),

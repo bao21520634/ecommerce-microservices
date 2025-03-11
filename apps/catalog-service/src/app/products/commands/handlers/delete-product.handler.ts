@@ -2,14 +2,9 @@ import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { Logger } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { DeleteProductCommand } from '../impl';
-import { Product } from '@ecommerce-microservices/proto-schema';
+import { Common } from '@ecommerce-microservices/proto-schema';
 import { ProductRepository } from '../../repositories';
 import { ProductDeletedEvent } from '../../events';
-import {
-    ProductType as PrismaProductType,
-    ProductStatus as PrismaProductStatus,
-} from '@prisma/client';
-import { mapEnum } from '@ecommerce-microservices/common';
 
 @CommandHandler(DeleteProductCommand)
 export class DeleteProductHandler
@@ -22,7 +17,9 @@ export class DeleteProductHandler
         private readonly productRepo: ProductRepository,
     ) {}
 
-    async execute(command: DeleteProductCommand): Promise<Product.Product> {
+    async execute(
+        command: DeleteProductCommand,
+    ): Promise<Common.DeleteResponse> {
         this.logger.log(`execute delete product command`);
         try {
             const result = await this.productRepo.store.delete({
@@ -34,19 +31,7 @@ export class DeleteProductHandler
             await this.eventBus.publish(new ProductDeletedEvent(result));
 
             return {
-                ...result,
-                productType: mapEnum(
-                    Product.ProductType,
-                    PrismaProductType,
-                    result.productType,
-                ),
-                status: mapEnum(
-                    Product.ProductStatus,
-                    PrismaProductStatus,
-                    result.status,
-                ),
-                attributes: JSON.stringify(result.attributes),
-                variantAttributes: JSON.stringify(result.variantAttributes),
+                success: true,
             };
         } catch (error) {
             this.logger.error(error);

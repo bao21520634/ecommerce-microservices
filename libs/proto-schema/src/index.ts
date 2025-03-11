@@ -21,3 +21,6 @@ export * as PaymentService from './schema/payment.service';
 export * as Charge from './schema/charge';
 export * as Checkout from './schema/checkout';
 export * as PaymentHistory from './schema/paymentHistory';
+
+// service-search
+export * as SearchService from './schema/search.service';

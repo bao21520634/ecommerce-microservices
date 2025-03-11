@@ -2,7 +2,7 @@ import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { Logger } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { DeleteProductCategoryCommand } from '../impl';
-import { ProductCategory } from '@ecommerce-microservices/proto-schema';
+import { Common } from '@ecommerce-microservices/proto-schema';
 import { ProductCategoryRepository } from '../../repositories';
 import { ProductCategoryDeletedEvent } from '../../events';
 
@@ -19,7 +19,7 @@ export class DeleteProductCategoryHandler
 
     async execute(
         command: DeleteProductCategoryCommand,
-    ): Promise<ProductCategory.ProductCategory> {
+    ): Promise<Common.DeleteResponse> {
         this.logger.log(`execute create product command`);
         try {
             console.log('command............', command.request);
@@ -37,7 +37,9 @@ export class DeleteProductCategoryHandler
                 new ProductCategoryDeletedEvent(result),
             );
 
-            return result;
+            return {
+                success: true,
+            };
         } catch (error) {
             this.logger.error(error);
             throw new RpcException(error);

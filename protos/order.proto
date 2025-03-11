@@ -3,7 +3,6 @@ syntax = "proto3";
 package order;
 
 import "address.proto";
-import "common.proto";
 import "google/protobuf/timestamp.proto";
 import 'google/protobuf/any.proto';
 import 'google/protobuf/struct.proto';
@@ -56,11 +55,6 @@ message OrderEdge {
   string cursor = 2;
 }
 
-message OrderConnection {
-  common.PageInfo pageInfo = 1;
-  int32 totalCount = 2;
-  repeated OrderEdge edges = 3;
-}
 message OrderInput {
   string code = 1;
   string customerId = 2;

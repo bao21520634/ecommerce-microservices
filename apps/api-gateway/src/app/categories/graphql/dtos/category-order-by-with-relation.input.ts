@@ -65,9 +65,6 @@ export class CategoryOrderByWithRelationInput {
     pageSize?: `${SortOrder}`;
 
     @Field(() => SortOrder, { nullable: true })
-    pageSizeOption?: `${SortOrder}`;
-
-    @Field(() => SortOrder, { nullable: true })
     allowCustomersToSelectPageSize?: `${SortOrder}`;
 
     @Field(() => SortOrder, { nullable: true })

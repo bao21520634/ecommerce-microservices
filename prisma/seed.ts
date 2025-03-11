@@ -43,7 +43,7 @@ async function main() {
         }),
         prisma.role.create({
             data: {
-                name: 'manager',
+                name: 'vendor',
                 description: 'Store manager',
                 permissions: {
                     connect: [

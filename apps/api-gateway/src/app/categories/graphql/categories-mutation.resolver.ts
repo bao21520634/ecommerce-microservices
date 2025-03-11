@@ -84,20 +84,13 @@ export class CategoriesMutationResolver {
     async deleteCategory(
         @Context() context: GqlContext,
         @Args('id') id: string,
-    ): Promise<CategoryDto> {
+    ) {
         const grpcContext = setRpcContext(context);
 
         const result = await lastValueFrom(
             context.rpc.catalog.svc.deleteCategory({ id }, grpcContext),
         );
 
-        return {
-            ...result,
-            status: mapEnum(
-                PrismaCategoryStatus,
-                PbCategory.CategoryStatus,
-                result.status,
-            ),
-        } as CategoryDto;
+        return !!result;
     }
 }

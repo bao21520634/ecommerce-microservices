@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import {
     CatalogsRpcClientService,
+    SearchsRpcClientService,
     CoreModule,
     RoleModule,
     ServiceRegistryModule,
@@ -17,6 +18,8 @@ import { ProductCategoriesResolver } from './product-categories/graphql/product-
 import { ProductCategoriesMutationResolver } from './product-categories/graphql/product-categories-mutation.resolver';
 import { CategoriesResolver } from './categories/graphql/categories.resolver';
 import { CategoriesMutationResolver } from './categories/graphql/categories-mutation.resolver';
+import { SearchsModule } from './searchs/searchs.module';
+import { SearchsResolver } from './searchs/graphql/searchs.resolver';
 
 @Module({
     imports: [
@@ -30,12 +33,14 @@ import { CategoriesMutationResolver } from './categories/graphql/categories-muta
                 CategoriesModule,
                 ProductsModule,
                 ProductCategoriesModule,
+                SearchsModule,
             ],
-            inject: [CatalogsRpcClientService],
+            inject: [CatalogsRpcClientService, SearchsRpcClientService],
         }),
         CategoriesModule,
         ProductsModule,
         ProductCategoriesModule,
+        SearchsModule,
     ],
     controllers: [],
     providers: [
@@ -45,6 +50,7 @@ import { CategoriesMutationResolver } from './categories/graphql/categories-muta
         ProductCategoriesMutationResolver,
         CategoriesResolver,
         CategoriesMutationResolver,
+        SearchsResolver,
     ],
 })
 export class AppModule {}
