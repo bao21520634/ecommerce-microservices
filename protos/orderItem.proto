@@ -26,11 +26,6 @@ message OrderItems {
   repeated OrderItem orderItems = 1;
 }
 
-message OrderItemEdge {
-  OrderItems node = 1;
-  string cursor = 2;
-}
-
 message OrderItemInput {
   string productVariantId = 1;
   string orderId = 2;
@@ -39,8 +34,8 @@ message OrderItemInput {
   float priceExclTax = 5;
   int32 quantity = 6;
   float subTotal = 7;
-  float discount = 8;
-  float tax = 9;
+  optional float discount = 8;
+  optional float tax = 9;
   float total = 10;
 }
 

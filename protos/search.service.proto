@@ -3,8 +3,17 @@ syntax = "proto3";
 package search;
 
 import 'common.proto';
+import 'elastic.proto';
+import 'category.proto';
+import 'product.proto';
+import 'productCategory.proto';
 
 service SearchService {
-    rpc search(common.SearchParams) returns (common.SearchResponse) {}
-    rpc getSuggestions(common.SuggestionRequest) returns (common.SuggestionResponse) {}
+    rpc search(elastic.SearchParams) returns (elastic.SearchResponse) {}
+    rpc getSuggestions(elastic.SuggestionRequest) returns (elastic.SuggestionResponse) {}
+
+    rpc getProductsFromCategories(productCategory.ProductCategorySearchInput) returns (elastic.SearchResponse) {}
+
+    rpc getCategory(common.Id) returns (category.NullableCategory){}
+    rpc getProduct(common.Id) returns (product.NullableProduct){}
 }

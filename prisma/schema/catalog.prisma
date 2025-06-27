@@ -22,18 +22,16 @@ model Product {
 
   name               String
   slug               String        @unique
+  brand              String?
   shortDescription   String?
   longDescription    String?
-  thumbnailUrl       String?
+  thumbnail          String?
+  images             String[]
   productType        ProductType   @default(Simple)
-  productTemplateId  String?
   manufacturerId     String?
   sortOrder          Int           @default(0)
-  metaTitle          String?
-  metaDescription    String?
   metaKeywords       String?
-  tags               String?
-  allowCustomMetaTag Boolean       @default(false)
+  tags               String[]
   limitedToLocations Boolean       @default(false)
   limitedToStores    Boolean       @default(false)
   status             ProductStatus @default(Active)
@@ -52,7 +50,7 @@ model Product {
   attributes         Json?
   variantAttributes  Json?
 
-  categories ProductCategory[]
+  ProductCategory ProductCategory[]
 }
 
 model Category {
@@ -60,33 +58,23 @@ model Category {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  name                           String
-  slug                           String         @unique
-  shortDescription               String?
-  longDescription                String?
-  thumbnailUrl                   String?
-  backgroundUrl                  String?
-  templateId                     String?
-  parentId                       String?        @db.ObjectId
-  parent                         Category?      @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  children                       Category[]     @relation("CategoryHierarchy")
-  sortOrder                      Int            @default(0)
-  metaTitle                      String?
-  metaDescription                String?
-  metaKeywords                   String?
-  allowCustomMetaTag             Boolean        @default(false)
-  limitedToLocations             Boolean        @default(false)
-  limitedToStores                Boolean        @default(false)
-  taxCategory                    String?
-  pageSize                       Int?
-  allowCustomersToSelectPageSize Boolean        @default(false)
-  priceRangeFiltering            Boolean        @default(false)
-  manuallyPriceRange             Boolean        @default(false)
-  priceFrom                      Float?
-  priceTo                        Float?
-  status                         CategoryStatus @default(Active)
+  name               String
+  slug               String         @unique
+  shortDescription   String?
+  longDescription    String?
+  thumbnail          String?
+  backgroundUrl      String?
+  parentId           String?        @db.ObjectId
+  parent             Category?      @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children           Category[]     @relation("CategoryHierarchy")
+  sortOrder          Int            @default(0)
+  metaKeywords       String?
+  limitedToLocations Boolean        @default(false)
+  limitedToStores    Boolean        @default(false)
+  taxCategory        String?
+  status             CategoryStatus @default(Active)
 
-  products ProductCategory[]
+  ProductCategory ProductCategory[]
 }
 
 model ProductCategory {

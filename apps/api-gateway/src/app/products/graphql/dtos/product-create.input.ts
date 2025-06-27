@@ -11,10 +11,10 @@ import { GraphQLJSON } from 'graphql-type-json';
 @InputType()
 export class ProductCreateInput {
     @Field(() => Date, { nullable: true })
-    createdAt?: Date | string;
+    createdAt?: Date;
 
     @Field(() => Date, { nullable: true })
-    updatedAt?: Date | string;
+    updatedAt?: Date;
 
     @Field(() => String, { nullable: false })
     name!: string;
@@ -23,19 +23,22 @@ export class ProductCreateInput {
     slug!: string;
 
     @Field(() => String, { nullable: true })
+    brand?: string;
+
+    @Field(() => String, { nullable: true })
     shortDescription?: string;
 
     @Field(() => String, { nullable: true })
     longDescription?: string;
 
     @Field(() => String, { nullable: true })
-    thumbnailUrl?: string;
+    thumbnail?: string;
+
+    @Field(() => [String], { nullable: false })
+    images!: Array<string>;
 
     @Field(() => ProductType, { nullable: true })
     productType?: `${ProductType}`;
-
-    @Field(() => String, { nullable: true })
-    productTemplateId?: string;
 
     @Field(() => String, { nullable: true })
     manufacturerId?: string;
@@ -44,19 +47,10 @@ export class ProductCreateInput {
     sortOrder?: number;
 
     @Field(() => String, { nullable: true })
-    metaTitle?: string;
-
-    @Field(() => String, { nullable: true })
-    metaDescription?: string;
-
-    @Field(() => String, { nullable: true })
     metaKeywords?: string;
 
-    @Field(() => String, { nullable: true })
-    tags?: string;
-
-    @Field(() => Boolean, { nullable: true })
-    allowCustomMetaTag?: boolean;
+    @Field(() => [String], { nullable: false })
+    tags!: Array<string>;
 
     @Field(() => Boolean, { nullable: true })
     limitedToLocations?: boolean;

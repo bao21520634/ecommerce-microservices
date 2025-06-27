@@ -32,8 +32,7 @@ service CatalogService {
 
     // product category
     rpc productCategory(productCategory.ProductCategoryInput) returns (productCategory.NullableProductCategory){}
-    rpc productCategories(common.Query) returns (productCategory.ProductCategories){}
-    rpc productCategoriesTotal(common.Query) returns (common.Count){}
+    rpc productCategories(productCategory.ProductCategoryFilterInput) returns (productCategory.ProductCategories){}
     rpc createProductCategory (productCategory.CreateProductCategoryInput) returns (productCategory.ProductCategory) {}
     rpc createManyProductCategories (productCategory.CreateManyProductCategoriesInput) returns (productCategory.ProductCategory) {}
     rpc deleteProductCategory (productCategory.DeleteProductCategoryInput) returns (common.DeleteResponse) {}

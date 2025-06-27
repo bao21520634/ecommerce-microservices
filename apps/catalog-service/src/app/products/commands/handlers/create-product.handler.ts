@@ -5,11 +5,7 @@ import { CreateProductCommand } from '../impl';
 import { Product } from '@ecommerce-microservices/proto-schema';
 import { ProductRepository } from '../../repositories';
 import { ProductCreatedEvent } from '../../events';
-import {
-    ProductType as PrismaProductType,
-    ProductStatus as PrismaProductStatus,
-} from '@prisma/client';
-import { mapEnum } from '@ecommerce-microservices/common';
+import { Prisma } from '@prisma/client';
 
 @CommandHandler(CreateProductCommand)
 export class CreateProductHandler
@@ -32,39 +28,15 @@ export class CreateProductHandler
             const result = await this.productRepo.store.create({
                 data: {
                     ...product,
-                    productType: mapEnum(
-                        PrismaProductType,
-                        Product.ProductType,
-                        product.productType,
-                    ),
-                    status: mapEnum(
-                        PrismaProductStatus,
-                        Product.ProductStatus,
-                        product.status,
-                    ),
-                    attributes: product.attributes
-                        ? JSON.parse(product.attributes)
-                        : {},
-                    variantAttributes: product.variantAttributes
-                        ? JSON.parse(product.variantAttributes)
-                        : {},
-                },
+                    attributes: product.attributes || {},
+                    variantAttributes: product.variantAttributes || {},
+                } as Prisma.ProductCreateInput,
             });
 
             await this.eventBus.publish(new ProductCreatedEvent(result));
 
             return {
                 ...result,
-                productType: mapEnum(
-                    Product.ProductType,
-                    PrismaProductType,
-                    result.productType,
-                ),
-                status: mapEnum(
-                    Product.ProductStatus,
-                    PrismaProductStatus,
-                    result.status,
-                ),
                 attributes: JSON.stringify(result.attributes),
                 variantAttributes: JSON.stringify(result.variantAttributes),
             };

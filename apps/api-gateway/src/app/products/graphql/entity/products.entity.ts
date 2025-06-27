@@ -28,19 +28,22 @@ export class Product {
     slug!: string;
 
     @Field(() => String, { nullable: true })
+    brand!: string | null;
+
+    @Field(() => String, { nullable: true })
     shortDescription!: string | null;
 
     @Field(() => String, { nullable: true })
     longDescription!: string | null;
 
     @Field(() => String, { nullable: true })
-    thumbnailUrl!: string | null;
+    thumbnail!: string | null;
+
+    @Field(() => [String], { nullable: true })
+    images!: Array<string>;
 
     @Field(() => ProductType, { defaultValue: 'Simple', nullable: false })
     productType!: `${ProductType}`;
-
-    @Field(() => String, { nullable: true })
-    productTemplateId!: string | null;
 
     @Field(() => String, { nullable: true })
     manufacturerId!: string | null;
@@ -49,19 +52,10 @@ export class Product {
     sortOrder!: number;
 
     @Field(() => String, { nullable: true })
-    metaTitle!: string | null;
-
-    @Field(() => String, { nullable: true })
-    metaDescription!: string | null;
-
-    @Field(() => String, { nullable: true })
     metaKeywords!: string | null;
 
-    @Field(() => String, { nullable: true })
-    tags!: string | null;
-
-    @Field(() => Boolean, { defaultValue: false, nullable: false })
-    allowCustomMetaTag!: boolean;
+    @Field(() => [String], { nullable: true })
+    tags!: Array<string>;
 
     @Field(() => Boolean, { defaultValue: false, nullable: false })
     limitedToLocations!: boolean;

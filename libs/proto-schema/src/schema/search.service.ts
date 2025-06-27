@@ -8,7 +8,11 @@
 import { Metadata } from "@grpc/grpc-js";
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
-import { SearchParams, SearchResponse, SuggestionRequest, SuggestionResponse } from "./common";
+import { NullableCategory } from "./category";
+import { Id } from "./common";
+import { SearchParams, SearchResponse, SuggestionRequest, SuggestionResponse } from "./elastic";
+import { NullableProduct } from "./product";
+import { ProductCategorySearchInput } from "./productCategory";
 
 export const protobufPackage = "search";
 
@@ -18,6 +22,12 @@ export interface SearchServiceClient {
   search(request: SearchParams, metadata?: Metadata): Observable<SearchResponse>;
 
   getSuggestions(request: SuggestionRequest, metadata?: Metadata): Observable<SuggestionResponse>;
+
+  getProductsFromCategories(request: ProductCategorySearchInput, metadata?: Metadata): Observable<SearchResponse>;
+
+  getCategory(request: Id, metadata?: Metadata): Observable<NullableCategory>;
+
+  getProduct(request: Id, metadata?: Metadata): Observable<NullableProduct>;
 }
 
 export interface SearchServiceController {
@@ -30,11 +40,32 @@ export interface SearchServiceController {
     request: SuggestionRequest,
     metadata?: Metadata,
   ): Promise<SuggestionResponse> | Observable<SuggestionResponse> | SuggestionResponse;
+
+  getProductsFromCategories(
+    request: ProductCategorySearchInput,
+    metadata?: Metadata,
+  ): Promise<SearchResponse> | Observable<SearchResponse> | SearchResponse;
+
+  getCategory(
+    request: Id,
+    metadata?: Metadata,
+  ): Promise<NullableCategory> | Observable<NullableCategory> | NullableCategory;
+
+  getProduct(
+    request: Id,
+    metadata?: Metadata,
+  ): Promise<NullableProduct> | Observable<NullableProduct> | NullableProduct;
 }
 
 export function SearchServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["search", "getSuggestions"];
+    const grpcMethods: string[] = [
+      "search",
+      "getSuggestions",
+      "getProductsFromCategories",
+      "getCategory",
+      "getProduct",
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("SearchService", method)(constructor.prototype[method], method, descriptor);

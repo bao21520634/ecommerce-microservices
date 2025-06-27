@@ -4,8 +4,10 @@ import {
     CatalogsRpcClientService,
     SearchsRpcClientService,
     CoreModule,
-    RoleModule,
     ServiceRegistryModule,
+    CartsRpcClientService,
+    SetupsRpcClientService,
+    KeycloakConfigService,
 } from '@ecommerce-microservices/core';
 import { GqlConfigService } from '../gql-config.service';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
@@ -20,12 +22,33 @@ import { CategoriesResolver } from './categories/graphql/categories.resolver';
 import { CategoriesMutationResolver } from './categories/graphql/categories-mutation.resolver';
 import { SearchsModule } from './searchs/searchs.module';
 import { SearchsResolver } from './searchs/graphql/searchs.resolver';
+import { OrdersModule } from './orders/orders.module';
+import { OrderItemsModule } from './order-items/order-items.module';
+import { OrdersResolver } from './orders/graphql/orders.resolver';
+import { OrdersMutationResolver } from './orders/graphql/orders-mutation.resolver';
+import { OrderItemsResolver } from './order-items/graphql/order-items.resolver';
+import { OrderItemsMutationResolver } from './order-items/graphql/order-items-mutation.resolver';
+import { SettingsModule } from './settings/settings.module';
+import { SettingsResolver } from './settings/graphql/settings.resolver';
+import { SettingsMutationResolver } from './settings/graphql/settings-mutation.resolver';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { TimestampInterceptor } from '@ecommerce-microservices/common';
+import {
+    AuthGuard,
+    KeycloakConnectModule,
+    ResourceGuard,
+    RoleGuard,
+} from 'nest-keycloak-connect';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
     imports: [
         CoreModule,
-        RoleModule,
         ServiceRegistryModule,
+        KeycloakConnectModule.registerAsync({
+            imports: [ConfigModule],
+            useClass: KeycloakConfigService,
+        }),
         GraphQLModule.forRootAsync<ApolloDriverConfig>({
             driver: ApolloDriver,
             useClass: GqlConfigService,
@@ -33,13 +56,24 @@ import { SearchsResolver } from './searchs/graphql/searchs.resolver';
                 CategoriesModule,
                 ProductsModule,
                 ProductCategoriesModule,
+                OrdersModule,
+                OrderItemsModule,
+                SettingsModule,
                 SearchsModule,
             ],
-            inject: [CatalogsRpcClientService, SearchsRpcClientService],
+            inject: [
+                CatalogsRpcClientService,
+                CartsRpcClientService,
+                SetupsRpcClientService,
+                SearchsRpcClientService,
+            ],
         }),
         CategoriesModule,
         ProductsModule,
         ProductCategoriesModule,
+        OrdersModule,
+        OrderItemsModule,
+        SettingsModule,
         SearchsModule,
     ],
     controllers: [],
@@ -50,7 +84,29 @@ import { SearchsResolver } from './searchs/graphql/searchs.resolver';
         ProductCategoriesMutationResolver,
         CategoriesResolver,
         CategoriesMutationResolver,
+        OrdersResolver,
+        OrdersMutationResolver,
+        OrderItemsResolver,
+        OrderItemsMutationResolver,
+        SettingsResolver,
+        SettingsMutationResolver,
         SearchsResolver,
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: TimestampInterceptor,
+        },
+        {
+            provide: APP_GUARD,
+            useClass: AuthGuard,
+        },
+        {
+            provide: APP_GUARD,
+            useClass: ResourceGuard,
+        },
+        {
+            provide: APP_GUARD,
+            useClass: RoleGuard,
+        },
     ],
 })
 export class AppModule {}

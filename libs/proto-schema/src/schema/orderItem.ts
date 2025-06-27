@@ -33,11 +33,6 @@ export interface OrderItems {
   orderItems: OrderItem[];
 }
 
-export interface OrderItemEdge {
-  node?: OrderItems | undefined;
-  cursor: string;
-}
-
 export interface OrderItemInput {
   productVariantId: string;
   orderId: string;
@@ -46,8 +41,8 @@ export interface OrderItemInput {
   priceExclTax: number;
   quantity: number;
   subTotal: number;
-  discount: number;
-  tax: number;
+  discount?: number | undefined;
+  tax?: number | undefined;
   total: number;
 }
 
@@ -385,72 +380,6 @@ export const OrderItems: MessageFns<OrderItems> = {
   },
 };
 
-function createBaseOrderItemEdge(): OrderItemEdge {
-  return { cursor: "" };
-}
-
-export const OrderItemEdge: MessageFns<OrderItemEdge> = {
-  encode(message: OrderItemEdge, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.node !== undefined) {
-      OrderItems.encode(message.node, writer.uint32(10).fork()).join();
-    }
-    if (message.cursor !== "") {
-      writer.uint32(18).string(message.cursor);
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): OrderItemEdge {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseOrderItemEdge();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
-
-          message.node = OrderItems.decode(reader, reader.uint32());
-          continue;
-        }
-        case 2: {
-          if (tag !== 18) {
-            break;
-          }
-
-          message.cursor = reader.string();
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): OrderItemEdge {
-    return {
-      node: isSet(object.node) ? OrderItems.fromJSON(object.node) : undefined,
-      cursor: isSet(object.cursor) ? globalThis.String(object.cursor) : "",
-    };
-  },
-
-  toJSON(message: OrderItemEdge): unknown {
-    const obj: any = {};
-    if (message.node !== undefined) {
-      obj.node = OrderItems.toJSON(message.node);
-    }
-    if (message.cursor !== "") {
-      obj.cursor = message.cursor;
-    }
-    return obj;
-  },
-};
-
 function createBaseOrderItemInput(): OrderItemInput {
   return {
     productVariantId: "",
@@ -460,8 +389,6 @@ function createBaseOrderItemInput(): OrderItemInput {
     priceExclTax: 0,
     quantity: 0,
     subTotal: 0,
-    discount: 0,
-    tax: 0,
     total: 0,
   };
 }
@@ -489,10 +416,10 @@ export const OrderItemInput: MessageFns<OrderItemInput> = {
     if (message.subTotal !== 0) {
       writer.uint32(61).float(message.subTotal);
     }
-    if (message.discount !== 0) {
+    if (message.discount !== undefined) {
       writer.uint32(69).float(message.discount);
     }
-    if (message.tax !== 0) {
+    if (message.tax !== undefined) {
       writer.uint32(77).float(message.tax);
     }
     if (message.total !== 0) {
@@ -606,8 +533,8 @@ export const OrderItemInput: MessageFns<OrderItemInput> = {
       priceExclTax: isSet(object.priceExclTax) ? globalThis.Number(object.priceExclTax) : 0,
       quantity: isSet(object.quantity) ? globalThis.Number(object.quantity) : 0,
       subTotal: isSet(object.subTotal) ? globalThis.Number(object.subTotal) : 0,
-      discount: isSet(object.discount) ? globalThis.Number(object.discount) : 0,
-      tax: isSet(object.tax) ? globalThis.Number(object.tax) : 0,
+      discount: isSet(object.discount) ? globalThis.Number(object.discount) : undefined,
+      tax: isSet(object.tax) ? globalThis.Number(object.tax) : undefined,
       total: isSet(object.total) ? globalThis.Number(object.total) : 0,
     };
   },
@@ -635,10 +562,10 @@ export const OrderItemInput: MessageFns<OrderItemInput> = {
     if (message.subTotal !== 0) {
       obj.subTotal = message.subTotal;
     }
-    if (message.discount !== 0) {
+    if (message.discount !== undefined) {
       obj.discount = message.discount;
     }
-    if (message.tax !== 0) {
+    if (message.tax !== undefined) {
       obj.tax = message.tax;
     }
     if (message.total !== 0) {

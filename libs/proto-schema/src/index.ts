@@ -11,16 +11,10 @@ export * as CartService from './schema/cart.service';
 export * as Order from './schema/order';
 export * as OrderItem from './schema/orderItem';
 
-// service-account
-export * as AccountService from './schema/account.service';
-export * as User from './schema/user';
-export * as Auth from './schema/auth';
-
-// service-payment
-export * as PaymentService from './schema/payment.service';
-export * as Charge from './schema/charge';
-export * as Checkout from './schema/checkout';
-export * as PaymentHistory from './schema/paymentHistory';
-
 // service-search
+export * as Elastic from './schema/elastic';
 export * as SearchService from './schema/search.service';
+
+// service-setup
+export * as Setting from './schema/setting';
+export * as SetupService from './schema/setup.service';

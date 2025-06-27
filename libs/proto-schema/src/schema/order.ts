@@ -7,176 +7,59 @@
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 import { wrappers } from "protobufjs";
-import { Address } from "./address";
 import { Any } from "./google/protobuf/any";
 import { NullValue, nullValueFromJSON, nullValueToJSON } from "./google/protobuf/struct";
 import { Timestamp } from "./google/protobuf/timestamp";
 
 export const protobufPackage = "order";
 
-export enum OrderStatus {
-  Draft = 0,
-  WaitForConfirmation = 1,
-  ReadyForDelivery = 2,
-  Delivery = 3,
-  Delivered = 4,
-  Cancelled = 5,
-  UNRECOGNIZED = -1,
-}
-
-export function orderStatusFromJSON(object: any): OrderStatus {
-  switch (object) {
-    case 0:
-    case "Draft":
-      return OrderStatus.Draft;
-    case 1:
-    case "WaitForConfirmation":
-      return OrderStatus.WaitForConfirmation;
-    case 2:
-    case "ReadyForDelivery":
-      return OrderStatus.ReadyForDelivery;
-    case 3:
-    case "Delivery":
-      return OrderStatus.Delivery;
-    case 4:
-    case "Delivered":
-      return OrderStatus.Delivered;
-    case 5:
-    case "Cancelled":
-      return OrderStatus.Cancelled;
-    case -1:
-    case "UNRECOGNIZED":
-    default:
-      return OrderStatus.UNRECOGNIZED;
-  }
-}
-
-export function orderStatusToJSON(object: OrderStatus): string {
-  switch (object) {
-    case OrderStatus.Draft:
-      return "Draft";
-    case OrderStatus.WaitForConfirmation:
-      return "WaitForConfirmation";
-    case OrderStatus.ReadyForDelivery:
-      return "ReadyForDelivery";
-    case OrderStatus.Delivery:
-      return "Delivery";
-    case OrderStatus.Delivered:
-      return "Delivered";
-    case OrderStatus.Cancelled:
-      return "Cancelled";
-    case OrderStatus.UNRECOGNIZED:
-    default:
-      return "UNRECOGNIZED";
-  }
-}
-
-export enum PaymentStatus {
-  Pending = 0,
-  Paid = 1,
-  UnPaid = 2,
-  UNRECOGNIZED = -1,
-}
-
-export function paymentStatusFromJSON(object: any): PaymentStatus {
-  switch (object) {
-    case 0:
-    case "Pending":
-      return PaymentStatus.Pending;
-    case 1:
-    case "Paid":
-      return PaymentStatus.Paid;
-    case 2:
-    case "UnPaid":
-      return PaymentStatus.UnPaid;
-    case -1:
-    case "UNRECOGNIZED":
-    default:
-      return PaymentStatus.UNRECOGNIZED;
-  }
-}
-
-export function paymentStatusToJSON(object: PaymentStatus): string {
-  switch (object) {
-    case PaymentStatus.Pending:
-      return "Pending";
-    case PaymentStatus.Paid:
-      return "Paid";
-    case PaymentStatus.UnPaid:
-      return "UnPaid";
-    case PaymentStatus.UNRECOGNIZED:
-    default:
-      return "UNRECOGNIZED";
-  }
-}
-
-export enum ShippingStatus {
-  Delivering = 0,
-  UNRECOGNIZED = -1,
-}
-
-export function shippingStatusFromJSON(object: any): ShippingStatus {
-  switch (object) {
-    case 0:
-    case "Delivering":
-      return ShippingStatus.Delivering;
-    case -1:
-    case "UNRECOGNIZED":
-    default:
-      return ShippingStatus.UNRECOGNIZED;
-  }
-}
-
-export function shippingStatusToJSON(object: ShippingStatus): string {
-  switch (object) {
-    case ShippingStatus.Delivering:
-      return "Delivering";
-    case ShippingStatus.UNRECOGNIZED:
-    default:
-      return "UNRECOGNIZED";
-  }
-}
-
 export interface Order {
   id: string;
   code: string;
   customerId: string;
+  addressId: string;
+  expectedDeliveryDate: string;
+  paymentMethod: string;
   subTotal: number;
   discount: number;
   tax: number;
+  deliveryFee: number;
   total: number;
+  isPaid: boolean;
+  paidAt?: Date | undefined;
+  deliveredAt?: Date | undefined;
   note: string;
-  address?: Address | undefined;
-  orderStatus: OrderStatus;
-  paymentStatus: PaymentStatus;
-  shippingStatus: ShippingStatus;
+  orderStatus: string;
+  paymentStatus: string;
+  shippingStatus: string;
+  paymentResult?: string | undefined;
   createdAt?: Date | undefined;
   updatedAt?: Date | undefined;
 }
 
 export interface Orders {
   orders: Order[];
-  totalCount: number;
-  page: number;
-  pageSize: number;
-}
-
-export interface OrderEdge {
-  node?: Orders | undefined;
-  cursor: string;
 }
 
 export interface OrderInput {
   code: string;
   customerId: string;
+  addressId?: string | undefined;
+  expectedDeliveryDate?: string | undefined;
+  paymentMethod?: string | undefined;
   subTotal: number;
-  discount: number;
-  tax: number;
+  discount?: number | undefined;
+  tax?: number | undefined;
+  deliveryFee?: number | undefined;
   total: number;
-  note: string;
-  orderStatus: OrderStatus;
-  paymentStatus: PaymentStatus;
-  shippingStatus: ShippingStatus;
+  isPaid?: boolean | undefined;
+  paidAt?: Date | undefined;
+  deliveredAt?: Date | undefined;
+  note?: string | undefined;
+  orderStatus?: string | undefined;
+  paymentStatus?: string | undefined;
+  shippingStatus?: string | undefined;
+  paymentResult?: string | undefined;
 }
 
 export interface CreateOrderInput {
@@ -222,14 +105,19 @@ function createBaseOrder(): Order {
     id: "",
     code: "",
     customerId: "",
+    addressId: "",
+    expectedDeliveryDate: "",
+    paymentMethod: "",
     subTotal: 0,
     discount: 0,
     tax: 0,
+    deliveryFee: 0,
     total: 0,
+    isPaid: false,
     note: "",
-    orderStatus: 0,
-    paymentStatus: 0,
-    shippingStatus: 0,
+    orderStatus: "",
+    paymentStatus: "",
+    shippingStatus: "",
   };
 }
 
@@ -244,38 +132,59 @@ export const Order: MessageFns<Order> = {
     if (message.customerId !== "") {
       writer.uint32(26).string(message.customerId);
     }
+    if (message.addressId !== "") {
+      writer.uint32(34).string(message.addressId);
+    }
+    if (message.expectedDeliveryDate !== "") {
+      writer.uint32(42).string(message.expectedDeliveryDate);
+    }
+    if (message.paymentMethod !== "") {
+      writer.uint32(50).string(message.paymentMethod);
+    }
     if (message.subTotal !== 0) {
-      writer.uint32(37).float(message.subTotal);
+      writer.uint32(61).float(message.subTotal);
     }
     if (message.discount !== 0) {
-      writer.uint32(45).float(message.discount);
+      writer.uint32(69).float(message.discount);
     }
     if (message.tax !== 0) {
-      writer.uint32(53).float(message.tax);
+      writer.uint32(77).float(message.tax);
+    }
+    if (message.deliveryFee !== 0) {
+      writer.uint32(85).float(message.deliveryFee);
     }
     if (message.total !== 0) {
-      writer.uint32(61).float(message.total);
+      writer.uint32(93).float(message.total);
+    }
+    if (message.isPaid !== false) {
+      writer.uint32(96).bool(message.isPaid);
+    }
+    if (message.paidAt !== undefined) {
+      Timestamp.encode(toTimestamp(message.paidAt), writer.uint32(106).fork()).join();
+    }
+    if (message.deliveredAt !== undefined) {
+      Timestamp.encode(toTimestamp(message.deliveredAt), writer.uint32(114).fork()).join();
     }
     if (message.note !== "") {
-      writer.uint32(66).string(message.note);
+      writer.uint32(122).string(message.note);
     }
-    if (message.address !== undefined) {
-      Address.encode(message.address, writer.uint32(74).fork()).join();
+    if (message.orderStatus !== "") {
+      writer.uint32(130).string(message.orderStatus);
     }
-    if (message.orderStatus !== 0) {
-      writer.uint32(80).int32(message.orderStatus);
+    if (message.paymentStatus !== "") {
+      writer.uint32(138).string(message.paymentStatus);
     }
-    if (message.paymentStatus !== 0) {
-      writer.uint32(88).int32(message.paymentStatus);
+    if (message.shippingStatus !== "") {
+      writer.uint32(146).string(message.shippingStatus);
     }
-    if (message.shippingStatus !== 0) {
-      writer.uint32(96).int32(message.shippingStatus);
+    if (message.paymentResult !== undefined) {
+      writer.uint32(154).string(message.paymentResult);
     }
     if (message.createdAt !== undefined) {
-      Timestamp.encode(toTimestamp(message.createdAt), writer.uint32(106).fork()).join();
+      Timestamp.encode(toTimestamp(message.createdAt), writer.uint32(162).fork()).join();
     }
     if (message.updatedAt !== undefined) {
-      Timestamp.encode(toTimestamp(message.updatedAt), writer.uint32(114).fork()).join();
+      Timestamp.encode(toTimestamp(message.updatedAt), writer.uint32(170).fork()).join();
     }
     return writer;
   },
@@ -312,27 +221,27 @@ export const Order: MessageFns<Order> = {
           continue;
         }
         case 4: {
-          if (tag !== 37) {
+          if (tag !== 34) {
             break;
           }
 
-          message.subTotal = reader.float();
+          message.addressId = reader.string();
           continue;
         }
         case 5: {
-          if (tag !== 45) {
+          if (tag !== 42) {
             break;
           }
 
-          message.discount = reader.float();
+          message.expectedDeliveryDate = reader.string();
           continue;
         }
         case 6: {
-          if (tag !== 53) {
+          if (tag !== 50) {
             break;
           }
 
-          message.tax = reader.float();
+          message.paymentMethod = reader.string();
           continue;
         }
         case 7: {
@@ -340,39 +249,39 @@ export const Order: MessageFns<Order> = {
             break;
           }
 
-          message.total = reader.float();
+          message.subTotal = reader.float();
           continue;
         }
         case 8: {
-          if (tag !== 66) {
+          if (tag !== 69) {
             break;
           }
 
-          message.note = reader.string();
+          message.discount = reader.float();
           continue;
         }
         case 9: {
-          if (tag !== 74) {
+          if (tag !== 77) {
             break;
           }
 
-          message.address = Address.decode(reader, reader.uint32());
+          message.tax = reader.float();
           continue;
         }
         case 10: {
-          if (tag !== 80) {
+          if (tag !== 85) {
             break;
           }
 
-          message.orderStatus = reader.int32() as any;
+          message.deliveryFee = reader.float();
           continue;
         }
         case 11: {
-          if (tag !== 88) {
+          if (tag !== 93) {
             break;
           }
 
-          message.paymentStatus = reader.int32() as any;
+          message.total = reader.float();
           continue;
         }
         case 12: {
@@ -380,7 +289,7 @@ export const Order: MessageFns<Order> = {
             break;
           }
 
-          message.shippingStatus = reader.int32() as any;
+          message.isPaid = reader.bool();
           continue;
         }
         case 13: {
@@ -388,11 +297,67 @@ export const Order: MessageFns<Order> = {
             break;
           }
 
-          message.createdAt = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          message.paidAt = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
           continue;
         }
         case 14: {
           if (tag !== 114) {
+            break;
+          }
+
+          message.deliveredAt = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 15: {
+          if (tag !== 122) {
+            break;
+          }
+
+          message.note = reader.string();
+          continue;
+        }
+        case 16: {
+          if (tag !== 130) {
+            break;
+          }
+
+          message.orderStatus = reader.string();
+          continue;
+        }
+        case 17: {
+          if (tag !== 138) {
+            break;
+          }
+
+          message.paymentStatus = reader.string();
+          continue;
+        }
+        case 18: {
+          if (tag !== 146) {
+            break;
+          }
+
+          message.shippingStatus = reader.string();
+          continue;
+        }
+        case 19: {
+          if (tag !== 154) {
+            break;
+          }
+
+          message.paymentResult = reader.string();
+          continue;
+        }
+        case 20: {
+          if (tag !== 162) {
+            break;
+          }
+
+          message.createdAt = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 21: {
+          if (tag !== 170) {
             break;
           }
 
@@ -413,15 +378,22 @@ export const Order: MessageFns<Order> = {
       id: isSet(object.id) ? globalThis.String(object.id) : "",
       code: isSet(object.code) ? globalThis.String(object.code) : "",
       customerId: isSet(object.customerId) ? globalThis.String(object.customerId) : "",
+      addressId: isSet(object.addressId) ? globalThis.String(object.addressId) : "",
+      expectedDeliveryDate: isSet(object.expectedDeliveryDate) ? globalThis.String(object.expectedDeliveryDate) : "",
+      paymentMethod: isSet(object.paymentMethod) ? globalThis.String(object.paymentMethod) : "",
       subTotal: isSet(object.subTotal) ? globalThis.Number(object.subTotal) : 0,
       discount: isSet(object.discount) ? globalThis.Number(object.discount) : 0,
       tax: isSet(object.tax) ? globalThis.Number(object.tax) : 0,
+      deliveryFee: isSet(object.deliveryFee) ? globalThis.Number(object.deliveryFee) : 0,
       total: isSet(object.total) ? globalThis.Number(object.total) : 0,
+      isPaid: isSet(object.isPaid) ? globalThis.Boolean(object.isPaid) : false,
+      paidAt: isSet(object.paidAt) ? fromJsonTimestamp(object.paidAt) : undefined,
+      deliveredAt: isSet(object.deliveredAt) ? fromJsonTimestamp(object.deliveredAt) : undefined,
       note: isSet(object.note) ? globalThis.String(object.note) : "",
-      address: isSet(object.address) ? Address.fromJSON(object.address) : undefined,
-      orderStatus: isSet(object.orderStatus) ? orderStatusFromJSON(object.orderStatus) : 0,
-      paymentStatus: isSet(object.paymentStatus) ? paymentStatusFromJSON(object.paymentStatus) : 0,
-      shippingStatus: isSet(object.shippingStatus) ? shippingStatusFromJSON(object.shippingStatus) : 0,
+      orderStatus: isSet(object.orderStatus) ? globalThis.String(object.orderStatus) : "",
+      paymentStatus: isSet(object.paymentStatus) ? globalThis.String(object.paymentStatus) : "",
+      shippingStatus: isSet(object.shippingStatus) ? globalThis.String(object.shippingStatus) : "",
+      paymentResult: isSet(object.paymentResult) ? globalThis.String(object.paymentResult) : undefined,
       createdAt: isSet(object.createdAt) ? fromJsonTimestamp(object.createdAt) : undefined,
       updatedAt: isSet(object.updatedAt) ? fromJsonTimestamp(object.updatedAt) : undefined,
     };
@@ -438,6 +410,15 @@ export const Order: MessageFns<Order> = {
     if (message.customerId !== "") {
       obj.customerId = message.customerId;
     }
+    if (message.addressId !== "") {
+      obj.addressId = message.addressId;
+    }
+    if (message.expectedDeliveryDate !== "") {
+      obj.expectedDeliveryDate = message.expectedDeliveryDate;
+    }
+    if (message.paymentMethod !== "") {
+      obj.paymentMethod = message.paymentMethod;
+    }
     if (message.subTotal !== 0) {
       obj.subTotal = message.subTotal;
     }
@@ -447,23 +428,35 @@ export const Order: MessageFns<Order> = {
     if (message.tax !== 0) {
       obj.tax = message.tax;
     }
+    if (message.deliveryFee !== 0) {
+      obj.deliveryFee = message.deliveryFee;
+    }
     if (message.total !== 0) {
       obj.total = message.total;
+    }
+    if (message.isPaid !== false) {
+      obj.isPaid = message.isPaid;
+    }
+    if (message.paidAt !== undefined) {
+      obj.paidAt = message.paidAt.toISOString();
+    }
+    if (message.deliveredAt !== undefined) {
+      obj.deliveredAt = message.deliveredAt.toISOString();
     }
     if (message.note !== "") {
       obj.note = message.note;
     }
-    if (message.address !== undefined) {
-      obj.address = Address.toJSON(message.address);
+    if (message.orderStatus !== "") {
+      obj.orderStatus = message.orderStatus;
     }
-    if (message.orderStatus !== 0) {
-      obj.orderStatus = orderStatusToJSON(message.orderStatus);
+    if (message.paymentStatus !== "") {
+      obj.paymentStatus = message.paymentStatus;
     }
-    if (message.paymentStatus !== 0) {
-      obj.paymentStatus = paymentStatusToJSON(message.paymentStatus);
+    if (message.shippingStatus !== "") {
+      obj.shippingStatus = message.shippingStatus;
     }
-    if (message.shippingStatus !== 0) {
-      obj.shippingStatus = shippingStatusToJSON(message.shippingStatus);
+    if (message.paymentResult !== undefined) {
+      obj.paymentResult = message.paymentResult;
     }
     if (message.createdAt !== undefined) {
       obj.createdAt = message.createdAt.toISOString();
@@ -476,22 +469,13 @@ export const Order: MessageFns<Order> = {
 };
 
 function createBaseOrders(): Orders {
-  return { orders: [], totalCount: 0, page: 0, pageSize: 0 };
+  return { orders: [] };
 }
 
 export const Orders: MessageFns<Orders> = {
   encode(message: Orders, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     for (const v of message.orders) {
       Order.encode(v!, writer.uint32(10).fork()).join();
-    }
-    if (message.totalCount !== 0) {
-      writer.uint32(16).int32(message.totalCount);
-    }
-    if (message.page !== 0) {
-      writer.uint32(24).int32(message.page);
-    }
-    if (message.pageSize !== 0) {
-      writer.uint32(32).int32(message.pageSize);
     }
     return writer;
   },
@@ -511,30 +495,6 @@ export const Orders: MessageFns<Orders> = {
           message.orders.push(Order.decode(reader, reader.uint32()));
           continue;
         }
-        case 2: {
-          if (tag !== 16) {
-            break;
-          }
-
-          message.totalCount = reader.int32();
-          continue;
-        }
-        case 3: {
-          if (tag !== 24) {
-            break;
-          }
-
-          message.page = reader.int32();
-          continue;
-        }
-        case 4: {
-          if (tag !== 32) {
-            break;
-          }
-
-          message.pageSize = reader.int32();
-          continue;
-        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -545,12 +505,7 @@ export const Orders: MessageFns<Orders> = {
   },
 
   fromJSON(object: any): Orders {
-    return {
-      orders: globalThis.Array.isArray(object?.orders) ? object.orders.map((e: any) => Order.fromJSON(e)) : [],
-      totalCount: isSet(object.totalCount) ? globalThis.Number(object.totalCount) : 0,
-      page: isSet(object.page) ? globalThis.Number(object.page) : 0,
-      pageSize: isSet(object.pageSize) ? globalThis.Number(object.pageSize) : 0,
-    };
+    return { orders: globalThis.Array.isArray(object?.orders) ? object.orders.map((e: any) => Order.fromJSON(e)) : [] };
   },
 
   toJSON(message: Orders): unknown {
@@ -558,98 +513,12 @@ export const Orders: MessageFns<Orders> = {
     if (message.orders?.length) {
       obj.orders = message.orders.map((e) => Order.toJSON(e));
     }
-    if (message.totalCount !== 0) {
-      obj.totalCount = Math.round(message.totalCount);
-    }
-    if (message.page !== 0) {
-      obj.page = Math.round(message.page);
-    }
-    if (message.pageSize !== 0) {
-      obj.pageSize = Math.round(message.pageSize);
-    }
-    return obj;
-  },
-};
-
-function createBaseOrderEdge(): OrderEdge {
-  return { cursor: "" };
-}
-
-export const OrderEdge: MessageFns<OrderEdge> = {
-  encode(message: OrderEdge, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.node !== undefined) {
-      Orders.encode(message.node, writer.uint32(10).fork()).join();
-    }
-    if (message.cursor !== "") {
-      writer.uint32(18).string(message.cursor);
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): OrderEdge {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseOrderEdge();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
-
-          message.node = Orders.decode(reader, reader.uint32());
-          continue;
-        }
-        case 2: {
-          if (tag !== 18) {
-            break;
-          }
-
-          message.cursor = reader.string();
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): OrderEdge {
-    return {
-      node: isSet(object.node) ? Orders.fromJSON(object.node) : undefined,
-      cursor: isSet(object.cursor) ? globalThis.String(object.cursor) : "",
-    };
-  },
-
-  toJSON(message: OrderEdge): unknown {
-    const obj: any = {};
-    if (message.node !== undefined) {
-      obj.node = Orders.toJSON(message.node);
-    }
-    if (message.cursor !== "") {
-      obj.cursor = message.cursor;
-    }
     return obj;
   },
 };
 
 function createBaseOrderInput(): OrderInput {
-  return {
-    code: "",
-    customerId: "",
-    subTotal: 0,
-    discount: 0,
-    tax: 0,
-    total: 0,
-    note: "",
-    orderStatus: 0,
-    paymentStatus: 0,
-    shippingStatus: 0,
-  };
+  return { code: "", customerId: "", subTotal: 0, total: 0 };
 }
 
 export const OrderInput: MessageFns<OrderInput> = {
@@ -660,29 +529,53 @@ export const OrderInput: MessageFns<OrderInput> = {
     if (message.customerId !== "") {
       writer.uint32(18).string(message.customerId);
     }
+    if (message.addressId !== undefined) {
+      writer.uint32(26).string(message.addressId);
+    }
+    if (message.expectedDeliveryDate !== undefined) {
+      writer.uint32(34).string(message.expectedDeliveryDate);
+    }
+    if (message.paymentMethod !== undefined) {
+      writer.uint32(42).string(message.paymentMethod);
+    }
     if (message.subTotal !== 0) {
-      writer.uint32(29).float(message.subTotal);
+      writer.uint32(53).float(message.subTotal);
     }
-    if (message.discount !== 0) {
-      writer.uint32(37).float(message.discount);
+    if (message.discount !== undefined) {
+      writer.uint32(61).float(message.discount);
     }
-    if (message.tax !== 0) {
-      writer.uint32(45).float(message.tax);
+    if (message.tax !== undefined) {
+      writer.uint32(69).float(message.tax);
+    }
+    if (message.deliveryFee !== undefined) {
+      writer.uint32(77).float(message.deliveryFee);
     }
     if (message.total !== 0) {
-      writer.uint32(53).float(message.total);
+      writer.uint32(85).float(message.total);
     }
-    if (message.note !== "") {
-      writer.uint32(58).string(message.note);
+    if (message.isPaid !== undefined) {
+      writer.uint32(88).bool(message.isPaid);
     }
-    if (message.orderStatus !== 0) {
-      writer.uint32(64).int32(message.orderStatus);
+    if (message.paidAt !== undefined) {
+      Timestamp.encode(toTimestamp(message.paidAt), writer.uint32(98).fork()).join();
     }
-    if (message.paymentStatus !== 0) {
-      writer.uint32(72).int32(message.paymentStatus);
+    if (message.deliveredAt !== undefined) {
+      Timestamp.encode(toTimestamp(message.deliveredAt), writer.uint32(106).fork()).join();
     }
-    if (message.shippingStatus !== 0) {
-      writer.uint32(80).int32(message.shippingStatus);
+    if (message.note !== undefined) {
+      writer.uint32(114).string(message.note);
+    }
+    if (message.orderStatus !== undefined) {
+      writer.uint32(122).string(message.orderStatus);
+    }
+    if (message.paymentStatus !== undefined) {
+      writer.uint32(130).string(message.paymentStatus);
+    }
+    if (message.shippingStatus !== undefined) {
+      writer.uint32(138).string(message.shippingStatus);
+    }
+    if (message.paymentResult !== undefined) {
+      writer.uint32(146).string(message.paymentResult);
     }
     return writer;
   },
@@ -711,27 +604,27 @@ export const OrderInput: MessageFns<OrderInput> = {
           continue;
         }
         case 3: {
-          if (tag !== 29) {
+          if (tag !== 26) {
             break;
           }
 
-          message.subTotal = reader.float();
+          message.addressId = reader.string();
           continue;
         }
         case 4: {
-          if (tag !== 37) {
+          if (tag !== 34) {
             break;
           }
 
-          message.discount = reader.float();
+          message.expectedDeliveryDate = reader.string();
           continue;
         }
         case 5: {
-          if (tag !== 45) {
+          if (tag !== 42) {
             break;
           }
 
-          message.tax = reader.float();
+          message.paymentMethod = reader.string();
           continue;
         }
         case 6: {
@@ -739,39 +632,103 @@ export const OrderInput: MessageFns<OrderInput> = {
             break;
           }
 
-          message.total = reader.float();
+          message.subTotal = reader.float();
           continue;
         }
         case 7: {
-          if (tag !== 58) {
+          if (tag !== 61) {
+            break;
+          }
+
+          message.discount = reader.float();
+          continue;
+        }
+        case 8: {
+          if (tag !== 69) {
+            break;
+          }
+
+          message.tax = reader.float();
+          continue;
+        }
+        case 9: {
+          if (tag !== 77) {
+            break;
+          }
+
+          message.deliveryFee = reader.float();
+          continue;
+        }
+        case 10: {
+          if (tag !== 85) {
+            break;
+          }
+
+          message.total = reader.float();
+          continue;
+        }
+        case 11: {
+          if (tag !== 88) {
+            break;
+          }
+
+          message.isPaid = reader.bool();
+          continue;
+        }
+        case 12: {
+          if (tag !== 98) {
+            break;
+          }
+
+          message.paidAt = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 13: {
+          if (tag !== 106) {
+            break;
+          }
+
+          message.deliveredAt = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 14: {
+          if (tag !== 114) {
             break;
           }
 
           message.note = reader.string();
           continue;
         }
-        case 8: {
-          if (tag !== 64) {
+        case 15: {
+          if (tag !== 122) {
             break;
           }
 
-          message.orderStatus = reader.int32() as any;
+          message.orderStatus = reader.string();
           continue;
         }
-        case 9: {
-          if (tag !== 72) {
+        case 16: {
+          if (tag !== 130) {
             break;
           }
 
-          message.paymentStatus = reader.int32() as any;
+          message.paymentStatus = reader.string();
           continue;
         }
-        case 10: {
-          if (tag !== 80) {
+        case 17: {
+          if (tag !== 138) {
             break;
           }
 
-          message.shippingStatus = reader.int32() as any;
+          message.shippingStatus = reader.string();
+          continue;
+        }
+        case 18: {
+          if (tag !== 146) {
+            break;
+          }
+
+          message.paymentResult = reader.string();
           continue;
         }
       }
@@ -787,14 +744,24 @@ export const OrderInput: MessageFns<OrderInput> = {
     return {
       code: isSet(object.code) ? globalThis.String(object.code) : "",
       customerId: isSet(object.customerId) ? globalThis.String(object.customerId) : "",
+      addressId: isSet(object.addressId) ? globalThis.String(object.addressId) : undefined,
+      expectedDeliveryDate: isSet(object.expectedDeliveryDate)
+        ? globalThis.String(object.expectedDeliveryDate)
+        : undefined,
+      paymentMethod: isSet(object.paymentMethod) ? globalThis.String(object.paymentMethod) : undefined,
       subTotal: isSet(object.subTotal) ? globalThis.Number(object.subTotal) : 0,
-      discount: isSet(object.discount) ? globalThis.Number(object.discount) : 0,
-      tax: isSet(object.tax) ? globalThis.Number(object.tax) : 0,
+      discount: isSet(object.discount) ? globalThis.Number(object.discount) : undefined,
+      tax: isSet(object.tax) ? globalThis.Number(object.tax) : undefined,
+      deliveryFee: isSet(object.deliveryFee) ? globalThis.Number(object.deliveryFee) : undefined,
       total: isSet(object.total) ? globalThis.Number(object.total) : 0,
-      note: isSet(object.note) ? globalThis.String(object.note) : "",
-      orderStatus: isSet(object.orderStatus) ? orderStatusFromJSON(object.orderStatus) : 0,
-      paymentStatus: isSet(object.paymentStatus) ? paymentStatusFromJSON(object.paymentStatus) : 0,
-      shippingStatus: isSet(object.shippingStatus) ? shippingStatusFromJSON(object.shippingStatus) : 0,
+      isPaid: isSet(object.isPaid) ? globalThis.Boolean(object.isPaid) : undefined,
+      paidAt: isSet(object.paidAt) ? fromJsonTimestamp(object.paidAt) : undefined,
+      deliveredAt: isSet(object.deliveredAt) ? fromJsonTimestamp(object.deliveredAt) : undefined,
+      note: isSet(object.note) ? globalThis.String(object.note) : undefined,
+      orderStatus: isSet(object.orderStatus) ? globalThis.String(object.orderStatus) : undefined,
+      paymentStatus: isSet(object.paymentStatus) ? globalThis.String(object.paymentStatus) : undefined,
+      shippingStatus: isSet(object.shippingStatus) ? globalThis.String(object.shippingStatus) : undefined,
+      paymentResult: isSet(object.paymentResult) ? globalThis.String(object.paymentResult) : undefined,
     };
   },
 
@@ -806,29 +773,53 @@ export const OrderInput: MessageFns<OrderInput> = {
     if (message.customerId !== "") {
       obj.customerId = message.customerId;
     }
+    if (message.addressId !== undefined) {
+      obj.addressId = message.addressId;
+    }
+    if (message.expectedDeliveryDate !== undefined) {
+      obj.expectedDeliveryDate = message.expectedDeliveryDate;
+    }
+    if (message.paymentMethod !== undefined) {
+      obj.paymentMethod = message.paymentMethod;
+    }
     if (message.subTotal !== 0) {
       obj.subTotal = message.subTotal;
     }
-    if (message.discount !== 0) {
+    if (message.discount !== undefined) {
       obj.discount = message.discount;
     }
-    if (message.tax !== 0) {
+    if (message.tax !== undefined) {
       obj.tax = message.tax;
+    }
+    if (message.deliveryFee !== undefined) {
+      obj.deliveryFee = message.deliveryFee;
     }
     if (message.total !== 0) {
       obj.total = message.total;
     }
-    if (message.note !== "") {
+    if (message.isPaid !== undefined) {
+      obj.isPaid = message.isPaid;
+    }
+    if (message.paidAt !== undefined) {
+      obj.paidAt = message.paidAt.toISOString();
+    }
+    if (message.deliveredAt !== undefined) {
+      obj.deliveredAt = message.deliveredAt.toISOString();
+    }
+    if (message.note !== undefined) {
       obj.note = message.note;
     }
-    if (message.orderStatus !== 0) {
-      obj.orderStatus = orderStatusToJSON(message.orderStatus);
+    if (message.orderStatus !== undefined) {
+      obj.orderStatus = message.orderStatus;
     }
-    if (message.paymentStatus !== 0) {
-      obj.paymentStatus = paymentStatusToJSON(message.paymentStatus);
+    if (message.paymentStatus !== undefined) {
+      obj.paymentStatus = message.paymentStatus;
     }
-    if (message.shippingStatus !== 0) {
-      obj.shippingStatus = shippingStatusToJSON(message.shippingStatus);
+    if (message.shippingStatus !== undefined) {
+      obj.shippingStatus = message.shippingStatus;
+    }
+    if (message.paymentResult !== undefined) {
+      obj.paymentResult = message.paymentResult;
     }
     return obj;
   },

@@ -20,9 +20,6 @@
             "@ecommerce-microservices/event-store": [
                 "libs/event-store/src/index.ts"
             ],
-            "@ecommerce-microservices/firebase-auth": [
-                "libs/firebase-auth/src/index.ts"
-            ],
             "@ecommerce-microservices/graphql-query": [
                 "libs/graphql-query/src/index.ts"
             ],

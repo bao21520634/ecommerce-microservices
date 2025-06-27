@@ -23,7 +23,7 @@ export class CategoriesController
 {
     constructor(private commandBus: CommandBus, private queryBus: QueryBus) {}
 
-    @GrpcMethod('CatalogService', 'category')
+    @GrpcMethod(CatalogService.CATALOG_SERVICE_NAME, 'category')
     async category(
         request: Common.Id,
         ctx: any,
@@ -41,7 +41,7 @@ export class CategoriesController
      * @param request
      * @param ctx
      */
-    @GrpcMethod('CatalogService', 'categories')
+    @GrpcMethod(CatalogService.CATALOG_SERVICE_NAME, 'categories')
     async categories(
         request: Common.Query,
         ctx: any,
@@ -53,7 +53,7 @@ export class CategoriesController
         }
     }
 
-    @GrpcMethod('CatalogService', 'categoriesTotal')
+    @GrpcMethod(CatalogService.CATALOG_SERVICE_NAME, 'categoriesTotal')
     async categoriesTotal(
         request: Common.Query,
         ctx: any,
@@ -70,8 +70,8 @@ export class CategoriesController
      * @param request
      * @param ctx
      */
-    @GrpcMethod('CatalogService', 'createCategory')
-    async createCatalog(
+    @GrpcMethod(CatalogService.CATALOG_SERVICE_NAME, 'createCategory')
+    async createCategory(
         request: Category.CreateCategoryInput,
         ctx: any,
     ): Promise<Category.Category> {
@@ -84,7 +84,7 @@ export class CategoriesController
         }
     }
 
-    @GrpcMethod('CatalogService', 'updateCategory')
+    @GrpcMethod(CatalogService.CATALOG_SERVICE_NAME, 'updateCategory')
     async updateCategory(
         request: Category.UpdateCategoryInput,
         ctx: any,
@@ -98,7 +98,7 @@ export class CategoriesController
         }
     }
 
-    @GrpcMethod('CatalogService', 'deleteCategory')
+    @GrpcMethod(CatalogService.CATALOG_SERVICE_NAME, 'deleteCategory')
     async deleteCategory(
         request: Common.Id,
         ctx: any,

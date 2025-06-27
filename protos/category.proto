@@ -6,39 +6,23 @@ import "google/protobuf/any.proto";
 import "google/protobuf/timestamp.proto";
 import 'google/protobuf/struct.proto';
 
-enum CategoryStatus {
-  Active = 0;
-  Locked = 1;
-  Deleted = 2;
-}
-
 message Category {
   string id = 1;
   string name = 2;
   string slug = 3;
-  optional string shortDescription = 4;
-  optional string longDescription = 5;
-  optional string thumbnailUrl = 6;
-  optional string backgroundUrl = 7;
-  optional string templateId = 8;
-  optional string parentId = 9;
-  optional int32 sortOrder = 10;
-  optional string metaTitle = 11;
-  optional string metaDescription = 12;
-  optional string metaKeywords = 13;
-  optional bool allowCustomMetaTag = 14;
-  optional bool limitedToLocations = 15;
-  optional bool limitedToStores = 16;
-  optional string taxCategory = 17;
-  optional int32 pageSize = 18;
-  optional bool allowCustomersToSelectPageSize = 19;
-  optional bool priceRangeFiltering = 20;
-  optional bool manuallyPriceRange = 21;
-  optional float priceFrom = 22;
-  optional float priceTo = 23;
-  optional CategoryStatus status = 24;
-  google.protobuf.Timestamp createdAt = 25;
-  google.protobuf.Timestamp updatedAt = 26;
+  string shortDescription = 4;
+  string longDescription = 5;
+  string thumbnail = 6;
+  string backgroundUrl = 7;
+  string parentId = 8;
+  int32 sortOrder = 9;
+  string metaKeywords = 10;
+  bool limitedToLocations = 11;
+  bool limitedToStores = 12;
+  string taxCategory = 13;
+  string status = 14;
+  google.protobuf.Timestamp createdAt = 15;
+  google.protobuf.Timestamp updatedAt = 16;
 }
 
 message Categories {
@@ -50,25 +34,15 @@ message CategoryInput {
   string slug = 2;
   optional string shortDescription = 3;
   optional string longDescription = 4;
-  optional string thumbnailUrl = 5;
+  optional string thumbnail = 5;
   optional string backgroundUrl = 6;
-  optional string templateId = 7;
-  optional string parentId = 8;
-  optional int32 sortOrder = 9;
-  optional string metaTitle = 10;
-  optional string metaDescription = 11;
-  optional string metaKeywords = 12;
-  optional bool allowCustomMetaTag = 13;
-  optional bool limitedToLocations = 14;
-  optional bool limitedToStores = 15;
-  optional string taxCategory = 16;
-  optional int32 pageSize = 17;
-  optional bool allowCustomersToSelectPageSize = 18;
-  optional bool priceRangeFiltering = 19;
-  optional bool manuallyPriceRange = 20;
-  optional float priceFrom = 21;
-  optional float priceTo = 22;
-  optional CategoryStatus status = 23;
+  optional string parentId = 7;
+  optional int32 sortOrder = 8;
+  optional string metaKeywords = 9;
+  optional bool limitedToLocations = 10;
+  optional bool limitedToStores = 11;
+  optional string taxCategory = 12;
+  optional string status = 13;
 }
 
 message CreateCategoryInput {

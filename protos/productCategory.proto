@@ -20,12 +20,25 @@ message ProductCategoryInput {
   string categoryId = 2;
 }
 
+message ProductCategoryFilterInput {
+  repeated string productIds = 1;
+  repeated string categoryIds = 2;
+}
+
+message ProductCategorySearchInput {
+  repeated string categoryIds = 1;
+  int32 page = 2;
+  int32 pageSize = 3;
+  repeated string filters = 4; // Format: "field:value"
+  repeated string sortBy = 5; // Format: "field:asc" or "field:desc"
+}
+
 message CreateProductCategoryInput {
   ProductCategoryInput data = 1;
 }
 
 message CreateManyProductCategoriesInput {
-  repeated ProductCategoryInput ProductCategories = 1;
+  repeated ProductCategoryInput productCategories = 1;
 }
 
 message UpdateProductCategoryInput {

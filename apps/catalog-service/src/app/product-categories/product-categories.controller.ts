@@ -6,11 +6,7 @@ import {
 import { Controller } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GrpcMethod, RpcException } from '@nestjs/microservices';
-import {
-    GetProductCategoriesQuery,
-    GetProductCategoriesTotalQuery,
-    GetProductCategoryQuery,
-} from './queries';
+import { GetProductCategoriesQuery, GetProductCategoryQuery } from './queries';
 import {
     CreateProductCategoryCommand,
     DeleteProductCategoryCommand,
@@ -22,7 +18,7 @@ export class ProductCategoriesController
 {
     constructor(private commandBus: CommandBus, private queryBus: QueryBus) {}
 
-    @GrpcMethod('CatalogService', 'productCategory')
+    @GrpcMethod(CatalogService.CATALOG_SERVICE_NAME, 'productCategory')
     async productCategory(
         request: ProductCategory.ProductCategoryInput,
         ctx: any,
@@ -40,28 +36,14 @@ export class ProductCategoriesController
      * @param request
      * @param ctx
      */
-    @GrpcMethod('CatalogService', 'productCategories')
+    @GrpcMethod(CatalogService.CATALOG_SERVICE_NAME, 'productCategories')
     async productCategories(
-        request: Common.Query,
+        request: ProductCategory.ProductCategoryFilterInput,
         ctx: any,
     ): Promise<ProductCategory.ProductCategories> {
         try {
             return this.queryBus.execute(
                 new GetProductCategoriesQuery(request),
-            );
-        } catch (e) {
-            throw new RpcException(e);
-        }
-    }
-
-    @GrpcMethod('CatalogService', 'productCategoriesTotal')
-    async productCategoriesTotal(
-        request: Common.Query,
-        ctx: any,
-    ): Promise<Common.Count> {
-        try {
-            return this.queryBus.execute(
-                new GetProductCategoriesTotalQuery(request),
             );
         } catch (e) {
             throw new RpcException(e);
@@ -74,7 +56,7 @@ export class ProductCategoriesController
      * @param ctx
      */
 
-    @GrpcMethod('CatalogService', 'createProductCategory')
+    @GrpcMethod(CatalogService.CATALOG_SERVICE_NAME, 'createProductCategory')
     async createProductCategory(
         request: ProductCategory.CreateProductCategoryInput,
         ctx: any,
@@ -88,7 +70,7 @@ export class ProductCategoriesController
         }
     }
 
-    @GrpcMethod('CatalogService', 'deleteProductCategory')
+    @GrpcMethod(CatalogService.CATALOG_SERVICE_NAME, 'deleteProductCategory')
     async deleteProductCategory(
         request: ProductCategory.DeleteProductCategoryInput,
         ctx: any,

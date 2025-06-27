@@ -1,9 +1,8 @@
-import { Resolver, Query, Args, Context, Int } from '@nestjs/graphql';
+import { Resolver, Query, Args, Context } from '@nestjs/graphql';
 import { GqlContext, setRpcContext } from '@ecommerce-microservices/core';
-import { transformFindArgsToGrpcQuery } from '@ecommerce-microservices/common';
 import { lastValueFrom } from 'rxjs';
 import { ProductCategory as ProductCategoryDto } from './entity/product-categories.entity';
-import { FindManyProductCategoryArgs } from './dtos/find-many-product-category.args';
+import { ProductCategoryWhereInput } from './dtos/product-category-where.input';
 
 @Resolver(() => ProductCategoryDto)
 export class ProductCategoriesResolver {
@@ -30,34 +29,20 @@ export class ProductCategoriesResolver {
     @Query(() => [ProductCategoryDto])
     async productCategories(
         @Context() context: GqlContext,
-        @Args() args: FindManyProductCategoryArgs,
+        @Args('args') args: ProductCategoryWhereInput,
     ): Promise<ProductCategoryDto[]> {
         const grpcContext = setRpcContext(context);
 
         const result = await lastValueFrom(
             context.rpc.catalog.svc.productCategories(
-                transformFindArgsToGrpcQuery(args),
+                {
+                    categoryIds: args.categoryIds ?? [],
+                    productIds: args.productIds ?? [],
+                },
                 grpcContext,
             ),
         );
 
         return result.productCategories;
-    }
-
-    @Query(() => Int)
-    async productCategoriesTotal(
-        @Context() context: GqlContext,
-        @Args() args: FindManyProductCategoryArgs,
-    ): Promise<number> {
-        const grpcContext = setRpcContext(context);
-
-        const result = await lastValueFrom(
-            context.rpc.catalog.svc.productCategoriesTotal(
-                transformFindArgsToGrpcQuery(args),
-                grpcContext,
-            ),
-        );
-
-        return result.totalCount ?? 0;
     }
 }

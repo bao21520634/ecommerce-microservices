@@ -1,19 +1,23 @@
 import { Resolver, Args, Context, Mutation } from '@nestjs/graphql';
-import { GqlContext, setRpcContext } from '@ecommerce-microservices/core';
-import { mapEnum } from '@ecommerce-microservices/common';
-import { CategoryStatus as PrismaCategoryStatus } from '@prisma/client';
-import { Category as PbCategory } from '@ecommerce-microservices/proto-schema';
+import {
+    GqlContext,
+    RESOURCES,
+    ROLES,
+    SCOPES,
+    setRpcContext,
+} from '@ecommerce-microservices/core';
 import { lastValueFrom } from 'rxjs';
 import { Category as CategoryDto } from './entity/categories.entity';
 import { CreateOneCategoryArgs } from './dtos/create-one-category.args';
 import { UpdateOneCategoryArgs } from './dtos/update-one-category.args';
-import { FirebaseAuthGuard } from '@ecommerce-microservices/firebase-auth';
-import { UseGuards } from '@nestjs/common';
+import { Resource, Roles, Scopes } from 'nest-keycloak-connect';
 
-@UseGuards(FirebaseAuthGuard)
 @Resolver(() => CategoryDto)
+@Resource(RESOURCES.CATEGORY)
+@Roles({ roles: [ROLES.VENDOR] })
 export class CategoriesMutationResolver {
     @Mutation(() => CategoryDto, { nullable: true })
+    @Scopes(SCOPES.CREATE)
     async createCategory(
         @Context() context: GqlContext,
         @Args() input: CreateOneCategoryArgs,
@@ -23,30 +27,17 @@ export class CategoriesMutationResolver {
         const result = await lastValueFrom(
             context.rpc.catalog.svc.createCategory(
                 {
-                    data: {
-                        ...input.data,
-                        status: mapEnum(
-                            PbCategory.CategoryStatus,
-                            PrismaCategoryStatus,
-                            input.data.status,
-                        ),
-                    },
+                    data: input.data,
                 },
                 grpcContext,
             ),
         );
 
-        return {
-            ...result,
-            status: mapEnum(
-                PrismaCategoryStatus,
-                PbCategory.CategoryStatus,
-                result.status,
-            ),
-        } as CategoryDto;
+        return result as CategoryDto;
     }
 
     @Mutation(() => CategoryDto, { nullable: true })
+    @Scopes(SCOPES.UPDATE)
     async updateCategory(
         @Context() context: GqlContext,
         @Args() input: UpdateOneCategoryArgs,
@@ -57,30 +48,17 @@ export class CategoriesMutationResolver {
             context.rpc.catalog.svc.updateCategory(
                 {
                     id: input.id,
-                    data: {
-                        ...input.data,
-                        status: mapEnum(
-                            PbCategory.CategoryStatus,
-                            PrismaCategoryStatus,
-                            input.data.status,
-                        ),
-                    },
+                    data: input.data,
                 },
                 grpcContext,
             ),
         );
 
-        return {
-            ...result,
-            status: mapEnum(
-                PrismaCategoryStatus,
-                PbCategory.CategoryStatus,
-                result.status,
-            ),
-        } as CategoryDto;
+        return result as CategoryDto;
     }
 
     @Mutation(() => CategoryDto, { nullable: true })
+    @Scopes(SCOPES.DELETE)
     async deleteCategory(
         @Context() context: GqlContext,
         @Args('id') id: string,

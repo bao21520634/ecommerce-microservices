@@ -20,19 +20,22 @@ export class ProductOrderByWithRelationInput {
     slug?: `${SortOrder}`;
 
     @Field(() => SortOrder, { nullable: true })
+    brand?: `${SortOrder}`;
+
+    @Field(() => SortOrder, { nullable: true })
     shortDescription?: `${SortOrder}`;
 
     @Field(() => SortOrder, { nullable: true })
     longDescription?: `${SortOrder}`;
 
     @Field(() => SortOrder, { nullable: true })
-    thumbnailUrl?: `${SortOrder}`;
+    thumbnail?: `${SortOrder}`;
+
+    @Field(() => SortOrder, { nullable: true })
+    images?: `${SortOrder}`;
 
     @Field(() => SortOrder, { nullable: true })
     productType?: `${SortOrder}`;
-
-    @Field(() => SortOrder, { nullable: true })
-    productTemplateId?: `${SortOrder}`;
 
     @Field(() => SortOrder, { nullable: true })
     manufacturerId?: `${SortOrder}`;
@@ -41,19 +44,10 @@ export class ProductOrderByWithRelationInput {
     sortOrder?: `${SortOrder}`;
 
     @Field(() => SortOrder, { nullable: true })
-    metaTitle?: `${SortOrder}`;
-
-    @Field(() => SortOrder, { nullable: true })
-    metaDescription?: `${SortOrder}`;
-
-    @Field(() => SortOrder, { nullable: true })
     metaKeywords?: `${SortOrder}`;
 
     @Field(() => SortOrder, { nullable: true })
     tags?: `${SortOrder}`;
-
-    @Field(() => SortOrder, { nullable: true })
-    allowCustomMetaTag?: `${SortOrder}`;
 
     @Field(() => SortOrder, { nullable: true })
     limitedToLocations?: `${SortOrder}`;

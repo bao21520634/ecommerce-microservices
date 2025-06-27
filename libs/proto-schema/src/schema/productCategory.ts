@@ -26,12 +26,27 @@ export interface ProductCategoryInput {
   categoryId: string;
 }
 
+export interface ProductCategoryFilterInput {
+  productIds: string[];
+  categoryIds: string[];
+}
+
+export interface ProductCategorySearchInput {
+  categoryIds: string[];
+  page: number;
+  pageSize: number;
+  /** Format: "field:value" */
+  filters: string[];
+  /** Format: "field:asc" or "field:desc" */
+  sortBy: string[];
+}
+
 export interface CreateProductCategoryInput {
   data?: ProductCategoryInput | undefined;
 }
 
 export interface CreateManyProductCategoriesInput {
-  ProductCategories: ProductCategoryInput[];
+  productCategories: ProductCategoryInput[];
 }
 
 export interface UpdateProductCategoryInput {
@@ -259,6 +274,189 @@ export const ProductCategoryInput: MessageFns<ProductCategoryInput> = {
   },
 };
 
+function createBaseProductCategoryFilterInput(): ProductCategoryFilterInput {
+  return { productIds: [], categoryIds: [] };
+}
+
+export const ProductCategoryFilterInput: MessageFns<ProductCategoryFilterInput> = {
+  encode(message: ProductCategoryFilterInput, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.productIds) {
+      writer.uint32(10).string(v!);
+    }
+    for (const v of message.categoryIds) {
+      writer.uint32(18).string(v!);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): ProductCategoryFilterInput {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseProductCategoryFilterInput();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.productIds.push(reader.string());
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.categoryIds.push(reader.string());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ProductCategoryFilterInput {
+    return {
+      productIds: globalThis.Array.isArray(object?.productIds)
+        ? object.productIds.map((e: any) => globalThis.String(e))
+        : [],
+      categoryIds: globalThis.Array.isArray(object?.categoryIds)
+        ? object.categoryIds.map((e: any) => globalThis.String(e))
+        : [],
+    };
+  },
+
+  toJSON(message: ProductCategoryFilterInput): unknown {
+    const obj: any = {};
+    if (message.productIds?.length) {
+      obj.productIds = message.productIds;
+    }
+    if (message.categoryIds?.length) {
+      obj.categoryIds = message.categoryIds;
+    }
+    return obj;
+  },
+};
+
+function createBaseProductCategorySearchInput(): ProductCategorySearchInput {
+  return { categoryIds: [], page: 0, pageSize: 0, filters: [], sortBy: [] };
+}
+
+export const ProductCategorySearchInput: MessageFns<ProductCategorySearchInput> = {
+  encode(message: ProductCategorySearchInput, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.categoryIds) {
+      writer.uint32(10).string(v!);
+    }
+    if (message.page !== 0) {
+      writer.uint32(16).int32(message.page);
+    }
+    if (message.pageSize !== 0) {
+      writer.uint32(24).int32(message.pageSize);
+    }
+    for (const v of message.filters) {
+      writer.uint32(34).string(v!);
+    }
+    for (const v of message.sortBy) {
+      writer.uint32(42).string(v!);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): ProductCategorySearchInput {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseProductCategorySearchInput();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.categoryIds.push(reader.string());
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.page = reader.int32();
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.pageSize = reader.int32();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.filters.push(reader.string());
+          continue;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.sortBy.push(reader.string());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ProductCategorySearchInput {
+    return {
+      categoryIds: globalThis.Array.isArray(object?.categoryIds)
+        ? object.categoryIds.map((e: any) => globalThis.String(e))
+        : [],
+      page: isSet(object.page) ? globalThis.Number(object.page) : 0,
+      pageSize: isSet(object.pageSize) ? globalThis.Number(object.pageSize) : 0,
+      filters: globalThis.Array.isArray(object?.filters) ? object.filters.map((e: any) => globalThis.String(e)) : [],
+      sortBy: globalThis.Array.isArray(object?.sortBy) ? object.sortBy.map((e: any) => globalThis.String(e)) : [],
+    };
+  },
+
+  toJSON(message: ProductCategorySearchInput): unknown {
+    const obj: any = {};
+    if (message.categoryIds?.length) {
+      obj.categoryIds = message.categoryIds;
+    }
+    if (message.page !== 0) {
+      obj.page = Math.round(message.page);
+    }
+    if (message.pageSize !== 0) {
+      obj.pageSize = Math.round(message.pageSize);
+    }
+    if (message.filters?.length) {
+      obj.filters = message.filters;
+    }
+    if (message.sortBy?.length) {
+      obj.sortBy = message.sortBy;
+    }
+    return obj;
+  },
+};
+
 function createBaseCreateProductCategoryInput(): CreateProductCategoryInput {
   return {};
 }
@@ -309,12 +507,12 @@ export const CreateProductCategoryInput: MessageFns<CreateProductCategoryInput> 
 };
 
 function createBaseCreateManyProductCategoriesInput(): CreateManyProductCategoriesInput {
-  return { ProductCategories: [] };
+  return { productCategories: [] };
 }
 
 export const CreateManyProductCategoriesInput: MessageFns<CreateManyProductCategoriesInput> = {
   encode(message: CreateManyProductCategoriesInput, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    for (const v of message.ProductCategories) {
+    for (const v of message.productCategories) {
       ProductCategoryInput.encode(v!, writer.uint32(10).fork()).join();
     }
     return writer;
@@ -332,7 +530,7 @@ export const CreateManyProductCategoriesInput: MessageFns<CreateManyProductCateg
             break;
           }
 
-          message.ProductCategories.push(ProductCategoryInput.decode(reader, reader.uint32()));
+          message.productCategories.push(ProductCategoryInput.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -346,16 +544,16 @@ export const CreateManyProductCategoriesInput: MessageFns<CreateManyProductCateg
 
   fromJSON(object: any): CreateManyProductCategoriesInput {
     return {
-      ProductCategories: globalThis.Array.isArray(object?.ProductCategories)
-        ? object.ProductCategories.map((e: any) => ProductCategoryInput.fromJSON(e))
+      productCategories: globalThis.Array.isArray(object?.productCategories)
+        ? object.productCategories.map((e: any) => ProductCategoryInput.fromJSON(e))
         : [],
     };
   },
 
   toJSON(message: CreateManyProductCategoriesInput): unknown {
     const obj: any = {};
-    if (message.ProductCategories?.length) {
-      obj.ProductCategories = message.ProductCategories.map((e) => ProductCategoryInput.toJSON(e));
+    if (message.productCategories?.length) {
+      obj.productCategories = message.productCategories.map((e) => ProductCategoryInput.toJSON(e));
     }
     return obj;
   },

@@ -23,10 +23,24 @@ export interface RedisConfig {
     password: string;
 }
 
+export interface KeycloakConfig {
+    authServerUrl: string;
+    realm: string;
+    clientId: string;
+    secret: string;
+    policyEnforcement: string;
+    tokenValidation: string;
+}
+
 export interface ElasticsearchConfig {
     node: string;
     username: string;
     password: string;
     requestTimeout?: number;
     maxRetries?: number;
+}
+
+export interface OpenAIConfig {
+    apiKey: string;
+    model?: string;
 }

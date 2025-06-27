@@ -26,13 +26,10 @@ export class CategoryOrderByWithRelationInput {
     longDescription?: `${SortOrder}`;
 
     @Field(() => SortOrder, { nullable: true })
-    thumbnailUrl?: `${SortOrder}`;
+    thumbnail?: `${SortOrder}`;
 
     @Field(() => SortOrder, { nullable: true })
     backgroundUrl?: `${SortOrder}`;
-
-    @Field(() => SortOrder, { nullable: true })
-    templateId?: `${SortOrder}`;
 
     @Field(() => SortOrder, { nullable: true })
     parentId?: `${SortOrder}`;
@@ -41,16 +38,7 @@ export class CategoryOrderByWithRelationInput {
     sortOrder?: `${SortOrder}`;
 
     @Field(() => SortOrder, { nullable: true })
-    metaTitle?: `${SortOrder}`;
-
-    @Field(() => SortOrder, { nullable: true })
-    metaDescription?: `${SortOrder}`;
-
-    @Field(() => SortOrder, { nullable: true })
     metaKeywords?: `${SortOrder}`;
-
-    @Field(() => SortOrder, { nullable: true })
-    allowCustomMetaTag?: `${SortOrder}`;
 
     @Field(() => SortOrder, { nullable: true })
     limitedToLocations?: `${SortOrder}`;
@@ -60,24 +48,6 @@ export class CategoryOrderByWithRelationInput {
 
     @Field(() => SortOrder, { nullable: true })
     taxCategory?: `${SortOrder}`;
-
-    @Field(() => SortOrder, { nullable: true })
-    pageSize?: `${SortOrder}`;
-
-    @Field(() => SortOrder, { nullable: true })
-    allowCustomersToSelectPageSize?: `${SortOrder}`;
-
-    @Field(() => SortOrder, { nullable: true })
-    priceRangeFiltering?: `${SortOrder}`;
-
-    @Field(() => SortOrder, { nullable: true })
-    manuallyPriceRange?: `${SortOrder}`;
-
-    @Field(() => SortOrder, { nullable: true })
-    priceFrom?: `${SortOrder}`;
-
-    @Field(() => SortOrder, { nullable: true })
-    priceTo?: `${SortOrder}`;
 
     @Field(() => SortOrder, { nullable: true })
     status?: `${SortOrder}`;

@@ -4,9 +4,8 @@ import { Logger } from '@nestjs/common';
 import { CategoryRepository } from '../../repositories';
 import { Category } from '@ecommerce-microservices/proto-schema';
 import { RpcException } from '@nestjs/microservices';
-import { CategoryStatus as PrismaCategoryStatus } from '@prisma/client';
-import { mapEnum } from '@ecommerce-microservices/common';
 import { CategoryUpdatedEvent } from '../../events';
+import { Prisma } from '@prisma/client';
 
 @CommandHandler(UpdateCategoryCommand)
 export class UpdateCategoryHandler
@@ -29,26 +28,12 @@ export class UpdateCategoryHandler
                 where: {
                     id: command.request.id,
                 },
-                data: {
-                    ...category,
-                    status: mapEnum(
-                        PrismaCategoryStatus,
-                        Category.CategoryStatus,
-                        category.status,
-                    ),
-                },
+                data: category as Prisma.CategoryUpdateInput,
             });
 
             await this.eventBus.publish(new CategoryUpdatedEvent(result));
 
-            return {
-                ...result,
-                status: mapEnum(
-                    Category.CategoryStatus,
-                    PrismaCategoryStatus,
-                    result.status,
-                ),
-            };
+            return result;
         } catch (error) {
             this.logger.error(error);
             throw new RpcException(error);

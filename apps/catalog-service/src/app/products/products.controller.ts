@@ -23,7 +23,7 @@ export class ProductsController
 {
     constructor(private commandBus: CommandBus, private queryBus: QueryBus) {}
 
-    @GrpcMethod('CatalogService', 'product')
+    @GrpcMethod(CatalogService.CATALOG_SERVICE_NAME, 'product')
     async product(
         request: Common.Id,
         ctx: any,
@@ -41,7 +41,7 @@ export class ProductsController
      * @param request
      * @param ctx
      */
-    @GrpcMethod('CatalogService', 'products')
+    @GrpcMethod(CatalogService.CATALOG_SERVICE_NAME, 'products')
     async products(request: Common.Query, ctx: any): Promise<Product.Products> {
         try {
             return this.queryBus.execute(new GetProductsQuery(request));
@@ -50,7 +50,7 @@ export class ProductsController
         }
     }
 
-    @GrpcMethod('CatalogService', 'productsTotal')
+    @GrpcMethod(CatalogService.CATALOG_SERVICE_NAME, 'productsTotal')
     async productsTotal(
         request: Common.Query,
         ctx: any,
@@ -67,7 +67,7 @@ export class ProductsController
      * @param request
      * @param ctx
      */
-    @GrpcMethod('CatalogService', 'createProduct')
+    @GrpcMethod(CatalogService.CATALOG_SERVICE_NAME, 'createProduct')
     async createProduct(
         request: Product.CreateProductInput,
         ctx: any,
@@ -81,7 +81,7 @@ export class ProductsController
         }
     }
 
-    @GrpcMethod('CatalogService', 'updateProduct')
+    @GrpcMethod(CatalogService.CATALOG_SERVICE_NAME, 'updateProduct')
     async updateProduct(
         request: Product.UpdateProductInput,
         ctx: any,
@@ -95,7 +95,7 @@ export class ProductsController
         }
     }
 
-    @GrpcMethod('CatalogService', 'deleteProduct')
+    @GrpcMethod(CatalogService.CATALOG_SERVICE_NAME, 'deleteProduct')
     async deleteProduct(
         request: Common.Id,
         ctx: any,

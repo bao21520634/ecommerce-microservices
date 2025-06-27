@@ -1,10 +1,9 @@
+import { CategoryStatus } from '@ecommerce-microservices/graphql-query';
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
 import { Int } from '@nestjs/graphql';
-import { Float } from '@nestjs/graphql';
 import { ProductCategory } from '../../../product-categories/graphql/entity/product-categories.entity';
-import { CategoryStatus } from '@ecommerce-microservices/graphql-query';
 
 @ObjectType()
 export class Category {
@@ -30,13 +29,10 @@ export class Category {
     longDescription!: string | null;
 
     @Field(() => String, { nullable: true })
-    thumbnailUrl!: string | null;
+    thumbnail!: string | null;
 
     @Field(() => String, { nullable: true })
     backgroundUrl!: string | null;
-
-    @Field(() => String, { nullable: true })
-    templateId!: string | null;
 
     @Field(() => String, { nullable: true })
     parentId!: string | null;
@@ -45,16 +41,7 @@ export class Category {
     sortOrder!: number;
 
     @Field(() => String, { nullable: true })
-    metaTitle!: string | null;
-
-    @Field(() => String, { nullable: true })
-    metaDescription!: string | null;
-
-    @Field(() => String, { nullable: true })
     metaKeywords!: string | null;
-
-    @Field(() => Boolean, { defaultValue: false, nullable: false })
-    allowCustomMetaTag!: boolean;
 
     @Field(() => Boolean, { defaultValue: false, nullable: false })
     limitedToLocations!: boolean;
@@ -64,24 +51,6 @@ export class Category {
 
     @Field(() => String, { nullable: true })
     taxCategory!: string | null;
-
-    @Field(() => Int, { nullable: true })
-    pageSize!: number | null;
-
-    @Field(() => Boolean, { defaultValue: false, nullable: false })
-    allowCustomersToSelectPageSize!: boolean;
-
-    @Field(() => Boolean, { defaultValue: false, nullable: false })
-    priceRangeFiltering!: boolean;
-
-    @Field(() => Boolean, { defaultValue: false, nullable: false })
-    manuallyPriceRange!: boolean;
-
-    @Field(() => Float, { nullable: true })
-    priceFrom!: number | null;
-
-    @Field(() => Float, { nullable: true })
-    priceTo!: number | null;
 
     @Field(() => CategoryStatus, { defaultValue: 'Active', nullable: false })
     status!: `${CategoryStatus}`;

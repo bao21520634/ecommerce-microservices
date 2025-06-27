@@ -2,70 +2,57 @@ syntax = "proto3";
 
 package order;
 
-import "address.proto";
 import "google/protobuf/timestamp.proto";
 import 'google/protobuf/any.proto';
 import 'google/protobuf/struct.proto';
-
-enum OrderStatus {
-  Draft = 0;
-  WaitForConfirmation = 1;
-  ReadyForDelivery = 2;
-  Delivery = 3;
-  Delivered = 4;
-  Cancelled = 5;
-}
-
-enum PaymentStatus {
-  Pending = 0;
-  Paid = 1;
-  UnPaid = 2;
-}
-
-enum ShippingStatus {
-  Delivering = 0;
-}
 
 message Order {
   string id = 1;
   string code = 2;
   string customerId = 3;
-  float subTotal = 4;
-  float discount = 5;
-  float tax = 6;
-  float total = 7;
-  string note = 8;
-  address.Address address = 9;
-  OrderStatus orderStatus = 10;
-  PaymentStatus paymentStatus = 11;
-  ShippingStatus shippingStatus = 12;
-  google.protobuf.Timestamp createdAt = 13;
-  google.protobuf.Timestamp updatedAt = 14;
+  string addressId = 4;
+  string expectedDeliveryDate = 5;
+  string paymentMethod = 6;
+  float subTotal = 7;
+  float discount = 8;
+  float tax = 9;
+  float deliveryFee = 10;
+  float total = 11;
+  bool isPaid = 12;
+  google.protobuf.Timestamp paidAt = 13;
+  google.protobuf.Timestamp deliveredAt = 14;
+  string note = 15;
+  string orderStatus = 16;
+  string paymentStatus = 17;
+  string shippingStatus = 18;
+  optional string paymentResult = 19;
+  google.protobuf.Timestamp createdAt = 20;
+  google.protobuf.Timestamp updatedAt = 21;
 }
 
 message Orders {
   repeated Order orders = 1;
-  int32 totalCount = 2;
-  int32 page = 3;
-  int32 pageSize = 4;
-}
-
-message OrderEdge {
-  Orders node = 1;
-  string cursor = 2;
 }
 
 message OrderInput {
   string code = 1;
   string customerId = 2;
-  float subTotal = 3;
-  float discount = 4;
-  float tax = 5;
-  float total = 6;
-  string note = 7;
-  OrderStatus orderStatus = 8;
-  PaymentStatus paymentStatus = 9;
-  ShippingStatus shippingStatus = 10;
+  optional string addressId = 3;
+  optional string expectedDeliveryDate = 4;
+  optional string paymentMethod = 5;
+  float subTotal = 6;
+  optional float discount = 7;
+  optional float tax = 8;
+  optional float deliveryFee = 9;
+  float total = 10;
+  optional bool isPaid = 11;
+  optional google.protobuf.Timestamp paidAt = 12;
+  optional google.protobuf.Timestamp deliveredAt = 13;
+  optional string note = 14;
+  optional string orderStatus = 15;
+  optional string paymentStatus = 16;
+  optional string shippingStatus = 17;
+  optional string paymentResult = 18;
 }
 
 message CreateOrderInput {
