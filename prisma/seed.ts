@@ -62,6 +62,16 @@ async function main() {
     ]);
 
     console.log('Database seeded with roles and permissions!');
+
+    const category = await prisma.category.create({
+        data: {
+            name: 'Electronics',
+            slug: 'electronics',
+            shortDescription: 'Electronic devices and gadgets',
+        },
+    });
+
+    await createSampleProducts(category.id);
 }
 
 async function createResourcePermissions(
@@ -83,6 +93,64 @@ async function createResourcePermissions(
     }
 
     return permissions;
+}
+
+async function createSampleProducts(categoryId: string) {
+    const products = [
+        {
+            id: '67d6f9bbe17e94953eb6c07c',
+            name: 'iPhone 15 Pro',
+            slug: 'iphone-15-pro',
+            brand: 'Apple',
+            shortDescription: 'Latest iPhone with A17 chip',
+            longDescription:
+                'The iPhone 15 Pro features an A17 Pro chip, a titanium frame, and an improved camera system.',
+            manufacturerId: 'apple',
+            metaKeywords: 'iPhone, Apple, Smartphone',
+            tags: ['smartphone', 'apple', 'iphone'],
+            priceExclTax: 999,
+            priceInclTax: 1099,
+            stockAvailability: 50,
+            attributes: {
+                color: 'Black',
+                storage: '256GB',
+            },
+            variantAttributes: null,
+        },
+        {
+            id: '67d6f9c3c86999df6e876741',
+            name: 'Samsung Galaxy S24 Ultra',
+            slug: 'samsung-galaxy-s24-ultra',
+            brand: 'Samsung',
+            shortDescription: 'Powerful flagship with S Pen support',
+            longDescription:
+                'The Samsung Galaxy S24 Ultra is packed with the latest Snapdragon chip, an advanced camera, and a stunning AMOLED display.',
+            manufacturerId: 'samsung',
+            metaKeywords: 'Samsung, Galaxy, Smartphone',
+            tags: ['smartphone', 'samsung', 'galaxy'],
+            priceExclTax: 1199,
+            priceInclTax: 1299,
+            stockAvailability: 40,
+            attributes: {
+                color: 'Phantom Black',
+                storage: '512GB',
+            },
+            variantAttributes: null,
+        },
+    ];
+
+    await prisma.product.createMany({
+        data: products,
+    });
+
+    await prisma.productCategory.createMany({
+        data: products.map((product) => ({
+            productId: product.id,
+            categoryId: categoryId,
+        })),
+    });
+
+    console.log('Sample products added!');
 }
 
 main()

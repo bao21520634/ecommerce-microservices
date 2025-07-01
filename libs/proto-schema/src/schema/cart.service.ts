@@ -8,7 +8,7 @@
 import { Metadata } from "@grpc/grpc-js";
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
-import { Count, DeleteManyResponse, Id, Query } from "./common";
+import { Count, DeleteManyResponse, DeleteResponse, Id, Query } from "./common";
 import {
   CreateManyOrdersInput,
   CreateOrderInput,
@@ -51,7 +51,7 @@ export interface CartServiceClient {
 
   updateManyOrders(request: UpdateManyOrdersInput, metadata?: Metadata): Observable<Orders>;
 
-  deleteOrder(request: Id, metadata?: Metadata): Observable<Order>;
+  deleteOrder(request: Id, metadata?: Metadata): Observable<DeleteResponse>;
 
   deleteManyOrders(request: DeleteManyOrdersInput, metadata?: Metadata): Observable<DeleteManyResponse>;
 
@@ -71,7 +71,7 @@ export interface CartServiceClient {
 
   updateManyOrderItems(request: UpdateManyOrderItemsInput, metadata?: Metadata): Observable<OrderItems>;
 
-  deleteOrderItem(request: Id, metadata?: Metadata): Observable<OrderItem>;
+  deleteOrderItem(request: Id, metadata?: Metadata): Observable<DeleteResponse>;
 
   deleteManyOrderItems(request: DeleteManyOrderItemsInput, metadata?: Metadata): Observable<DeleteManyResponse>;
 }
@@ -93,7 +93,7 @@ export interface CartServiceController {
 
   updateManyOrders(request: UpdateManyOrdersInput, metadata?: Metadata): Promise<Orders> | Observable<Orders> | Orders;
 
-  deleteOrder(request: Id, metadata?: Metadata): Promise<Order> | Observable<Order> | Order;
+  deleteOrder(request: Id, metadata?: Metadata): Promise<DeleteResponse> | Observable<DeleteResponse> | DeleteResponse;
 
   deleteManyOrders(
     request: DeleteManyOrdersInput,
@@ -131,7 +131,10 @@ export interface CartServiceController {
     metadata?: Metadata,
   ): Promise<OrderItems> | Observable<OrderItems> | OrderItems;
 
-  deleteOrderItem(request: Id, metadata?: Metadata): Promise<OrderItem> | Observable<OrderItem> | OrderItem;
+  deleteOrderItem(
+    request: Id,
+    metadata?: Metadata,
+  ): Promise<DeleteResponse> | Observable<DeleteResponse> | DeleteResponse;
 
   deleteManyOrderItems(
     request: DeleteManyOrderItemsInput,

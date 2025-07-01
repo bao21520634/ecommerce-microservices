@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package setting;
+
+import "google/protobuf/timestamp.proto";
+
+message Setting {
+  string id = 1;
+  CommonSettings common = 2;
+  SiteSettings site = 3;
+  repeated Carousel carousels = 4;
+  repeated Language availableLanguages = 5;
+  string defaultLanguage = 6;
+  repeated Currency availableCurrencies = 7;
+  string defaultCurrency = 8;
+  repeated PaymentMethod availablePaymentMethods = 9;
+  string defaultPaymentMethod = 10;
+  google.protobuf.Timestamp createdAt = 11;
+  google.protobuf.Timestamp updatedAt = 12;
+}
+
+message SettingInput {
+  optional CommonSettings common = 1;
+  optional SiteSettings site = 2;
+  repeated Carousel carousels = 3;
+  repeated Language availableLanguages = 4;
+  optional string defaultLanguage = 5;
+  repeated Currency availableCurrencies = 6;
+  optional string defaultCurrency = 7;
+  repeated PaymentMethod availablePaymentMethods = 8;
+  optional string defaultPaymentMethod = 9;
+}
+
+message UpdateSettingInput {
+    string id = 1;
+    SettingInput data = 2;
+}
+
+message CommonSettings {
+  optional int32 pageSize = 1;
+  optional bool isMaintenanceMode = 2;
+  optional float freeShippingMinPrice = 3;
+  optional string defaultTheme = 4;
+  optional string defaultColor = 5;
+}
+
+message SiteSettings {
+  optional string name = 1;
+  optional string url = 2;
+  optional string logo = 3;
+  optional string slogan = 4;
+  optional string description = 5;
+  optional string keywords = 6;
+  optional string email = 7;
+  optional string phone = 8;
+  optional string author = 9;
+  optional string copyright = 10;
+  optional string address = 11;
+}
+
+message Carousel {
+  optional string title = 1;
+  optional string url = 2;
+  optional string image = 3;
+  optional string buttonCaption = 4;
+}
+
+message Language {
+  optional string name = 1;
+  optional string code = 2;
+}
+
+message Currency {
+  optional string name = 1;
+  optional string code = 2;
+  optional float convertRate = 3;
+  optional string symbol = 4;
+}
+
+message PaymentMethod {
+  optional string name = 1;
+  optional float commission = 2;
+}

@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package elastic;
+
+message SearchMetadata {
+  int32 totalResults = 1;
+  int32 page = 2;
+  int32 pageSize = 3;
+  int32 totalPages = 4;
+}
+
+message SearchParams {
+  string queryString = 1;
+  int32 page = 2;
+  int32 pageSize = 3;
+  repeated string filters = 4; // Format: "field:value"
+  repeated string sortBy = 5; // Format: "field:asc" or "field:desc"
+}
+
+message SearchHit {
+  string id = 1;
+  float score = 2;
+  string index_name = 3;
+  bytes document = 4; // JSON blob of the hit
+  map<string, string> highlights = 5;
+}
+
+message SearchResponse {
+  SearchMetadata metadata = 1;
+  repeated SearchHit hits = 2;
+  map<string, bytes> aggregations = 3; // JSON blobs of aggregations
+}
+
+message SuggestionRequest {
+  string prefix = 1;
+  string index_name = 2;
+  string field_name = 3;
+  int32 size = 4;
+}
+
+message SuggestionResponse {
+  repeated string suggestions = 1;
+}
+  

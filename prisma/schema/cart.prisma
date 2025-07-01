@@ -26,15 +26,23 @@ model Order {
   customerId String  @db.ObjectId // Reference to User in Account service
   addressId  String? @db.ObjectId // Reference to Address in Account service
 
-  subTotal Float
-  discount Float   @default(0)
-  tax      Float   @default(0)
-  total    Float
-  note     String?
+  expectedDeliveryDate String?
+  paymentMethod        String?
+  subTotal             Float
+  discount             Float     @default(0)
+  tax                  Float     @default(0)
+  deliveryFee          Float     @default(0)
+  total                Float
+  isPaid               Boolean   @default(true)
+  paidAt               DateTime?
+  deliveredAt          DateTime?
+  note                 String?
 
   orderStatus    OrderStatus     @default(Draft)
   paymentStatus  PaymentStatus   @default(Pending)
   shippingStatus ShippingStatus?
+
+  paymentResult Json?
 
   orderItems OrderItem[]
 }
@@ -45,7 +53,7 @@ model OrderItem {
   updatedAt DateTime @updatedAt
 
   productVariantId String @db.ObjectId // Reference to Product in Catalog service
-  order            Order  @relation(fields: [orderId], references: [id])
+  order            Order? @relation(fields: [orderId], references: [id])
   orderId          String @db.ObjectId
 
   displayName  String

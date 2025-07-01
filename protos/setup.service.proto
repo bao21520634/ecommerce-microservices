@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package setup;
+
+import "setting.proto";
+import "google/protobuf/empty.proto";
+
+service SetupService {
+    rpc setting (google.protobuf.Empty) returns (setting.Setting);
+    rpc updateSetting (setting.UpdateSettingInput) returns (setting.Setting);
+}

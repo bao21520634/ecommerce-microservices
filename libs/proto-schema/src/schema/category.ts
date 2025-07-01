@@ -13,70 +13,21 @@ import { Timestamp } from "./google/protobuf/timestamp";
 
 export const protobufPackage = "category";
 
-export enum CategoryStatus {
-  Active = 0,
-  Locked = 1,
-  Deleted = 2,
-  UNRECOGNIZED = -1,
-}
-
-export function categoryStatusFromJSON(object: any): CategoryStatus {
-  switch (object) {
-    case 0:
-    case "Active":
-      return CategoryStatus.Active;
-    case 1:
-    case "Locked":
-      return CategoryStatus.Locked;
-    case 2:
-    case "Deleted":
-      return CategoryStatus.Deleted;
-    case -1:
-    case "UNRECOGNIZED":
-    default:
-      return CategoryStatus.UNRECOGNIZED;
-  }
-}
-
-export function categoryStatusToJSON(object: CategoryStatus): string {
-  switch (object) {
-    case CategoryStatus.Active:
-      return "Active";
-    case CategoryStatus.Locked:
-      return "Locked";
-    case CategoryStatus.Deleted:
-      return "Deleted";
-    case CategoryStatus.UNRECOGNIZED:
-    default:
-      return "UNRECOGNIZED";
-  }
-}
-
 export interface Category {
   id: string;
   name: string;
   slug: string;
-  shortDescription?: string | undefined;
-  longDescription?: string | undefined;
-  thumbnailUrl?: string | undefined;
-  backgroundUrl?: string | undefined;
-  templateId?: string | undefined;
-  parentId?: string | undefined;
-  sortOrder?: number | undefined;
-  metaTitle?: string | undefined;
-  metaDescription?: string | undefined;
-  metaKeywords?: string | undefined;
-  allowCustomMetaTag?: boolean | undefined;
-  limitedToLocations?: boolean | undefined;
-  limitedToStores?: boolean | undefined;
-  taxCategory?: string | undefined;
-  pageSize?: number | undefined;
-  allowCustomersToSelectPageSize?: boolean | undefined;
-  priceRangeFiltering?: boolean | undefined;
-  manuallyPriceRange?: boolean | undefined;
-  priceFrom?: number | undefined;
-  priceTo?: number | undefined;
-  status?: CategoryStatus | undefined;
+  shortDescription: string;
+  longDescription: string;
+  thumbnail: string;
+  backgroundUrl: string;
+  parentId: string;
+  sortOrder: number;
+  metaKeywords: string;
+  limitedToLocations: boolean;
+  limitedToStores: boolean;
+  taxCategory: string;
+  status: string;
   createdAt?: Date | undefined;
   updatedAt?: Date | undefined;
 }
@@ -90,25 +41,15 @@ export interface CategoryInput {
   slug: string;
   shortDescription?: string | undefined;
   longDescription?: string | undefined;
-  thumbnailUrl?: string | undefined;
+  thumbnail?: string | undefined;
   backgroundUrl?: string | undefined;
-  templateId?: string | undefined;
   parentId?: string | undefined;
   sortOrder?: number | undefined;
-  metaTitle?: string | undefined;
-  metaDescription?: string | undefined;
   metaKeywords?: string | undefined;
-  allowCustomMetaTag?: boolean | undefined;
   limitedToLocations?: boolean | undefined;
   limitedToStores?: boolean | undefined;
   taxCategory?: string | undefined;
-  pageSize?: number | undefined;
-  allowCustomersToSelectPageSize?: boolean | undefined;
-  priceRangeFiltering?: boolean | undefined;
-  manuallyPriceRange?: boolean | undefined;
-  priceFrom?: number | undefined;
-  priceTo?: number | undefined;
-  status?: CategoryStatus | undefined;
+  status?: string | undefined;
 }
 
 export interface CreateCategoryInput {
@@ -150,7 +91,22 @@ wrappers[".google.protobuf.Timestamp"] = {
 } as any;
 
 function createBaseCategory(): Category {
-  return { id: "", name: "", slug: "" };
+  return {
+    id: "",
+    name: "",
+    slug: "",
+    shortDescription: "",
+    longDescription: "",
+    thumbnail: "",
+    backgroundUrl: "",
+    parentId: "",
+    sortOrder: 0,
+    metaKeywords: "",
+    limitedToLocations: false,
+    limitedToStores: false,
+    taxCategory: "",
+    status: "",
+  };
 }
 
 export const Category: MessageFns<Category> = {
@@ -164,74 +120,44 @@ export const Category: MessageFns<Category> = {
     if (message.slug !== "") {
       writer.uint32(26).string(message.slug);
     }
-    if (message.shortDescription !== undefined) {
+    if (message.shortDescription !== "") {
       writer.uint32(34).string(message.shortDescription);
     }
-    if (message.longDescription !== undefined) {
+    if (message.longDescription !== "") {
       writer.uint32(42).string(message.longDescription);
     }
-    if (message.thumbnailUrl !== undefined) {
-      writer.uint32(50).string(message.thumbnailUrl);
+    if (message.thumbnail !== "") {
+      writer.uint32(50).string(message.thumbnail);
     }
-    if (message.backgroundUrl !== undefined) {
+    if (message.backgroundUrl !== "") {
       writer.uint32(58).string(message.backgroundUrl);
     }
-    if (message.templateId !== undefined) {
-      writer.uint32(66).string(message.templateId);
+    if (message.parentId !== "") {
+      writer.uint32(66).string(message.parentId);
     }
-    if (message.parentId !== undefined) {
-      writer.uint32(74).string(message.parentId);
+    if (message.sortOrder !== 0) {
+      writer.uint32(72).int32(message.sortOrder);
     }
-    if (message.sortOrder !== undefined) {
-      writer.uint32(80).int32(message.sortOrder);
+    if (message.metaKeywords !== "") {
+      writer.uint32(82).string(message.metaKeywords);
     }
-    if (message.metaTitle !== undefined) {
-      writer.uint32(90).string(message.metaTitle);
+    if (message.limitedToLocations !== false) {
+      writer.uint32(88).bool(message.limitedToLocations);
     }
-    if (message.metaDescription !== undefined) {
-      writer.uint32(98).string(message.metaDescription);
+    if (message.limitedToStores !== false) {
+      writer.uint32(96).bool(message.limitedToStores);
     }
-    if (message.metaKeywords !== undefined) {
-      writer.uint32(106).string(message.metaKeywords);
+    if (message.taxCategory !== "") {
+      writer.uint32(106).string(message.taxCategory);
     }
-    if (message.allowCustomMetaTag !== undefined) {
-      writer.uint32(112).bool(message.allowCustomMetaTag);
-    }
-    if (message.limitedToLocations !== undefined) {
-      writer.uint32(120).bool(message.limitedToLocations);
-    }
-    if (message.limitedToStores !== undefined) {
-      writer.uint32(128).bool(message.limitedToStores);
-    }
-    if (message.taxCategory !== undefined) {
-      writer.uint32(138).string(message.taxCategory);
-    }
-    if (message.pageSize !== undefined) {
-      writer.uint32(144).int32(message.pageSize);
-    }
-    if (message.allowCustomersToSelectPageSize !== undefined) {
-      writer.uint32(152).bool(message.allowCustomersToSelectPageSize);
-    }
-    if (message.priceRangeFiltering !== undefined) {
-      writer.uint32(160).bool(message.priceRangeFiltering);
-    }
-    if (message.manuallyPriceRange !== undefined) {
-      writer.uint32(168).bool(message.manuallyPriceRange);
-    }
-    if (message.priceFrom !== undefined) {
-      writer.uint32(181).float(message.priceFrom);
-    }
-    if (message.priceTo !== undefined) {
-      writer.uint32(189).float(message.priceTo);
-    }
-    if (message.status !== undefined) {
-      writer.uint32(192).int32(message.status);
+    if (message.status !== "") {
+      writer.uint32(114).string(message.status);
     }
     if (message.createdAt !== undefined) {
-      Timestamp.encode(toTimestamp(message.createdAt), writer.uint32(202).fork()).join();
+      Timestamp.encode(toTimestamp(message.createdAt), writer.uint32(122).fork()).join();
     }
     if (message.updatedAt !== undefined) {
-      Timestamp.encode(toTimestamp(message.updatedAt), writer.uint32(210).fork()).join();
+      Timestamp.encode(toTimestamp(message.updatedAt), writer.uint32(130).fork()).join();
     }
     return writer;
   },
@@ -288,7 +214,7 @@ export const Category: MessageFns<Category> = {
             break;
           }
 
-          message.thumbnailUrl = reader.string();
+          message.thumbnail = reader.string();
           continue;
         }
         case 7: {
@@ -304,39 +230,39 @@ export const Category: MessageFns<Category> = {
             break;
           }
 
-          message.templateId = reader.string();
-          continue;
-        }
-        case 9: {
-          if (tag !== 74) {
-            break;
-          }
-
           message.parentId = reader.string();
           continue;
         }
-        case 10: {
-          if (tag !== 80) {
+        case 9: {
+          if (tag !== 72) {
             break;
           }
 
           message.sortOrder = reader.int32();
           continue;
         }
-        case 11: {
-          if (tag !== 90) {
+        case 10: {
+          if (tag !== 82) {
             break;
           }
 
-          message.metaTitle = reader.string();
+          message.metaKeywords = reader.string();
+          continue;
+        }
+        case 11: {
+          if (tag !== 88) {
+            break;
+          }
+
+          message.limitedToLocations = reader.bool();
           continue;
         }
         case 12: {
-          if (tag !== 98) {
+          if (tag !== 96) {
             break;
           }
 
-          message.metaDescription = reader.string();
+          message.limitedToStores = reader.bool();
           continue;
         }
         case 13: {
@@ -344,107 +270,27 @@ export const Category: MessageFns<Category> = {
             break;
           }
 
-          message.metaKeywords = reader.string();
-          continue;
-        }
-        case 14: {
-          if (tag !== 112) {
-            break;
-          }
-
-          message.allowCustomMetaTag = reader.bool();
-          continue;
-        }
-        case 15: {
-          if (tag !== 120) {
-            break;
-          }
-
-          message.limitedToLocations = reader.bool();
-          continue;
-        }
-        case 16: {
-          if (tag !== 128) {
-            break;
-          }
-
-          message.limitedToStores = reader.bool();
-          continue;
-        }
-        case 17: {
-          if (tag !== 138) {
-            break;
-          }
-
           message.taxCategory = reader.string();
           continue;
         }
-        case 18: {
-          if (tag !== 144) {
+        case 14: {
+          if (tag !== 114) {
             break;
           }
 
-          message.pageSize = reader.int32();
+          message.status = reader.string();
           continue;
         }
-        case 19: {
-          if (tag !== 152) {
-            break;
-          }
-
-          message.allowCustomersToSelectPageSize = reader.bool();
-          continue;
-        }
-        case 20: {
-          if (tag !== 160) {
-            break;
-          }
-
-          message.priceRangeFiltering = reader.bool();
-          continue;
-        }
-        case 21: {
-          if (tag !== 168) {
-            break;
-          }
-
-          message.manuallyPriceRange = reader.bool();
-          continue;
-        }
-        case 22: {
-          if (tag !== 181) {
-            break;
-          }
-
-          message.priceFrom = reader.float();
-          continue;
-        }
-        case 23: {
-          if (tag !== 189) {
-            break;
-          }
-
-          message.priceTo = reader.float();
-          continue;
-        }
-        case 24: {
-          if (tag !== 192) {
-            break;
-          }
-
-          message.status = reader.int32() as any;
-          continue;
-        }
-        case 25: {
-          if (tag !== 202) {
+        case 15: {
+          if (tag !== 122) {
             break;
           }
 
           message.createdAt = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
           continue;
         }
-        case 26: {
-          if (tag !== 210) {
+        case 16: {
+          if (tag !== 130) {
             break;
           }
 
@@ -465,31 +311,17 @@ export const Category: MessageFns<Category> = {
       id: isSet(object.id) ? globalThis.String(object.id) : "",
       name: isSet(object.name) ? globalThis.String(object.name) : "",
       slug: isSet(object.slug) ? globalThis.String(object.slug) : "",
-      shortDescription: isSet(object.shortDescription) ? globalThis.String(object.shortDescription) : undefined,
-      longDescription: isSet(object.longDescription) ? globalThis.String(object.longDescription) : undefined,
-      thumbnailUrl: isSet(object.thumbnailUrl) ? globalThis.String(object.thumbnailUrl) : undefined,
-      backgroundUrl: isSet(object.backgroundUrl) ? globalThis.String(object.backgroundUrl) : undefined,
-      templateId: isSet(object.templateId) ? globalThis.String(object.templateId) : undefined,
-      parentId: isSet(object.parentId) ? globalThis.String(object.parentId) : undefined,
-      sortOrder: isSet(object.sortOrder) ? globalThis.Number(object.sortOrder) : undefined,
-      metaTitle: isSet(object.metaTitle) ? globalThis.String(object.metaTitle) : undefined,
-      metaDescription: isSet(object.metaDescription) ? globalThis.String(object.metaDescription) : undefined,
-      metaKeywords: isSet(object.metaKeywords) ? globalThis.String(object.metaKeywords) : undefined,
-      allowCustomMetaTag: isSet(object.allowCustomMetaTag) ? globalThis.Boolean(object.allowCustomMetaTag) : undefined,
-      limitedToLocations: isSet(object.limitedToLocations) ? globalThis.Boolean(object.limitedToLocations) : undefined,
-      limitedToStores: isSet(object.limitedToStores) ? globalThis.Boolean(object.limitedToStores) : undefined,
-      taxCategory: isSet(object.taxCategory) ? globalThis.String(object.taxCategory) : undefined,
-      pageSize: isSet(object.pageSize) ? globalThis.Number(object.pageSize) : undefined,
-      allowCustomersToSelectPageSize: isSet(object.allowCustomersToSelectPageSize)
-        ? globalThis.Boolean(object.allowCustomersToSelectPageSize)
-        : undefined,
-      priceRangeFiltering: isSet(object.priceRangeFiltering)
-        ? globalThis.Boolean(object.priceRangeFiltering)
-        : undefined,
-      manuallyPriceRange: isSet(object.manuallyPriceRange) ? globalThis.Boolean(object.manuallyPriceRange) : undefined,
-      priceFrom: isSet(object.priceFrom) ? globalThis.Number(object.priceFrom) : undefined,
-      priceTo: isSet(object.priceTo) ? globalThis.Number(object.priceTo) : undefined,
-      status: isSet(object.status) ? categoryStatusFromJSON(object.status) : undefined,
+      shortDescription: isSet(object.shortDescription) ? globalThis.String(object.shortDescription) : "",
+      longDescription: isSet(object.longDescription) ? globalThis.String(object.longDescription) : "",
+      thumbnail: isSet(object.thumbnail) ? globalThis.String(object.thumbnail) : "",
+      backgroundUrl: isSet(object.backgroundUrl) ? globalThis.String(object.backgroundUrl) : "",
+      parentId: isSet(object.parentId) ? globalThis.String(object.parentId) : "",
+      sortOrder: isSet(object.sortOrder) ? globalThis.Number(object.sortOrder) : 0,
+      metaKeywords: isSet(object.metaKeywords) ? globalThis.String(object.metaKeywords) : "",
+      limitedToLocations: isSet(object.limitedToLocations) ? globalThis.Boolean(object.limitedToLocations) : false,
+      limitedToStores: isSet(object.limitedToStores) ? globalThis.Boolean(object.limitedToStores) : false,
+      taxCategory: isSet(object.taxCategory) ? globalThis.String(object.taxCategory) : "",
+      status: isSet(object.status) ? globalThis.String(object.status) : "",
       createdAt: isSet(object.createdAt) ? fromJsonTimestamp(object.createdAt) : undefined,
       updatedAt: isSet(object.updatedAt) ? fromJsonTimestamp(object.updatedAt) : undefined,
     };
@@ -506,68 +338,38 @@ export const Category: MessageFns<Category> = {
     if (message.slug !== "") {
       obj.slug = message.slug;
     }
-    if (message.shortDescription !== undefined) {
+    if (message.shortDescription !== "") {
       obj.shortDescription = message.shortDescription;
     }
-    if (message.longDescription !== undefined) {
+    if (message.longDescription !== "") {
       obj.longDescription = message.longDescription;
     }
-    if (message.thumbnailUrl !== undefined) {
-      obj.thumbnailUrl = message.thumbnailUrl;
+    if (message.thumbnail !== "") {
+      obj.thumbnail = message.thumbnail;
     }
-    if (message.backgroundUrl !== undefined) {
+    if (message.backgroundUrl !== "") {
       obj.backgroundUrl = message.backgroundUrl;
     }
-    if (message.templateId !== undefined) {
-      obj.templateId = message.templateId;
-    }
-    if (message.parentId !== undefined) {
+    if (message.parentId !== "") {
       obj.parentId = message.parentId;
     }
-    if (message.sortOrder !== undefined) {
+    if (message.sortOrder !== 0) {
       obj.sortOrder = Math.round(message.sortOrder);
     }
-    if (message.metaTitle !== undefined) {
-      obj.metaTitle = message.metaTitle;
-    }
-    if (message.metaDescription !== undefined) {
-      obj.metaDescription = message.metaDescription;
-    }
-    if (message.metaKeywords !== undefined) {
+    if (message.metaKeywords !== "") {
       obj.metaKeywords = message.metaKeywords;
     }
-    if (message.allowCustomMetaTag !== undefined) {
-      obj.allowCustomMetaTag = message.allowCustomMetaTag;
-    }
-    if (message.limitedToLocations !== undefined) {
+    if (message.limitedToLocations !== false) {
       obj.limitedToLocations = message.limitedToLocations;
     }
-    if (message.limitedToStores !== undefined) {
+    if (message.limitedToStores !== false) {
       obj.limitedToStores = message.limitedToStores;
     }
-    if (message.taxCategory !== undefined) {
+    if (message.taxCategory !== "") {
       obj.taxCategory = message.taxCategory;
     }
-    if (message.pageSize !== undefined) {
-      obj.pageSize = Math.round(message.pageSize);
-    }
-    if (message.allowCustomersToSelectPageSize !== undefined) {
-      obj.allowCustomersToSelectPageSize = message.allowCustomersToSelectPageSize;
-    }
-    if (message.priceRangeFiltering !== undefined) {
-      obj.priceRangeFiltering = message.priceRangeFiltering;
-    }
-    if (message.manuallyPriceRange !== undefined) {
-      obj.manuallyPriceRange = message.manuallyPriceRange;
-    }
-    if (message.priceFrom !== undefined) {
-      obj.priceFrom = message.priceFrom;
-    }
-    if (message.priceTo !== undefined) {
-      obj.priceTo = message.priceTo;
-    }
-    if (message.status !== undefined) {
-      obj.status = categoryStatusToJSON(message.status);
+    if (message.status !== "") {
+      obj.status = message.status;
     }
     if (message.createdAt !== undefined) {
       obj.createdAt = message.createdAt.toISOString();
@@ -650,62 +452,32 @@ export const CategoryInput: MessageFns<CategoryInput> = {
     if (message.longDescription !== undefined) {
       writer.uint32(34).string(message.longDescription);
     }
-    if (message.thumbnailUrl !== undefined) {
-      writer.uint32(42).string(message.thumbnailUrl);
+    if (message.thumbnail !== undefined) {
+      writer.uint32(42).string(message.thumbnail);
     }
     if (message.backgroundUrl !== undefined) {
       writer.uint32(50).string(message.backgroundUrl);
     }
-    if (message.templateId !== undefined) {
-      writer.uint32(58).string(message.templateId);
-    }
     if (message.parentId !== undefined) {
-      writer.uint32(66).string(message.parentId);
+      writer.uint32(58).string(message.parentId);
     }
     if (message.sortOrder !== undefined) {
-      writer.uint32(72).int32(message.sortOrder);
-    }
-    if (message.metaTitle !== undefined) {
-      writer.uint32(82).string(message.metaTitle);
-    }
-    if (message.metaDescription !== undefined) {
-      writer.uint32(90).string(message.metaDescription);
+      writer.uint32(64).int32(message.sortOrder);
     }
     if (message.metaKeywords !== undefined) {
-      writer.uint32(98).string(message.metaKeywords);
-    }
-    if (message.allowCustomMetaTag !== undefined) {
-      writer.uint32(104).bool(message.allowCustomMetaTag);
+      writer.uint32(74).string(message.metaKeywords);
     }
     if (message.limitedToLocations !== undefined) {
-      writer.uint32(112).bool(message.limitedToLocations);
+      writer.uint32(80).bool(message.limitedToLocations);
     }
     if (message.limitedToStores !== undefined) {
-      writer.uint32(120).bool(message.limitedToStores);
+      writer.uint32(88).bool(message.limitedToStores);
     }
     if (message.taxCategory !== undefined) {
-      writer.uint32(130).string(message.taxCategory);
-    }
-    if (message.pageSize !== undefined) {
-      writer.uint32(136).int32(message.pageSize);
-    }
-    if (message.allowCustomersToSelectPageSize !== undefined) {
-      writer.uint32(144).bool(message.allowCustomersToSelectPageSize);
-    }
-    if (message.priceRangeFiltering !== undefined) {
-      writer.uint32(152).bool(message.priceRangeFiltering);
-    }
-    if (message.manuallyPriceRange !== undefined) {
-      writer.uint32(160).bool(message.manuallyPriceRange);
-    }
-    if (message.priceFrom !== undefined) {
-      writer.uint32(173).float(message.priceFrom);
-    }
-    if (message.priceTo !== undefined) {
-      writer.uint32(181).float(message.priceTo);
+      writer.uint32(98).string(message.taxCategory);
     }
     if (message.status !== undefined) {
-      writer.uint32(184).int32(message.status);
+      writer.uint32(106).string(message.status);
     }
     return writer;
   },
@@ -754,7 +526,7 @@ export const CategoryInput: MessageFns<CategoryInput> = {
             break;
           }
 
-          message.thumbnailUrl = reader.string();
+          message.thumbnail = reader.string();
           continue;
         }
         case 6: {
@@ -770,39 +542,39 @@ export const CategoryInput: MessageFns<CategoryInput> = {
             break;
           }
 
-          message.templateId = reader.string();
-          continue;
-        }
-        case 8: {
-          if (tag !== 66) {
-            break;
-          }
-
           message.parentId = reader.string();
           continue;
         }
-        case 9: {
-          if (tag !== 72) {
+        case 8: {
+          if (tag !== 64) {
             break;
           }
 
           message.sortOrder = reader.int32();
           continue;
         }
-        case 10: {
-          if (tag !== 82) {
+        case 9: {
+          if (tag !== 74) {
             break;
           }
 
-          message.metaTitle = reader.string();
+          message.metaKeywords = reader.string();
+          continue;
+        }
+        case 10: {
+          if (tag !== 80) {
+            break;
+          }
+
+          message.limitedToLocations = reader.bool();
           continue;
         }
         case 11: {
-          if (tag !== 90) {
+          if (tag !== 88) {
             break;
           }
 
-          message.metaDescription = reader.string();
+          message.limitedToStores = reader.bool();
           continue;
         }
         case 12: {
@@ -810,95 +582,15 @@ export const CategoryInput: MessageFns<CategoryInput> = {
             break;
           }
 
-          message.metaKeywords = reader.string();
-          continue;
-        }
-        case 13: {
-          if (tag !== 104) {
-            break;
-          }
-
-          message.allowCustomMetaTag = reader.bool();
-          continue;
-        }
-        case 14: {
-          if (tag !== 112) {
-            break;
-          }
-
-          message.limitedToLocations = reader.bool();
-          continue;
-        }
-        case 15: {
-          if (tag !== 120) {
-            break;
-          }
-
-          message.limitedToStores = reader.bool();
-          continue;
-        }
-        case 16: {
-          if (tag !== 130) {
-            break;
-          }
-
           message.taxCategory = reader.string();
           continue;
         }
-        case 17: {
-          if (tag !== 136) {
+        case 13: {
+          if (tag !== 106) {
             break;
           }
 
-          message.pageSize = reader.int32();
-          continue;
-        }
-        case 18: {
-          if (tag !== 144) {
-            break;
-          }
-
-          message.allowCustomersToSelectPageSize = reader.bool();
-          continue;
-        }
-        case 19: {
-          if (tag !== 152) {
-            break;
-          }
-
-          message.priceRangeFiltering = reader.bool();
-          continue;
-        }
-        case 20: {
-          if (tag !== 160) {
-            break;
-          }
-
-          message.manuallyPriceRange = reader.bool();
-          continue;
-        }
-        case 21: {
-          if (tag !== 173) {
-            break;
-          }
-
-          message.priceFrom = reader.float();
-          continue;
-        }
-        case 22: {
-          if (tag !== 181) {
-            break;
-          }
-
-          message.priceTo = reader.float();
-          continue;
-        }
-        case 23: {
-          if (tag !== 184) {
-            break;
-          }
-
-          message.status = reader.int32() as any;
+          message.status = reader.string();
           continue;
         }
       }
@@ -916,29 +608,15 @@ export const CategoryInput: MessageFns<CategoryInput> = {
       slug: isSet(object.slug) ? globalThis.String(object.slug) : "",
       shortDescription: isSet(object.shortDescription) ? globalThis.String(object.shortDescription) : undefined,
       longDescription: isSet(object.longDescription) ? globalThis.String(object.longDescription) : undefined,
-      thumbnailUrl: isSet(object.thumbnailUrl) ? globalThis.String(object.thumbnailUrl) : undefined,
+      thumbnail: isSet(object.thumbnail) ? globalThis.String(object.thumbnail) : undefined,
       backgroundUrl: isSet(object.backgroundUrl) ? globalThis.String(object.backgroundUrl) : undefined,
-      templateId: isSet(object.templateId) ? globalThis.String(object.templateId) : undefined,
       parentId: isSet(object.parentId) ? globalThis.String(object.parentId) : undefined,
       sortOrder: isSet(object.sortOrder) ? globalThis.Number(object.sortOrder) : undefined,
-      metaTitle: isSet(object.metaTitle) ? globalThis.String(object.metaTitle) : undefined,
-      metaDescription: isSet(object.metaDescription) ? globalThis.String(object.metaDescription) : undefined,
       metaKeywords: isSet(object.metaKeywords) ? globalThis.String(object.metaKeywords) : undefined,
-      allowCustomMetaTag: isSet(object.allowCustomMetaTag) ? globalThis.Boolean(object.allowCustomMetaTag) : undefined,
       limitedToLocations: isSet(object.limitedToLocations) ? globalThis.Boolean(object.limitedToLocations) : undefined,
       limitedToStores: isSet(object.limitedToStores) ? globalThis.Boolean(object.limitedToStores) : undefined,
       taxCategory: isSet(object.taxCategory) ? globalThis.String(object.taxCategory) : undefined,
-      pageSize: isSet(object.pageSize) ? globalThis.Number(object.pageSize) : undefined,
-      allowCustomersToSelectPageSize: isSet(object.allowCustomersToSelectPageSize)
-        ? globalThis.Boolean(object.allowCustomersToSelectPageSize)
-        : undefined,
-      priceRangeFiltering: isSet(object.priceRangeFiltering)
-        ? globalThis.Boolean(object.priceRangeFiltering)
-        : undefined,
-      manuallyPriceRange: isSet(object.manuallyPriceRange) ? globalThis.Boolean(object.manuallyPriceRange) : undefined,
-      priceFrom: isSet(object.priceFrom) ? globalThis.Number(object.priceFrom) : undefined,
-      priceTo: isSet(object.priceTo) ? globalThis.Number(object.priceTo) : undefined,
-      status: isSet(object.status) ? categoryStatusFromJSON(object.status) : undefined,
+      status: isSet(object.status) ? globalThis.String(object.status) : undefined,
     };
   },
 
@@ -956,14 +634,11 @@ export const CategoryInput: MessageFns<CategoryInput> = {
     if (message.longDescription !== undefined) {
       obj.longDescription = message.longDescription;
     }
-    if (message.thumbnailUrl !== undefined) {
-      obj.thumbnailUrl = message.thumbnailUrl;
+    if (message.thumbnail !== undefined) {
+      obj.thumbnail = message.thumbnail;
     }
     if (message.backgroundUrl !== undefined) {
       obj.backgroundUrl = message.backgroundUrl;
-    }
-    if (message.templateId !== undefined) {
-      obj.templateId = message.templateId;
     }
     if (message.parentId !== undefined) {
       obj.parentId = message.parentId;
@@ -971,17 +646,8 @@ export const CategoryInput: MessageFns<CategoryInput> = {
     if (message.sortOrder !== undefined) {
       obj.sortOrder = Math.round(message.sortOrder);
     }
-    if (message.metaTitle !== undefined) {
-      obj.metaTitle = message.metaTitle;
-    }
-    if (message.metaDescription !== undefined) {
-      obj.metaDescription = message.metaDescription;
-    }
     if (message.metaKeywords !== undefined) {
       obj.metaKeywords = message.metaKeywords;
-    }
-    if (message.allowCustomMetaTag !== undefined) {
-      obj.allowCustomMetaTag = message.allowCustomMetaTag;
     }
     if (message.limitedToLocations !== undefined) {
       obj.limitedToLocations = message.limitedToLocations;
@@ -992,26 +658,8 @@ export const CategoryInput: MessageFns<CategoryInput> = {
     if (message.taxCategory !== undefined) {
       obj.taxCategory = message.taxCategory;
     }
-    if (message.pageSize !== undefined) {
-      obj.pageSize = Math.round(message.pageSize);
-    }
-    if (message.allowCustomersToSelectPageSize !== undefined) {
-      obj.allowCustomersToSelectPageSize = message.allowCustomersToSelectPageSize;
-    }
-    if (message.priceRangeFiltering !== undefined) {
-      obj.priceRangeFiltering = message.priceRangeFiltering;
-    }
-    if (message.manuallyPriceRange !== undefined) {
-      obj.manuallyPriceRange = message.manuallyPriceRange;
-    }
-    if (message.priceFrom !== undefined) {
-      obj.priceFrom = message.priceFrom;
-    }
-    if (message.priceTo !== undefined) {
-      obj.priceTo = message.priceTo;
-    }
     if (message.status !== undefined) {
-      obj.status = categoryStatusToJSON(message.status);
+      obj.status = message.status;
     }
     return obj;
   },

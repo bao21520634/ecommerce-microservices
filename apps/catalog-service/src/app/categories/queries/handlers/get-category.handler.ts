@@ -3,8 +3,6 @@ import { RpcException } from '@nestjs/microservices';
 import { CategoryRepository } from '../../repositories';
 import { GetCategoryQuery } from '../impl';
 import { Category } from '@ecommerce-microservices/proto-schema';
-import { CategoryStatus as PrismaCategoryStatus } from '@prisma/client';
-import { mapEnum } from '@ecommerce-microservices/common';
 
 @QueryHandler(GetCategoryQuery)
 export class GetCategoryHandler implements IQueryHandler<GetCategoryQuery> {
@@ -19,16 +17,7 @@ export class GetCategoryHandler implements IQueryHandler<GetCategoryQuery> {
             });
 
             return {
-                data: result
-                    ? {
-                          ...result,
-                          status: mapEnum(
-                              Category.CategoryStatus,
-                              PrismaCategoryStatus,
-                              result.status,
-                          ),
-                      }
-                    : undefined,
+                data: result,
                 null: result ? 0 : undefined,
             };
         } catch (e) {

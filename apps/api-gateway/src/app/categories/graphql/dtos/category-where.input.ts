@@ -2,9 +2,7 @@ import {
     BoolFilter,
     DateTimeFilter,
     EnumCategoryStatusFilter,
-    FloatNullableFilter,
     IntFilter,
-    IntNullableFilter,
     StringFilter,
     StringNullableFilter,
 } from '@ecommerce-microservices/graphql-query';
@@ -44,13 +42,10 @@ export class CategoryWhereInput {
     longDescription?: StringNullableFilter;
 
     @Field(() => StringNullableFilter, { nullable: true })
-    thumbnailUrl?: StringNullableFilter;
+    thumbnail?: StringNullableFilter;
 
     @Field(() => StringNullableFilter, { nullable: true })
     backgroundUrl?: StringNullableFilter;
-
-    @Field(() => StringNullableFilter, { nullable: true })
-    templateId?: StringNullableFilter;
 
     @Field(() => StringNullableFilter, { nullable: true })
     parentId?: StringNullableFilter;
@@ -59,16 +54,7 @@ export class CategoryWhereInput {
     sortOrder?: IntFilter;
 
     @Field(() => StringNullableFilter, { nullable: true })
-    metaTitle?: StringNullableFilter;
-
-    @Field(() => StringNullableFilter, { nullable: true })
-    metaDescription?: StringNullableFilter;
-
-    @Field(() => StringNullableFilter, { nullable: true })
     metaKeywords?: StringNullableFilter;
-
-    @Field(() => BoolFilter, { nullable: true })
-    allowCustomMetaTag?: BoolFilter;
 
     @Field(() => BoolFilter, { nullable: true })
     limitedToLocations?: BoolFilter;
@@ -79,27 +65,6 @@ export class CategoryWhereInput {
     @Field(() => StringNullableFilter, { nullable: true })
     taxCategory?: StringNullableFilter;
 
-    @Field(() => IntNullableFilter, { nullable: true })
-    pageSize?: IntNullableFilter;
-
-    @Field(() => BoolFilter, { nullable: true })
-    allowCustomersToSelectPageSize?: BoolFilter;
-
-    @Field(() => BoolFilter, { nullable: true })
-    priceRangeFiltering?: BoolFilter;
-
-    @Field(() => BoolFilter, { nullable: true })
-    manuallyPriceRange?: BoolFilter;
-
-    @Field(() => FloatNullableFilter, { nullable: true })
-    priceFrom?: FloatNullableFilter;
-
-    @Field(() => FloatNullableFilter, { nullable: true })
-    priceTo?: FloatNullableFilter;
-
     @Field(() => EnumCategoryStatusFilter, { nullable: true })
     status?: EnumCategoryStatusFilter;
-
-    @Field(() => StringNullableFilter, { nullable: true })
-    parent?: StringNullableFilter;
 }

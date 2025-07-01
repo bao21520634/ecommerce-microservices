@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+  ecommerce-ui:
+    container_name: ecommerce-ui
+    build:
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_EC_API_URL: ${NEXT_PUBLIC_EC_API_URL}
+        NEXT_PUBLIC_STOREFRONT_URL: ${NEXT_PUBLIC_STOREFRONT_URL}
+    restart: always
+    ports:
+      - 3000:3000
+    networks:
+      - ec_network
+
+  # Add more containers below (nginx, postgres, etc.)
+
+networks:
+  ec_network:
+    external: false

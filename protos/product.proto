@@ -6,52 +6,40 @@ import 'google/protobuf/any.proto';
 import "google/protobuf/timestamp.proto";
 import 'google/protobuf/struct.proto';
 
-enum ProductType {
-  Simple = 0;
-  Variant = 1;
-}
-
-enum ProductStatus {
-  Active = 0;
-  Locked = 1;
-  Deleted = 2;
-}
 
 message Product {
   string id = 1;
   string name = 2;
-  string slug = 3;
-  optional string shortDescription = 4;
-  optional string longDescription = 5;
-  optional string thumbnailUrl = 6;
-  optional ProductType productType = 7;
-  optional string productTemplateId = 8;
-  optional string manufacturerId = 9;
-  optional int32 sortOrder = 10;
-  optional string metaTitle = 11;
-  optional string metaDescription = 12;
-  optional string metaKeywords = 13;
-  optional string tags = 14;
-  optional bool allowCustomMetaTag = 15;
-  optional bool limitedToLocations = 16;
-  optional bool limitedToStores = 17;
-  optional ProductStatus status = 18;
-  optional bool displayPrice = 19;
-  optional bool shippable = 20;
-  optional float weight = 21;
-  optional float length = 22;
-  optional float width = 23;
-  optional float height = 24;
-  optional string taxCategory = 25;
-  optional float taxPercent = 26;
-  float priceExclTax = 27;
-  float priceInclTax = 28;
-  optional string unit = 29;
-  optional int32 stockAvailability = 30;
-  optional string attributes = 31;
-  optional string variantAttributes = 32;
-  google.protobuf.Timestamp createdAt = 33;
-  google.protobuf.Timestamp updatedAt = 34;
+  string brand = 3;
+  string slug = 4;
+  string shortDescription = 5;
+  string longDescription = 6;
+  string thumbnail = 7;
+  repeated string images = 8;
+  string productType = 9;
+  string manufacturerId = 10;
+  int32 sortOrder = 11;
+  string metaKeywords = 12;
+  repeated string tags = 13;
+  bool limitedToLocations = 14;
+  bool limitedToStores = 15;
+  string status = 16;
+  bool displayPrice = 17;
+  bool shippable = 18;
+  float weight = 19;
+  float length = 20;
+  float width = 21;
+  float height = 22;
+  string taxCategory = 23;
+  float taxPercent = 24;
+  float priceExclTax = 25;
+  float priceInclTax = 26;
+  string unit = 27;
+  int32 stockAvailability = 28;
+  string attributes = 29;
+  string variantAttributes = 30;
+  google.protobuf.Timestamp createdAt = 31;
+  google.protobuf.Timestamp updatedAt = 32;
 }
 
 message Products {
@@ -61,35 +49,33 @@ message Products {
 message ProductInput {
   string name = 1;
   string slug = 2;
-  optional string shortDescription = 3;
-  optional string longDescription = 4;
-  optional string thumbnailUrl = 5;
-  optional ProductType productType = 6;
-  optional string productTemplateId = 7;
-  optional string manufacturerId = 8;
-  optional int32 sortOrder = 9;
-  optional string metaTitle = 10;
-  optional string metaDescription = 11;
-  optional string metaKeywords = 12;
-  optional string tags = 13;
-  optional bool allowCustomMetaTag = 14;
-  optional bool limitedToLocations = 15;
-  optional bool limitedToStores = 16;
-  optional ProductStatus status = 17;
-  optional bool displayPrice = 18;
-  optional bool shippable = 19;
-  optional float weight = 20;
-  optional float length = 21;
-  optional float width = 22;
-  optional float height = 23;
-  optional string taxCategory = 24;
-  optional float taxPercent = 25;
-  float priceExclTax = 26;
-  float priceInclTax = 27;
-  optional string unit = 28;
-  optional int32 stockAvailability = 29;
-  optional string attributes = 30;
-  optional string variantAttributes = 31;
+  optional string brand = 3;
+  optional string shortDescription = 4;
+  optional string longDescription = 5;
+  optional string thumbnail = 6;
+  repeated string images = 7;
+  optional string productType = 8;
+  optional string manufacturerId = 9;
+  optional int32 sortOrder = 10;
+  optional string metaKeywords = 11;
+  repeated string tags = 12;
+  optional bool limitedToLocations = 13;
+  optional bool limitedToStores = 14;
+  optional string status = 15;
+  optional bool displayPrice = 16;
+  optional bool shippable = 17;
+  optional float weight = 18;
+  optional float length = 19;
+  optional float width = 20;
+  optional float height = 21;
+  optional string taxCategory = 22;
+  optional float taxPercent = 23;
+  float priceExclTax = 24;
+  float priceInclTax = 25;
+  optional string unit = 26;
+  optional int32 stockAvailability = 27;
+  optional string attributes = 28;
+  optional string variantAttributes = 29;
 }
 
 message CreateProductInput {

@@ -1,5 +1,6 @@
 import {
     CacheStoreConfigService,
+    CatalogsRpcClientService,
     CoreModule,
     ServiceRegistryModule,
 } from '@ecommerce-microservices/core';
@@ -38,6 +39,7 @@ import { SearchController } from './app.controller';
         ...SearchQueryHandlers,
         EventBus,
         ElasticsearchConfigService,
+        CatalogsRpcClientService,
         {
             provide: 'CACHE_INSTANCE',
             useFactory: (cacheConfig: CacheStoreConfigService) => {

@@ -37,6 +37,7 @@ import {
   NullableProductCategory,
   ProductCategories,
   ProductCategory,
+  ProductCategoryFilterInput,
   ProductCategoryInput,
 } from "./productCategory";
 
@@ -89,9 +90,7 @@ export interface CatalogServiceClient {
 
   productCategory(request: ProductCategoryInput, metadata?: Metadata): Observable<NullableProductCategory>;
 
-  productCategories(request: Query, metadata?: Metadata): Observable<ProductCategories>;
-
-  productCategoriesTotal(request: Query, metadata?: Metadata): Observable<Count>;
+  productCategories(request: ProductCategoryFilterInput, metadata?: Metadata): Observable<ProductCategories>;
 
   createProductCategory(request: CreateProductCategoryInput, metadata?: Metadata): Observable<ProductCategory>;
 
@@ -190,11 +189,9 @@ export interface CatalogServiceController {
   ): Promise<NullableProductCategory> | Observable<NullableProductCategory> | NullableProductCategory;
 
   productCategories(
-    request: Query,
+    request: ProductCategoryFilterInput,
     metadata?: Metadata,
   ): Promise<ProductCategories> | Observable<ProductCategories> | ProductCategories;
-
-  productCategoriesTotal(request: Query, metadata?: Metadata): Promise<Count> | Observable<Count> | Count;
 
   createProductCategory(
     request: CreateProductCategoryInput,
@@ -240,7 +237,6 @@ export function CatalogServiceControllerMethods() {
       "deleteManyProducts",
       "productCategory",
       "productCategories",
-      "productCategoriesTotal",
       "createProductCategory",
       "createManyProductCategories",
       "deleteProductCategory",

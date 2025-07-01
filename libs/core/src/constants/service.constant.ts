@@ -22,11 +22,11 @@ export const SERVICE_LIST = {
         protoPath: baseUrl + 'cart.service.proto',
         url: 'localhost:50053',
     },
-    payment: {
-        package: 'payment',
-        consulName: 'payment',
-        service: 'PaymentService',
-        protoPath: baseUrl + 'payment.service.proto',
+    setup: {
+        package: 'setup',
+        consulName: 'setup',
+        service: 'SetupService',
+        protoPath: baseUrl + 'setup.service.proto',
         url: 'localhost:50054',
     },
     search: {
@@ -35,5 +35,12 @@ export const SERVICE_LIST = {
         service: 'SearchService',
         protoPath: baseUrl + 'search.service.proto',
         url: 'localhost:50055',
+    },
+    recommendation: {
+        package: 'recommendation',
+        consulName: 'recommendation',
+        service: 'RecommendationService',
+        protoPath: baseUrl + 'recommendation.service.proto',
+        url: 'localhost:50056',
     },
 };

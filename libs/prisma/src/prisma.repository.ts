@@ -222,8 +222,9 @@ export class PrismaRepository extends PrismaClient implements OnModuleInit {
         args: any,
     ): string {
         // Sort the keys to ensure consistent caching regardless of object key order
-        const stableArgs = JSON.stringify(args, Object.keys(args).sort());
-        return `prisma:${model}:${operation}:${stableArgs}`;
+        const argsString = superjson.stringify(args);
+
+        return `prisma:${model}:${operation}:${argsString}`;
     }
 
     private async retrieveFromCache<T>(key: string): Promise<T | null> {
@@ -247,6 +248,18 @@ export class PrismaRepository extends PrismaClient implements OnModuleInit {
             const value =
                 typeof data === 'string' ? data : superjson.stringify(data);
             await this.cache.set(key, value, ttl);
+
+            // Track cache keys
+            const cacheKeySetKey = 'prisma:cacheKeys';
+            const cacheKeys = (await this.cache.get(cacheKeySetKey)) || {};
+            const model = key.split(':')[1];
+
+            if (!cacheKeys[model]) {
+                cacheKeys[model] = new Set();
+            }
+            cacheKeys[model].add(key);
+
+            await this.cache.set(cacheKeySetKey, cacheKeys);
         } catch (error) {
             this.logger.error('Cache save error:', error);
         }
@@ -254,15 +267,20 @@ export class PrismaRepository extends PrismaClient implements OnModuleInit {
 
     private async clearCache(model?: string): Promise<void> {
         try {
+            const cacheKeySetKey = 'prisma:cacheKeys';
+            const cacheKeys = (await this.cache.get(cacheKeySetKey)) || {};
+
             if (model) {
-                // Clear only the cache for the specific model
-                // This would require a more sophisticated approach with Keyv
-                // Since Keyv doesn't support wildcard deletions, we'd need to track model-specific keys
-                // For now, we'll clear the entire cache to ensure consistency
-                await this.cache.clear();
+                const modelKeys = cacheKeys[model] || [];
+                for (const key of modelKeys) {
+                    await this.cache.delete(key);
+                }
+                delete cacheKeys[model];
+                await this.cache.set(cacheKeySetKey, cacheKeys);
                 this.logger.debug(`Cleared cache for model: ${model}`);
             } else {
                 await this.cache.clear();
+                await this.cache.delete(cacheKeySetKey);
                 this.logger.debug('Cleared entire cache');
             }
         } catch (error) {

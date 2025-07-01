@@ -1,29 +1,23 @@
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
-import { Product as PbProduct } from '@ecommerce-microservices/proto-schema';
-import { GqlContext, setRpcContext } from '@ecommerce-microservices/core';
-import { mapEnum } from '@ecommerce-microservices/common';
 import {
-    ProductStatus as PrismaProductStatus,
-    ProductType as PrismaProductType,
-} from '@prisma/client';
+    GqlContext,
+    RESOURCES,
+    ROLES,
+    SCOPES,
+    setRpcContext,
+} from '@ecommerce-microservices/core';
 import { lastValueFrom } from 'rxjs';
 import { Product as ProductDto } from './entity/products.entity';
 import { CreateOneProductArgs } from './dtos/create-one-product.args';
 import { UpdateOneProductArgs } from './dtos/update-one-product.args';
-import { UseGuards } from '@nestjs/common';
-import {
-    FirebaseAuthGuard,
-    PermissionGuard,
-    RequirePermission,
-    RoleGuard,
-    Roles,
-} from '@ecommerce-microservices/firebase-auth';
+import { Resource, Scopes, Roles } from 'nest-keycloak-connect';
 
 @Resolver(() => ProductDto)
+@Resource(RESOURCES.PRODUCT)
+@Roles({ roles: [ROLES.VENDOR, ROLES.ADMIN] })
 export class ProductsMutationResolver {
     @Mutation(() => ProductDto, { nullable: true })
-    @UseGuards(FirebaseAuthGuard, PermissionGuard)
-    @RequirePermission('product', 'create')
+    @Scopes(SCOPES.CREATE)
     async createProduct(
         @Context() context: GqlContext,
         @Args() input: CreateOneProductArgs,
@@ -38,16 +32,6 @@ export class ProductsMutationResolver {
                     {
                         data: {
                             ...data,
-                            status: mapEnum(
-                                PbProduct.ProductStatus,
-                                PrismaProductStatus,
-                                data.status,
-                            ),
-                            productType: mapEnum(
-                                PbProduct.ProductType,
-                                PrismaProductType,
-                                data.productType,
-                            ),
                             attributes: JSON.stringify(data.attributes),
                             variantAttributes: JSON.stringify(
                                 data.variantAttributes,
@@ -58,21 +42,7 @@ export class ProductsMutationResolver {
                 ),
             );
 
-            return {
-                ...result,
-                status: mapEnum(
-                    PrismaProductStatus,
-                    PbProduct.ProductStatus,
-                    result.status,
-                ),
-                productType: mapEnum(
-                    PrismaProductType,
-                    PbProduct.ProductType,
-                    result.productType,
-                ),
-                attributes: result.attributes,
-                variantAttributes: result.variantAttributes,
-            } as ProductDto;
+            return result as ProductDto;
         } catch (error) {
             console.error('gRPC call error:', error);
             throw error;
@@ -80,8 +50,7 @@ export class ProductsMutationResolver {
     }
 
     @Mutation(() => ProductDto, { nullable: true })
-    @UseGuards(FirebaseAuthGuard, PermissionGuard)
-    @RequirePermission('product', 'update')
+    @Scopes(SCOPES.UPDATE)
     async updateProduct(
         @Context() context: GqlContext,
         @Args() input: UpdateOneProductArgs,
@@ -92,16 +61,6 @@ export class ProductsMutationResolver {
 
         const updateData = {
             ...data,
-            status: mapEnum(
-                PbProduct.ProductStatus,
-                PrismaProductStatus,
-                data.status,
-            ),
-            productType: mapEnum(
-                PbProduct.ProductType,
-                PrismaProductType,
-                data.productType,
-            ),
             attributes: data.attributes
                 ? JSON.stringify(data.attributes)
                 : undefined,
@@ -120,26 +79,11 @@ export class ProductsMutationResolver {
             ),
         );
 
-        return {
-            ...result,
-            status: mapEnum(
-                PrismaProductStatus,
-                PbProduct.ProductStatus,
-                result.status,
-            ),
-            productType: mapEnum(
-                PrismaProductType,
-                PbProduct.ProductType,
-                result.productType,
-            ),
-            attributes: result.attributes,
-            variantAttributes: result.variantAttributes,
-        } as ProductDto;
+        return result as ProductDto;
     }
 
     @Mutation(() => ProductDto, { nullable: true })
-    @UseGuards(FirebaseAuthGuard, RoleGuard)
-    @Roles('admin')
+    @Scopes(SCOPES.DELETE)
     async deleteProduct(
         @Context() context: GqlContext,
         @Args('id') id: string,

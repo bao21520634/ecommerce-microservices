@@ -15,7 +15,7 @@ service CartService {
     rpc createManyOrders (order.CreateManyOrdersInput) returns (order.Orders) {}
     rpc updateOrder (order.UpdateOrderInput) returns (order.Order) {}
     rpc updateManyOrders (order.UpdateManyOrdersInput) returns (order.Orders) {}
-    rpc deleteOrder (common.Id) returns (order.Order) {}
+    rpc deleteOrder (common.Id) returns (common.DeleteResponse) {}
     rpc deleteManyOrders (order.DeleteManyOrdersInput) returns (common.DeleteManyResponse) {}
 
     // OrderItem
@@ -26,6 +26,6 @@ service CartService {
     rpc createManyOrderItems (orderItem.CreateManyOrderItemsInput) returns (orderItem.OrderItems) {}
     rpc updateOrderItem (orderItem.UpdateOrderItemInput) returns (orderItem.OrderItem) {}
     rpc updateManyOrderItems (orderItem.UpdateManyOrderItemsInput) returns (orderItem.OrderItems) {}
-    rpc deleteOrderItem (common.Id) returns (orderItem.OrderItem) {}
+    rpc deleteOrderItem (common.Id) returns (common.DeleteResponse) {}
     rpc deleteManyOrderItems (orderItem.DeleteManyOrderItemsInput) returns (common.DeleteManyResponse) {}
 }

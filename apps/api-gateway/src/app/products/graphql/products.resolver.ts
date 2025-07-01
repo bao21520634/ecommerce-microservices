@@ -1,19 +1,20 @@
 import { Args, Context, Int, Query, Resolver } from '@nestjs/graphql';
 import { Product as ProductDto } from './entity/products.entity';
-import { Product as PbProduct } from '@ecommerce-microservices/proto-schema';
-import { GqlContext, setRpcContext } from '@ecommerce-microservices/core';
 import {
-    mapEnum,
-    transformFindArgsToGrpcQuery,
-} from '@ecommerce-microservices/common';
-import {
-    ProductStatus as PrismaProductStatus,
-    ProductType as PrismaProductType,
-} from '@prisma/client';
+    GqlContext,
+    RESOURCES,
+    SCOPES,
+    setRpcContext,
+} from '@ecommerce-microservices/core';
+import { transformFindArgsToGrpcQuery } from '@ecommerce-microservices/common';
 import { lastValueFrom } from 'rxjs';
 import { FindManyProductArgs } from './dtos/find-many-product.args';
+import { Public, Resource, Scopes } from 'nest-keycloak-connect';
 
 @Resolver(() => ProductDto)
+@Resource(RESOURCES.PRODUCT)
+@Public()
+@Scopes(SCOPES.READ)
 export class ProductsResolver {
     @Query(() => ProductDto, { nullable: true })
     async product(
@@ -31,19 +32,7 @@ export class ProductsResolver {
             ),
         );
 
-        return {
-            ...result.data,
-            status: mapEnum(
-                PrismaProductStatus,
-                PbProduct.ProductStatus,
-                result.data.status,
-            ),
-            productType: mapEnum(
-                PrismaProductType,
-                PbProduct.ProductType,
-                result.data.productType,
-            ),
-        } as ProductDto;
+        return result.data as ProductDto;
     }
 
     @Query(() => [ProductDto])
@@ -60,19 +49,7 @@ export class ProductsResolver {
             ),
         );
 
-        return (products.products.map((product) => ({
-            ...product,
-            status: mapEnum(
-                PrismaProductStatus,
-                PbProduct.ProductStatus,
-                product.status,
-            ),
-            productType: mapEnum(
-                PrismaProductType,
-                PbProduct.ProductType,
-                product.productType,
-            ),
-        })) ?? []) as ProductDto[];
+        return products.products as ProductDto[];
     }
 
     @Query(() => Int)

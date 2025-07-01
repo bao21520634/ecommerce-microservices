@@ -2,11 +2,6 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { RpcException } from '@nestjs/microservices';
 import { ProductRepository } from '../../repositories';
 import { Product } from '@ecommerce-microservices/proto-schema';
-import {
-    ProductType as PrismaProductType,
-    ProductStatus as PrismaProductStatus,
-} from '@prisma/client';
-import { mapEnum } from '@ecommerce-microservices/common';
 import { GetProductsQuery } from '../impl';
 
 @QueryHandler(GetProductsQuery)
@@ -29,16 +24,6 @@ export class GetProductsHandler implements IQueryHandler<GetProductsQuery> {
             return {
                 products: result.map((product) => ({
                     ...product,
-                    productType: mapEnum(
-                        Product.ProductType,
-                        PrismaProductType,
-                        product.productType,
-                    ),
-                    status: mapEnum(
-                        Product.ProductStatus,
-                        PrismaProductStatus,
-                        product.status,
-                    ),
                     attributes: JSON.stringify(product.attributes),
                     variantAttributes: JSON.stringify(
                         product.variantAttributes,

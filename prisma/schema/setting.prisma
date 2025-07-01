@@ -1,0 +1,61 @@
+model Setting {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    common                  CommonSettings
+    site                    SiteSettings
+    carousels               Carousel[]
+    availableLanguages      Language[]
+    defaultLanguage         String          @default("en-US")
+    availableCurrencies     Currency[]
+    defaultCurrency         String          @default("USD")
+    availablePaymentMethods PaymentMethod[]
+    defaultPaymentMethod    String          @default("PayPal")
+}
+
+type CommonSettings {
+    pageSize             Int     @default(9)
+    isMaintenanceMode    Boolean @default(false)
+    freeShippingMinPrice Float   @default(0)
+    defaultTheme         String  @default("light")
+    defaultColor         String  @default("gold")
+}
+
+type SiteSettings {
+    name        String @default("My eCommerce Site")
+    url         String @default("https://myecommercesite.com")
+    logo        String @default("https://myecommercesite.com/logo.png")
+    slogan      String @default("Best products, best prices!")
+    description String @default("Welcome to our eCommerce platform.")
+    keywords    String @default("shopping, eCommerce, buy online")
+    email       String @default("support@myecommercesite.com")
+    phone       String @default("+1234567890")
+    author      String @default("Admin")
+    copyright   String @default("© 2025 My eCommerce Site")
+    address     String @default("1234 Market Street, City, Country")
+}
+
+type Carousel {
+    title         String
+    url           String
+    image         String
+    buttonCaption String
+}
+
+type Language {
+    name String @default("English")
+    code String @default("en-US")
+}
+
+type Currency {
+    name        String @default("United States Dollar")
+    code        String @default("USD")
+    convertRate Float  @default(1.0)
+    symbol      String @default("$")
+}
+
+type PaymentMethod {
+    name       String @default("PayPal")
+    commission Float  @default(0)
+}

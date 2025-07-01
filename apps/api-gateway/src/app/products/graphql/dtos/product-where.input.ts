@@ -41,19 +41,22 @@ export class ProductWhereInput {
     slug?: StringFilter;
 
     @Field(() => StringNullableFilter, { nullable: true })
+    brand?: StringNullableFilter;
+
+    @Field(() => StringNullableFilter, { nullable: true })
     shortDescription?: StringNullableFilter;
 
     @Field(() => StringNullableFilter, { nullable: true })
     longDescription?: StringNullableFilter;
 
     @Field(() => StringNullableFilter, { nullable: true })
-    thumbnailUrl?: StringNullableFilter;
+    thumbnail?: StringNullableFilter;
+
+    @Field(() => [String], { nullable: true })
+    images?: Array<string>;
 
     @Field(() => EnumProductTypeFilter, { nullable: true })
     productType?: EnumProductTypeFilter;
-
-    @Field(() => StringNullableFilter, { nullable: true })
-    productTemplateId?: StringNullableFilter;
 
     @Field(() => StringNullableFilter, { nullable: true })
     manufacturerId?: StringNullableFilter;
@@ -62,19 +65,10 @@ export class ProductWhereInput {
     sortOrder?: IntFilter;
 
     @Field(() => StringNullableFilter, { nullable: true })
-    metaTitle?: StringNullableFilter;
-
-    @Field(() => StringNullableFilter, { nullable: true })
-    metaDescription?: StringNullableFilter;
-
-    @Field(() => StringNullableFilter, { nullable: true })
     metaKeywords?: StringNullableFilter;
 
-    @Field(() => StringNullableFilter, { nullable: true })
-    tags?: StringNullableFilter;
-
-    @Field(() => BoolFilter, { nullable: true })
-    allowCustomMetaTag?: BoolFilter;
+    @Field(() => [String], { nullable: true })
+    tags?: Array<string>;
 
     @Field(() => BoolFilter, { nullable: true })
     limitedToLocations?: BoolFilter;

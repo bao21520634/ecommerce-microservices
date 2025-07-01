@@ -1,16 +1,20 @@
 import { Resolver, Query, Args, Context, Int } from '@nestjs/graphql';
-import { GqlContext, setRpcContext } from '@ecommerce-microservices/core';
 import {
-    mapEnum,
-    transformFindArgsToGrpcQuery,
-} from '@ecommerce-microservices/common';
-import { CategoryStatus as PrismaCategoryStatus } from '@prisma/client';
-import { Category as PbCategory } from '@ecommerce-microservices/proto-schema';
+    GqlContext,
+    RESOURCES,
+    SCOPES,
+    setRpcContext,
+} from '@ecommerce-microservices/core';
+import { transformFindArgsToGrpcQuery } from '@ecommerce-microservices/common';
 import { lastValueFrom } from 'rxjs';
 import { Category as CategoryDto } from './entity/categories.entity';
 import { FindManyCategoryArgs } from './dtos/find-many-category.args';
+import { Public, Resource, Scopes } from 'nest-keycloak-connect';
 
 @Resolver(() => CategoryDto)
+@Resource(RESOURCES.CATEGORY)
+@Public()
+@Scopes(SCOPES.READ)
 export class CategoriesResolver {
     @Query(() => CategoryDto, { nullable: true })
     async category(
@@ -27,14 +31,7 @@ export class CategoriesResolver {
             ),
         );
 
-        return {
-            ...result.data,
-            status: mapEnum(
-                PrismaCategoryStatus,
-                PbCategory.CategoryStatus,
-                result.data.status,
-            ),
-        } as CategoryDto;
+        return result.data as CategoryDto;
     }
 
     @Query(() => [CategoryDto])
@@ -51,14 +48,7 @@ export class CategoriesResolver {
             ),
         );
 
-        return (categories.categories.map((category) => ({
-            ...category,
-            status: mapEnum(
-                PrismaCategoryStatus,
-                PbCategory.CategoryStatus,
-                category.status,
-            ),
-        })) ?? []) as CategoryDto[];
+        return categories.categories as CategoryDto[];
     }
 
     @Query(() => Int)

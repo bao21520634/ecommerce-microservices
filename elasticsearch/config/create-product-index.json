@@ -1,0 +1,80 @@
+{
+    "settings": {
+        "analysis": {
+            "analyzer": {
+                "edge_ngram_analyzer": {
+                    "type": "custom",
+                    "tokenizer": "icu_tokenizer",
+                    "filter": ["lowercase", "edge_ngram_filter"]
+                },
+                "search_analyzer": {
+                    "type": "custom",
+                    "tokenizer": "icu_tokenizer",
+                    "filter": ["lowercase"]
+                }
+            },
+            "filter": {
+                "edge_ngram_filter": {
+                    "type": "edge_ngram",
+                    "min_gram": 2,
+                    "max_gram": 10,
+                    "side": "front"
+                }
+            }
+        }
+    },
+    "mappings": {
+        "properties": {
+            "name": {
+                "type": "text",
+                "analyzer": "edge_ngram_analyzer",
+                "search_analyzer": "search_analyzer",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword",
+                        "ignore_above": 256
+                    }
+                }
+            },
+            "shortDescription": {
+                "type": "text",
+                "analyzer": "edge_ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+            },
+            "longDescription": {
+                "type": "text",
+                "analyzer": "edge_ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+            },
+            "tags": {
+                "type": "text",
+                "analyzer": "edge_ngram_analyzer",
+                "search_analyzer": "search_analyzer"
+            },
+            "priceExclTax": {
+                "type": "float"
+            },
+            "priceInclTax": {
+                "type": "float"
+            },
+            "unit": {
+                "type": "keyword"
+            },
+            "stockAvailability": {
+                "type": "integer"
+            },
+            "attributes": {
+                "type": "nested",
+                "enabled": true
+            },
+            "variantAttributes": {
+                "type": "nested",
+                "enabled": true
+            },
+            "embedding": {
+                "type": "dense_vector",
+                "dims": 1536
+            }
+        }
+    }
+}

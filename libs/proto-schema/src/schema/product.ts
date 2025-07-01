@@ -13,111 +13,37 @@ import { Timestamp } from "./google/protobuf/timestamp";
 
 export const protobufPackage = "product";
 
-export enum ProductType {
-  Simple = 0,
-  Variant = 1,
-  UNRECOGNIZED = -1,
-}
-
-export function productTypeFromJSON(object: any): ProductType {
-  switch (object) {
-    case 0:
-    case "Simple":
-      return ProductType.Simple;
-    case 1:
-    case "Variant":
-      return ProductType.Variant;
-    case -1:
-    case "UNRECOGNIZED":
-    default:
-      return ProductType.UNRECOGNIZED;
-  }
-}
-
-export function productTypeToJSON(object: ProductType): string {
-  switch (object) {
-    case ProductType.Simple:
-      return "Simple";
-    case ProductType.Variant:
-      return "Variant";
-    case ProductType.UNRECOGNIZED:
-    default:
-      return "UNRECOGNIZED";
-  }
-}
-
-export enum ProductStatus {
-  Active = 0,
-  Locked = 1,
-  Deleted = 2,
-  UNRECOGNIZED = -1,
-}
-
-export function productStatusFromJSON(object: any): ProductStatus {
-  switch (object) {
-    case 0:
-    case "Active":
-      return ProductStatus.Active;
-    case 1:
-    case "Locked":
-      return ProductStatus.Locked;
-    case 2:
-    case "Deleted":
-      return ProductStatus.Deleted;
-    case -1:
-    case "UNRECOGNIZED":
-    default:
-      return ProductStatus.UNRECOGNIZED;
-  }
-}
-
-export function productStatusToJSON(object: ProductStatus): string {
-  switch (object) {
-    case ProductStatus.Active:
-      return "Active";
-    case ProductStatus.Locked:
-      return "Locked";
-    case ProductStatus.Deleted:
-      return "Deleted";
-    case ProductStatus.UNRECOGNIZED:
-    default:
-      return "UNRECOGNIZED";
-  }
-}
-
 export interface Product {
   id: string;
   name: string;
+  brand: string;
   slug: string;
-  shortDescription?: string | undefined;
-  longDescription?: string | undefined;
-  thumbnailUrl?: string | undefined;
-  productType?: ProductType | undefined;
-  productTemplateId?: string | undefined;
-  manufacturerId?: string | undefined;
-  sortOrder?: number | undefined;
-  metaTitle?: string | undefined;
-  metaDescription?: string | undefined;
-  metaKeywords?: string | undefined;
-  tags?: string | undefined;
-  allowCustomMetaTag?: boolean | undefined;
-  limitedToLocations?: boolean | undefined;
-  limitedToStores?: boolean | undefined;
-  status?: ProductStatus | undefined;
-  displayPrice?: boolean | undefined;
-  shippable?: boolean | undefined;
-  weight?: number | undefined;
-  length?: number | undefined;
-  width?: number | undefined;
-  height?: number | undefined;
-  taxCategory?: string | undefined;
-  taxPercent?: number | undefined;
+  shortDescription: string;
+  longDescription: string;
+  thumbnail: string;
+  images: string[];
+  productType: string;
+  manufacturerId: string;
+  sortOrder: number;
+  metaKeywords: string;
+  tags: string[];
+  limitedToLocations: boolean;
+  limitedToStores: boolean;
+  status: string;
+  displayPrice: boolean;
+  shippable: boolean;
+  weight: number;
+  length: number;
+  width: number;
+  height: number;
+  taxCategory: string;
+  taxPercent: number;
   priceExclTax: number;
   priceInclTax: number;
-  unit?: string | undefined;
-  stockAvailability?: number | undefined;
-  attributes?: string | undefined;
-  variantAttributes?: string | undefined;
+  unit: string;
+  stockAvailability: number;
+  attributes: string;
+  variantAttributes: string;
   createdAt?: Date | undefined;
   updatedAt?: Date | undefined;
 }
@@ -129,21 +55,19 @@ export interface Products {
 export interface ProductInput {
   name: string;
   slug: string;
+  brand?: string | undefined;
   shortDescription?: string | undefined;
   longDescription?: string | undefined;
-  thumbnailUrl?: string | undefined;
-  productType?: ProductType | undefined;
-  productTemplateId?: string | undefined;
+  thumbnail?: string | undefined;
+  images: string[];
+  productType?: string | undefined;
   manufacturerId?: string | undefined;
   sortOrder?: number | undefined;
-  metaTitle?: string | undefined;
-  metaDescription?: string | undefined;
   metaKeywords?: string | undefined;
-  tags?: string | undefined;
-  allowCustomMetaTag?: boolean | undefined;
+  tags: string[];
   limitedToLocations?: boolean | undefined;
   limitedToStores?: boolean | undefined;
-  status?: ProductStatus | undefined;
+  status?: string | undefined;
   displayPrice?: boolean | undefined;
   shippable?: boolean | undefined;
   weight?: number | undefined;
@@ -199,7 +123,38 @@ wrappers[".google.protobuf.Timestamp"] = {
 } as any;
 
 function createBaseProduct(): Product {
-  return { id: "", name: "", slug: "", priceExclTax: 0, priceInclTax: 0 };
+  return {
+    id: "",
+    name: "",
+    brand: "",
+    slug: "",
+    shortDescription: "",
+    longDescription: "",
+    thumbnail: "",
+    images: [],
+    productType: "",
+    manufacturerId: "",
+    sortOrder: 0,
+    metaKeywords: "",
+    tags: [],
+    limitedToLocations: false,
+    limitedToStores: false,
+    status: "",
+    displayPrice: false,
+    shippable: false,
+    weight: 0,
+    length: 0,
+    width: 0,
+    height: 0,
+    taxCategory: "",
+    taxPercent: 0,
+    priceExclTax: 0,
+    priceInclTax: 0,
+    unit: "",
+    stockAvailability: 0,
+    attributes: "",
+    variantAttributes: "",
+  };
 }
 
 export const Product: MessageFns<Product> = {
@@ -210,101 +165,95 @@ export const Product: MessageFns<Product> = {
     if (message.name !== "") {
       writer.uint32(18).string(message.name);
     }
+    if (message.brand !== "") {
+      writer.uint32(26).string(message.brand);
+    }
     if (message.slug !== "") {
-      writer.uint32(26).string(message.slug);
+      writer.uint32(34).string(message.slug);
     }
-    if (message.shortDescription !== undefined) {
-      writer.uint32(34).string(message.shortDescription);
+    if (message.shortDescription !== "") {
+      writer.uint32(42).string(message.shortDescription);
     }
-    if (message.longDescription !== undefined) {
-      writer.uint32(42).string(message.longDescription);
+    if (message.longDescription !== "") {
+      writer.uint32(50).string(message.longDescription);
     }
-    if (message.thumbnailUrl !== undefined) {
-      writer.uint32(50).string(message.thumbnailUrl);
+    if (message.thumbnail !== "") {
+      writer.uint32(58).string(message.thumbnail);
     }
-    if (message.productType !== undefined) {
-      writer.uint32(56).int32(message.productType);
+    for (const v of message.images) {
+      writer.uint32(66).string(v!);
     }
-    if (message.productTemplateId !== undefined) {
-      writer.uint32(66).string(message.productTemplateId);
+    if (message.productType !== "") {
+      writer.uint32(74).string(message.productType);
     }
-    if (message.manufacturerId !== undefined) {
-      writer.uint32(74).string(message.manufacturerId);
+    if (message.manufacturerId !== "") {
+      writer.uint32(82).string(message.manufacturerId);
     }
-    if (message.sortOrder !== undefined) {
-      writer.uint32(80).int32(message.sortOrder);
+    if (message.sortOrder !== 0) {
+      writer.uint32(88).int32(message.sortOrder);
     }
-    if (message.metaTitle !== undefined) {
-      writer.uint32(90).string(message.metaTitle);
+    if (message.metaKeywords !== "") {
+      writer.uint32(98).string(message.metaKeywords);
     }
-    if (message.metaDescription !== undefined) {
-      writer.uint32(98).string(message.metaDescription);
+    for (const v of message.tags) {
+      writer.uint32(106).string(v!);
     }
-    if (message.metaKeywords !== undefined) {
-      writer.uint32(106).string(message.metaKeywords);
+    if (message.limitedToLocations !== false) {
+      writer.uint32(112).bool(message.limitedToLocations);
     }
-    if (message.tags !== undefined) {
-      writer.uint32(114).string(message.tags);
+    if (message.limitedToStores !== false) {
+      writer.uint32(120).bool(message.limitedToStores);
     }
-    if (message.allowCustomMetaTag !== undefined) {
-      writer.uint32(120).bool(message.allowCustomMetaTag);
+    if (message.status !== "") {
+      writer.uint32(130).string(message.status);
     }
-    if (message.limitedToLocations !== undefined) {
-      writer.uint32(128).bool(message.limitedToLocations);
+    if (message.displayPrice !== false) {
+      writer.uint32(136).bool(message.displayPrice);
     }
-    if (message.limitedToStores !== undefined) {
-      writer.uint32(136).bool(message.limitedToStores);
+    if (message.shippable !== false) {
+      writer.uint32(144).bool(message.shippable);
     }
-    if (message.status !== undefined) {
-      writer.uint32(144).int32(message.status);
+    if (message.weight !== 0) {
+      writer.uint32(157).float(message.weight);
     }
-    if (message.displayPrice !== undefined) {
-      writer.uint32(152).bool(message.displayPrice);
+    if (message.length !== 0) {
+      writer.uint32(165).float(message.length);
     }
-    if (message.shippable !== undefined) {
-      writer.uint32(160).bool(message.shippable);
+    if (message.width !== 0) {
+      writer.uint32(173).float(message.width);
     }
-    if (message.weight !== undefined) {
-      writer.uint32(173).float(message.weight);
+    if (message.height !== 0) {
+      writer.uint32(181).float(message.height);
     }
-    if (message.length !== undefined) {
-      writer.uint32(181).float(message.length);
+    if (message.taxCategory !== "") {
+      writer.uint32(186).string(message.taxCategory);
     }
-    if (message.width !== undefined) {
-      writer.uint32(189).float(message.width);
-    }
-    if (message.height !== undefined) {
-      writer.uint32(197).float(message.height);
-    }
-    if (message.taxCategory !== undefined) {
-      writer.uint32(202).string(message.taxCategory);
-    }
-    if (message.taxPercent !== undefined) {
-      writer.uint32(213).float(message.taxPercent);
+    if (message.taxPercent !== 0) {
+      writer.uint32(197).float(message.taxPercent);
     }
     if (message.priceExclTax !== 0) {
-      writer.uint32(221).float(message.priceExclTax);
+      writer.uint32(205).float(message.priceExclTax);
     }
     if (message.priceInclTax !== 0) {
-      writer.uint32(229).float(message.priceInclTax);
+      writer.uint32(213).float(message.priceInclTax);
     }
-    if (message.unit !== undefined) {
-      writer.uint32(234).string(message.unit);
+    if (message.unit !== "") {
+      writer.uint32(218).string(message.unit);
     }
-    if (message.stockAvailability !== undefined) {
-      writer.uint32(240).int32(message.stockAvailability);
+    if (message.stockAvailability !== 0) {
+      writer.uint32(224).int32(message.stockAvailability);
     }
-    if (message.attributes !== undefined) {
-      writer.uint32(250).string(message.attributes);
+    if (message.attributes !== "") {
+      writer.uint32(234).string(message.attributes);
     }
-    if (message.variantAttributes !== undefined) {
-      writer.uint32(258).string(message.variantAttributes);
+    if (message.variantAttributes !== "") {
+      writer.uint32(242).string(message.variantAttributes);
     }
     if (message.createdAt !== undefined) {
-      Timestamp.encode(toTimestamp(message.createdAt), writer.uint32(266).fork()).join();
+      Timestamp.encode(toTimestamp(message.createdAt), writer.uint32(250).fork()).join();
     }
     if (message.updatedAt !== undefined) {
-      Timestamp.encode(toTimestamp(message.updatedAt), writer.uint32(274).fork()).join();
+      Timestamp.encode(toTimestamp(message.updatedAt), writer.uint32(258).fork()).join();
     }
     return writer;
   },
@@ -337,7 +286,7 @@ export const Product: MessageFns<Product> = {
             break;
           }
 
-          message.slug = reader.string();
+          message.brand = reader.string();
           continue;
         }
         case 4: {
@@ -345,7 +294,7 @@ export const Product: MessageFns<Product> = {
             break;
           }
 
-          message.shortDescription = reader.string();
+          message.slug = reader.string();
           continue;
         }
         case 5: {
@@ -353,7 +302,7 @@ export const Product: MessageFns<Product> = {
             break;
           }
 
-          message.longDescription = reader.string();
+          message.shortDescription = reader.string();
           continue;
         }
         case 6: {
@@ -361,15 +310,15 @@ export const Product: MessageFns<Product> = {
             break;
           }
 
-          message.thumbnailUrl = reader.string();
+          message.longDescription = reader.string();
           continue;
         }
         case 7: {
-          if (tag !== 56) {
+          if (tag !== 58) {
             break;
           }
 
-          message.productType = reader.int32() as any;
+          message.thumbnail = reader.string();
           continue;
         }
         case 8: {
@@ -377,7 +326,7 @@ export const Product: MessageFns<Product> = {
             break;
           }
 
-          message.productTemplateId = reader.string();
+          message.images.push(reader.string());
           continue;
         }
         case 9: {
@@ -385,23 +334,23 @@ export const Product: MessageFns<Product> = {
             break;
           }
 
-          message.manufacturerId = reader.string();
+          message.productType = reader.string();
           continue;
         }
         case 10: {
-          if (tag !== 80) {
+          if (tag !== 82) {
+            break;
+          }
+
+          message.manufacturerId = reader.string();
+          continue;
+        }
+        case 11: {
+          if (tag !== 88) {
             break;
           }
 
           message.sortOrder = reader.int32();
-          continue;
-        }
-        case 11: {
-          if (tag !== 90) {
-            break;
-          }
-
-          message.metaTitle = reader.string();
           continue;
         }
         case 12: {
@@ -409,7 +358,7 @@ export const Product: MessageFns<Product> = {
             break;
           }
 
-          message.metaDescription = reader.string();
+          message.metaKeywords = reader.string();
           continue;
         }
         case 13: {
@@ -417,15 +366,15 @@ export const Product: MessageFns<Product> = {
             break;
           }
 
-          message.metaKeywords = reader.string();
+          message.tags.push(reader.string());
           continue;
         }
         case 14: {
-          if (tag !== 114) {
+          if (tag !== 112) {
             break;
           }
 
-          message.tags = reader.string();
+          message.limitedToLocations = reader.bool();
           continue;
         }
         case 15: {
@@ -433,15 +382,15 @@ export const Product: MessageFns<Product> = {
             break;
           }
 
-          message.allowCustomMetaTag = reader.bool();
+          message.limitedToStores = reader.bool();
           continue;
         }
         case 16: {
-          if (tag !== 128) {
+          if (tag !== 130) {
             break;
           }
 
-          message.limitedToLocations = reader.bool();
+          message.status = reader.string();
           continue;
         }
         case 17: {
@@ -449,7 +398,7 @@ export const Product: MessageFns<Product> = {
             break;
           }
 
-          message.limitedToStores = reader.bool();
+          message.displayPrice = reader.bool();
           continue;
         }
         case 18: {
@@ -457,23 +406,23 @@ export const Product: MessageFns<Product> = {
             break;
           }
 
-          message.status = reader.int32() as any;
+          message.shippable = reader.bool();
           continue;
         }
         case 19: {
-          if (tag !== 152) {
+          if (tag !== 157) {
             break;
           }
 
-          message.displayPrice = reader.bool();
+          message.weight = reader.float();
           continue;
         }
         case 20: {
-          if (tag !== 160) {
+          if (tag !== 165) {
             break;
           }
 
-          message.shippable = reader.bool();
+          message.length = reader.float();
           continue;
         }
         case 21: {
@@ -481,7 +430,7 @@ export const Product: MessageFns<Product> = {
             break;
           }
 
-          message.weight = reader.float();
+          message.width = reader.float();
           continue;
         }
         case 22: {
@@ -489,15 +438,15 @@ export const Product: MessageFns<Product> = {
             break;
           }
 
-          message.length = reader.float();
+          message.height = reader.float();
           continue;
         }
         case 23: {
-          if (tag !== 189) {
+          if (tag !== 186) {
             break;
           }
 
-          message.width = reader.float();
+          message.taxCategory = reader.string();
           continue;
         }
         case 24: {
@@ -505,15 +454,15 @@ export const Product: MessageFns<Product> = {
             break;
           }
 
-          message.height = reader.float();
+          message.taxPercent = reader.float();
           continue;
         }
         case 25: {
-          if (tag !== 202) {
+          if (tag !== 205) {
             break;
           }
 
-          message.taxCategory = reader.string();
+          message.priceExclTax = reader.float();
           continue;
         }
         case 26: {
@@ -521,23 +470,23 @@ export const Product: MessageFns<Product> = {
             break;
           }
 
-          message.taxPercent = reader.float();
+          message.priceInclTax = reader.float();
           continue;
         }
         case 27: {
-          if (tag !== 221) {
+          if (tag !== 218) {
             break;
           }
 
-          message.priceExclTax = reader.float();
+          message.unit = reader.string();
           continue;
         }
         case 28: {
-          if (tag !== 229) {
+          if (tag !== 224) {
             break;
           }
 
-          message.priceInclTax = reader.float();
+          message.stockAvailability = reader.int32();
           continue;
         }
         case 29: {
@@ -545,15 +494,15 @@ export const Product: MessageFns<Product> = {
             break;
           }
 
-          message.unit = reader.string();
+          message.attributes = reader.string();
           continue;
         }
         case 30: {
-          if (tag !== 240) {
+          if (tag !== 242) {
             break;
           }
 
-          message.stockAvailability = reader.int32();
+          message.variantAttributes = reader.string();
           continue;
         }
         case 31: {
@@ -561,27 +510,11 @@ export const Product: MessageFns<Product> = {
             break;
           }
 
-          message.attributes = reader.string();
+          message.createdAt = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
           continue;
         }
         case 32: {
           if (tag !== 258) {
-            break;
-          }
-
-          message.variantAttributes = reader.string();
-          continue;
-        }
-        case 33: {
-          if (tag !== 266) {
-            break;
-          }
-
-          message.createdAt = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
-          continue;
-        }
-        case 34: {
-          if (tag !== 274) {
             break;
           }
 
@@ -601,36 +534,34 @@ export const Product: MessageFns<Product> = {
     return {
       id: isSet(object.id) ? globalThis.String(object.id) : "",
       name: isSet(object.name) ? globalThis.String(object.name) : "",
+      brand: isSet(object.brand) ? globalThis.String(object.brand) : "",
       slug: isSet(object.slug) ? globalThis.String(object.slug) : "",
-      shortDescription: isSet(object.shortDescription) ? globalThis.String(object.shortDescription) : undefined,
-      longDescription: isSet(object.longDescription) ? globalThis.String(object.longDescription) : undefined,
-      thumbnailUrl: isSet(object.thumbnailUrl) ? globalThis.String(object.thumbnailUrl) : undefined,
-      productType: isSet(object.productType) ? productTypeFromJSON(object.productType) : undefined,
-      productTemplateId: isSet(object.productTemplateId) ? globalThis.String(object.productTemplateId) : undefined,
-      manufacturerId: isSet(object.manufacturerId) ? globalThis.String(object.manufacturerId) : undefined,
-      sortOrder: isSet(object.sortOrder) ? globalThis.Number(object.sortOrder) : undefined,
-      metaTitle: isSet(object.metaTitle) ? globalThis.String(object.metaTitle) : undefined,
-      metaDescription: isSet(object.metaDescription) ? globalThis.String(object.metaDescription) : undefined,
-      metaKeywords: isSet(object.metaKeywords) ? globalThis.String(object.metaKeywords) : undefined,
-      tags: isSet(object.tags) ? globalThis.String(object.tags) : undefined,
-      allowCustomMetaTag: isSet(object.allowCustomMetaTag) ? globalThis.Boolean(object.allowCustomMetaTag) : undefined,
-      limitedToLocations: isSet(object.limitedToLocations) ? globalThis.Boolean(object.limitedToLocations) : undefined,
-      limitedToStores: isSet(object.limitedToStores) ? globalThis.Boolean(object.limitedToStores) : undefined,
-      status: isSet(object.status) ? productStatusFromJSON(object.status) : undefined,
-      displayPrice: isSet(object.displayPrice) ? globalThis.Boolean(object.displayPrice) : undefined,
-      shippable: isSet(object.shippable) ? globalThis.Boolean(object.shippable) : undefined,
-      weight: isSet(object.weight) ? globalThis.Number(object.weight) : undefined,
-      length: isSet(object.length) ? globalThis.Number(object.length) : undefined,
-      width: isSet(object.width) ? globalThis.Number(object.width) : undefined,
-      height: isSet(object.height) ? globalThis.Number(object.height) : undefined,
-      taxCategory: isSet(object.taxCategory) ? globalThis.String(object.taxCategory) : undefined,
-      taxPercent: isSet(object.taxPercent) ? globalThis.Number(object.taxPercent) : undefined,
+      shortDescription: isSet(object.shortDescription) ? globalThis.String(object.shortDescription) : "",
+      longDescription: isSet(object.longDescription) ? globalThis.String(object.longDescription) : "",
+      thumbnail: isSet(object.thumbnail) ? globalThis.String(object.thumbnail) : "",
+      images: globalThis.Array.isArray(object?.images) ? object.images.map((e: any) => globalThis.String(e)) : [],
+      productType: isSet(object.productType) ? globalThis.String(object.productType) : "",
+      manufacturerId: isSet(object.manufacturerId) ? globalThis.String(object.manufacturerId) : "",
+      sortOrder: isSet(object.sortOrder) ? globalThis.Number(object.sortOrder) : 0,
+      metaKeywords: isSet(object.metaKeywords) ? globalThis.String(object.metaKeywords) : "",
+      tags: globalThis.Array.isArray(object?.tags) ? object.tags.map((e: any) => globalThis.String(e)) : [],
+      limitedToLocations: isSet(object.limitedToLocations) ? globalThis.Boolean(object.limitedToLocations) : false,
+      limitedToStores: isSet(object.limitedToStores) ? globalThis.Boolean(object.limitedToStores) : false,
+      status: isSet(object.status) ? globalThis.String(object.status) : "",
+      displayPrice: isSet(object.displayPrice) ? globalThis.Boolean(object.displayPrice) : false,
+      shippable: isSet(object.shippable) ? globalThis.Boolean(object.shippable) : false,
+      weight: isSet(object.weight) ? globalThis.Number(object.weight) : 0,
+      length: isSet(object.length) ? globalThis.Number(object.length) : 0,
+      width: isSet(object.width) ? globalThis.Number(object.width) : 0,
+      height: isSet(object.height) ? globalThis.Number(object.height) : 0,
+      taxCategory: isSet(object.taxCategory) ? globalThis.String(object.taxCategory) : "",
+      taxPercent: isSet(object.taxPercent) ? globalThis.Number(object.taxPercent) : 0,
       priceExclTax: isSet(object.priceExclTax) ? globalThis.Number(object.priceExclTax) : 0,
       priceInclTax: isSet(object.priceInclTax) ? globalThis.Number(object.priceInclTax) : 0,
-      unit: isSet(object.unit) ? globalThis.String(object.unit) : undefined,
-      stockAvailability: isSet(object.stockAvailability) ? globalThis.Number(object.stockAvailability) : undefined,
-      attributes: isSet(object.attributes) ? globalThis.String(object.attributes) : undefined,
-      variantAttributes: isSet(object.variantAttributes) ? globalThis.String(object.variantAttributes) : undefined,
+      unit: isSet(object.unit) ? globalThis.String(object.unit) : "",
+      stockAvailability: isSet(object.stockAvailability) ? globalThis.Number(object.stockAvailability) : 0,
+      attributes: isSet(object.attributes) ? globalThis.String(object.attributes) : "",
+      variantAttributes: isSet(object.variantAttributes) ? globalThis.String(object.variantAttributes) : "",
       createdAt: isSet(object.createdAt) ? fromJsonTimestamp(object.createdAt) : undefined,
       updatedAt: isSet(object.updatedAt) ? fromJsonTimestamp(object.updatedAt) : undefined,
     };
@@ -644,76 +575,70 @@ export const Product: MessageFns<Product> = {
     if (message.name !== "") {
       obj.name = message.name;
     }
+    if (message.brand !== "") {
+      obj.brand = message.brand;
+    }
     if (message.slug !== "") {
       obj.slug = message.slug;
     }
-    if (message.shortDescription !== undefined) {
+    if (message.shortDescription !== "") {
       obj.shortDescription = message.shortDescription;
     }
-    if (message.longDescription !== undefined) {
+    if (message.longDescription !== "") {
       obj.longDescription = message.longDescription;
     }
-    if (message.thumbnailUrl !== undefined) {
-      obj.thumbnailUrl = message.thumbnailUrl;
+    if (message.thumbnail !== "") {
+      obj.thumbnail = message.thumbnail;
     }
-    if (message.productType !== undefined) {
-      obj.productType = productTypeToJSON(message.productType);
+    if (message.images?.length) {
+      obj.images = message.images;
     }
-    if (message.productTemplateId !== undefined) {
-      obj.productTemplateId = message.productTemplateId;
+    if (message.productType !== "") {
+      obj.productType = message.productType;
     }
-    if (message.manufacturerId !== undefined) {
+    if (message.manufacturerId !== "") {
       obj.manufacturerId = message.manufacturerId;
     }
-    if (message.sortOrder !== undefined) {
+    if (message.sortOrder !== 0) {
       obj.sortOrder = Math.round(message.sortOrder);
     }
-    if (message.metaTitle !== undefined) {
-      obj.metaTitle = message.metaTitle;
-    }
-    if (message.metaDescription !== undefined) {
-      obj.metaDescription = message.metaDescription;
-    }
-    if (message.metaKeywords !== undefined) {
+    if (message.metaKeywords !== "") {
       obj.metaKeywords = message.metaKeywords;
     }
-    if (message.tags !== undefined) {
+    if (message.tags?.length) {
       obj.tags = message.tags;
     }
-    if (message.allowCustomMetaTag !== undefined) {
-      obj.allowCustomMetaTag = message.allowCustomMetaTag;
-    }
-    if (message.limitedToLocations !== undefined) {
+    if (message.limitedToLocations !== false) {
       obj.limitedToLocations = message.limitedToLocations;
     }
-    if (message.limitedToStores !== undefined) {
+    if (message.limitedToStores !== false) {
       obj.limitedToStores = message.limitedToStores;
     }
-    if (message.status !== undefined) {
-      obj.status = productStatusToJSON(message.status);
+    if (message.status !== "") {
+      obj.status = message.status;
     }
-    if (message.displayPrice !== undefined) {
+    if (message.displayPrice !== false) {
       obj.displayPrice = message.displayPrice;
     }
-    if (message.shippable !== undefined) {
+    if (message.shippable !== false) {
       obj.shippable = message.shippable;
     }
-    if (message.weight !== undefined) {
+    if (message.weight !== 0) {
       obj.weight = message.weight;
     }
-    if (message.length !== undefined) {
+    if (message.length !== 0) {
       obj.length = message.length;
     }
-    if (message.width !== undefined) {
+    if (message.width !== 0) {
       obj.width = message.width;
     }
-    if (message.height !== undefined) {
+    if (message.height !== 0) {
       obj.height = message.height;
     }
-    if (message.taxCategory !== undefined) {
+    if (message.taxCategory !== "") {
       obj.taxCategory = message.taxCategory;
     }
-    if (message.taxPercent !== undefined) {
+    if (message.taxPercent !== 0) {
       obj.taxPercent = message.taxPercent;
     }
     if (message.priceExclTax !== 0) {
@@ -722,16 +647,16 @@ export const Product: MessageFns<Product> = {
     if (message.priceInclTax !== 0) {
       obj.priceInclTax = message.priceInclTax;
     }
-    if (message.unit !== undefined) {
+    if (message.unit !== "") {
       obj.unit = message.unit;
     }
-    if (message.stockAvailability !== undefined) {
+    if (message.stockAvailability !== 0) {
       obj.stockAvailability = Math.round(message.stockAvailability);
     }
-    if (message.attributes !== undefined) {
+    if (message.attributes !== "") {
       obj.attributes = message.attributes;
     }
-    if (message.variantAttributes !== undefined) {
+    if (message.variantAttributes !== "") {
       obj.variantAttributes = message.variantAttributes;
     }
     if (message.createdAt !== undefined) {
@@ -796,7 +721,7 @@ export const Products: MessageFns<Products> = {
 };
 
 function createBaseProductInput(): ProductInput {
-  return { name: "", slug: "", priceExclTax: 0, priceInclTax: 0 };
+  return { name: "", slug: "", images: [], tags: [], priceExclTax: 0, priceInclTax: 0 };
 }
 
 export const ProductInput: MessageFns<ProductInput> = {
@@ -807,92 +732,86 @@ export const ProductInput: MessageFns<ProductInput> = {
     if (message.slug !== "") {
       writer.uint32(18).string(message.slug);
     }
+    if (message.brand !== undefined) {
+      writer.uint32(26).string(message.brand);
+    }
     if (message.shortDescription !== undefined) {
-      writer.uint32(26).string(message.shortDescription);
+      writer.uint32(34).string(message.shortDescription);
     }
     if (message.longDescription !== undefined) {
-      writer.uint32(34).string(message.longDescription);
+      writer.uint32(42).string(message.longDescription);
     }
-    if (message.thumbnailUrl !== undefined) {
-      writer.uint32(42).string(message.thumbnailUrl);
+    if (message.thumbnail !== undefined) {
+      writer.uint32(50).string(message.thumbnail);
+    }
+    for (const v of message.images) {
+      writer.uint32(58).string(v!);
     }
     if (message.productType !== undefined) {
-      writer.uint32(48).int32(message.productType);
-    }
-    if (message.productTemplateId !== undefined) {
-      writer.uint32(58).string(message.productTemplateId);
+      writer.uint32(66).string(message.productType);
     }
     if (message.manufacturerId !== undefined) {
-      writer.uint32(66).string(message.manufacturerId);
+      writer.uint32(74).string(message.manufacturerId);
     }
     if (message.sortOrder !== undefined) {
-      writer.uint32(72).int32(message.sortOrder);
-    }
-    if (message.metaTitle !== undefined) {
-      writer.uint32(82).string(message.metaTitle);
-    }
-    if (message.metaDescription !== undefined) {
-      writer.uint32(90).string(message.metaDescription);
+      writer.uint32(80).int32(message.sortOrder);
     }
     if (message.metaKeywords !== undefined) {
-      writer.uint32(98).string(message.metaKeywords);
+      writer.uint32(90).string(message.metaKeywords);
     }
-    if (message.tags !== undefined) {
-      writer.uint32(106).string(message.tags);
-    }
-    if (message.allowCustomMetaTag !== undefined) {
-      writer.uint32(112).bool(message.allowCustomMetaTag);
+    for (const v of message.tags) {
+      writer.uint32(98).string(v!);
     }
     if (message.limitedToLocations !== undefined) {
-      writer.uint32(120).bool(message.limitedToLocations);
+      writer.uint32(104).bool(message.limitedToLocations);
     }
     if (message.limitedToStores !== undefined) {
-      writer.uint32(128).bool(message.limitedToStores);
+      writer.uint32(112).bool(message.limitedToStores);
     }
     if (message.status !== undefined) {
-      writer.uint32(136).int32(message.status);
+      writer.uint32(122).string(message.status);
     }
     if (message.displayPrice !== undefined) {
-      writer.uint32(144).bool(message.displayPrice);
+      writer.uint32(128).bool(message.displayPrice);
     }
     if (message.shippable !== undefined) {
-      writer.uint32(152).bool(message.shippable);
+      writer.uint32(136).bool(message.shippable);
     }
     if (message.weight !== undefined) {
-      writer.uint32(165).float(message.weight);
+      writer.uint32(149).float(message.weight);
     }
     if (message.length !== undefined) {
-      writer.uint32(173).float(message.length);
+      writer.uint32(157).float(message.length);
     }
     if (message.width !== undefined) {
-      writer.uint32(181).float(message.width);
+      writer.uint32(165).float(message.width);
     }
     if (message.height !== undefined) {
-      writer.uint32(189).float(message.height);
+      writer.uint32(173).float(message.height);
     }
     if (message.taxCategory !== undefined) {
-      writer.uint32(194).string(message.taxCategory);
+      writer.uint32(178).string(message.taxCategory);
     }
     if (message.taxPercent !== undefined) {
-      writer.uint32(205).float(message.taxPercent);
+      writer.uint32(189).float(message.taxPercent);
     }
     if (message.priceExclTax !== 0) {
-      writer.uint32(213).float(message.priceExclTax);
+      writer.uint32(197).float(message.priceExclTax);
     }
     if (message.priceInclTax !== 0) {
-      writer.uint32(221).float(message.priceInclTax);
+      writer.uint32(205).float(message.priceInclTax);
     }
     if (message.unit !== undefined) {
-      writer.uint32(226).string(message.unit);
+      writer.uint32(210).string(message.unit);
     }
     if (message.stockAvailability !== undefined) {
-      writer.uint32(232).int32(message.stockAvailability);
+      writer.uint32(216).int32(message.stockAvailability);
     }
     if (message.attributes !== undefined) {
-      writer.uint32(242).string(message.attributes);
+      writer.uint32(226).string(message.attributes);
     }
     if (message.variantAttributes !== undefined) {
-      writer.uint32(250).string(message.variantAttributes);
+      writer.uint32(234).string(message.variantAttributes);
     }
     return writer;
   },
@@ -925,7 +844,7 @@ export const ProductInput: MessageFns<ProductInput> = {
             break;
           }
 
-          message.shortDescription = reader.string();
+          message.brand = reader.string();
           continue;
         }
         case 4: {
@@ -933,7 +852,7 @@ export const ProductInput: MessageFns<ProductInput> = {
             break;
           }
 
-          message.longDescription = reader.string();
+          message.shortDescription = reader.string();
           continue;
         }
         case 5: {
@@ -941,15 +860,15 @@ export const ProductInput: MessageFns<ProductInput> = {
             break;
           }
 
-          message.thumbnailUrl = reader.string();
+          message.longDescription = reader.string();
           continue;
         }
         case 6: {
-          if (tag !== 48) {
+          if (tag !== 50) {
             break;
           }
 
-          message.productType = reader.int32() as any;
+          message.thumbnail = reader.string();
           continue;
         }
         case 7: {
@@ -957,7 +876,7 @@ export const ProductInput: MessageFns<ProductInput> = {
             break;
           }
 
-          message.productTemplateId = reader.string();
+          message.images.push(reader.string());
           continue;
         }
         case 8: {
@@ -965,23 +884,23 @@ export const ProductInput: MessageFns<ProductInput> = {
             break;
           }
 
-          message.manufacturerId = reader.string();
+          message.productType = reader.string();
           continue;
         }
         case 9: {
-          if (tag !== 72) {
+          if (tag !== 74) {
+            break;
+          }
+
+          message.manufacturerId = reader.string();
+          continue;
+        }
+        case 10: {
+          if (tag !== 80) {
             break;
           }
 
           message.sortOrder = reader.int32();
-          continue;
-        }
-        case 10: {
-          if (tag !== 82) {
-            break;
-          }
-
-          message.metaTitle = reader.string();
           continue;
         }
         case 11: {
@@ -989,7 +908,7 @@ export const ProductInput: MessageFns<ProductInput> = {
             break;
           }
 
-          message.metaDescription = reader.string();
+          message.metaKeywords = reader.string();
           continue;
         }
         case 12: {
@@ -997,15 +916,15 @@ export const ProductInput: MessageFns<ProductInput> = {
             break;
           }
 
-          message.metaKeywords = reader.string();
+          message.tags.push(reader.string());
           continue;
         }
         case 13: {
-          if (tag !== 106) {
+          if (tag !== 104) {
             break;
           }
 
-          message.tags = reader.string();
+          message.limitedToLocations = reader.bool();
           continue;
         }
         case 14: {
@@ -1013,15 +932,15 @@ export const ProductInput: MessageFns<ProductInput> = {
             break;
           }
 
-          message.allowCustomMetaTag = reader.bool();
+          message.limitedToStores = reader.bool();
           continue;
         }
         case 15: {
-          if (tag !== 120) {
+          if (tag !== 122) {
             break;
           }
 
-          message.limitedToLocations = reader.bool();
+          message.status = reader.string();
           continue;
         }
         case 16: {
@@ -1029,7 +948,7 @@ export const ProductInput: MessageFns<ProductInput> = {
             break;
           }
 
-          message.limitedToStores = reader.bool();
+          message.displayPrice = reader.bool();
           continue;
         }
         case 17: {
@@ -1037,23 +956,23 @@ export const ProductInput: MessageFns<ProductInput> = {
             break;
           }
 
-          message.status = reader.int32() as any;
+          message.shippable = reader.bool();
           continue;
         }
         case 18: {
-          if (tag !== 144) {
+          if (tag !== 149) {
             break;
           }
 
-          message.displayPrice = reader.bool();
+          message.weight = reader.float();
           continue;
         }
         case 19: {
-          if (tag !== 152) {
+          if (tag !== 157) {
             break;
           }
 
-          message.shippable = reader.bool();
+          message.length = reader.float();
           continue;
         }
         case 20: {
@@ -1061,7 +980,7 @@ export const ProductInput: MessageFns<ProductInput> = {
             break;
           }
 
-          message.weight = reader.float();
+          message.width = reader.float();
           continue;
         }
         case 21: {
@@ -1069,15 +988,15 @@ export const ProductInput: MessageFns<ProductInput> = {
             break;
           }
 
-          message.length = reader.float();
+          message.height = reader.float();
           continue;
         }
         case 22: {
-          if (tag !== 181) {
+          if (tag !== 178) {
             break;
           }
 
-          message.width = reader.float();
+          message.taxCategory = reader.string();
           continue;
         }
         case 23: {
@@ -1085,15 +1004,15 @@ export const ProductInput: MessageFns<ProductInput> = {
             break;
           }
 
-          message.height = reader.float();
+          message.taxPercent = reader.float();
           continue;
         }
         case 24: {
-          if (tag !== 194) {
+          if (tag !== 197) {
             break;
           }
 
-          message.taxCategory = reader.string();
+          message.priceExclTax = reader.float();
           continue;
         }
         case 25: {
@@ -1101,23 +1020,23 @@ export const ProductInput: MessageFns<ProductInput> = {
             break;
           }
 
-          message.taxPercent = reader.float();
+          message.priceInclTax = reader.float();
           continue;
         }
         case 26: {
-          if (tag !== 213) {
+          if (tag !== 210) {
             break;
           }
 
-          message.priceExclTax = reader.float();
+          message.unit = reader.string();
           continue;
         }
         case 27: {
-          if (tag !== 221) {
+          if (tag !== 216) {
             break;
           }
 
-          message.priceInclTax = reader.float();
+          message.stockAvailability = reader.int32();
           continue;
         }
         case 28: {
@@ -1125,27 +1044,11 @@ export const ProductInput: MessageFns<ProductInput> = {
             break;
           }
 
-          message.unit = reader.string();
-          continue;
-        }
-        case 29: {
-          if (tag !== 232) {
-            break;
-          }
-
-          message.stockAvailability = reader.int32();
-          continue;
-        }
-        case 30: {
-          if (tag !== 242) {
-            break;
-          }
-
           message.attributes = reader.string();
           continue;
         }
-        case 31: {
-          if (tag !== 250) {
+        case 29: {
+          if (tag !== 234) {
             break;
           }
 
@@ -1165,21 +1068,19 @@ export const ProductInput: MessageFns<ProductInput> = {
     return {
       name: isSet(object.name) ? globalThis.String(object.name) : "",
       slug: isSet(object.slug) ? globalThis.String(object.slug) : "",
+      brand: isSet(object.brand) ? globalThis.String(object.brand) : undefined,
       shortDescription: isSet(object.shortDescription) ? globalThis.String(object.shortDescription) : undefined,
       longDescription: isSet(object.longDescription) ? globalThis.String(object.longDescription) : undefined,
-      thumbnailUrl: isSet(object.thumbnailUrl) ? globalThis.String(object.thumbnailUrl) : undefined,
-      productType: isSet(object.productType) ? productTypeFromJSON(object.productType) : undefined,
-      productTemplateId: isSet(object.productTemplateId) ? globalThis.String(object.productTemplateId) : undefined,
+      thumbnail: isSet(object.thumbnail) ? globalThis.String(object.thumbnail) : undefined,
+      images: globalThis.Array.isArray(object?.images) ? object.images.map((e: any) => globalThis.String(e)) : [],
+      productType: isSet(object.productType) ? globalThis.String(object.productType) : undefined,
       manufacturerId: isSet(object.manufacturerId) ? globalThis.String(object.manufacturerId) : undefined,
       sortOrder: isSet(object.sortOrder) ? globalThis.Number(object.sortOrder) : undefined,
-      metaTitle: isSet(object.metaTitle) ? globalThis.String(object.metaTitle) : undefined,
-      metaDescription: isSet(object.metaDescription) ? globalThis.String(object.metaDescription) : undefined,
       metaKeywords: isSet(object.metaKeywords) ? globalThis.String(object.metaKeywords) : undefined,
-      tags: isSet(object.tags) ? globalThis.String(object.tags) : undefined,
-      allowCustomMetaTag: isSet(object.allowCustomMetaTag) ? globalThis.Boolean(object.allowCustomMetaTag) : undefined,
+      tags: globalThis.Array.isArray(object?.tags) ? object.tags.map((e: any) => globalThis.String(e)) : [],
       limitedToLocations: isSet(object.limitedToLocations) ? globalThis.Boolean(object.limitedToLocations) : undefined,
       limitedToStores: isSet(object.limitedToStores) ? globalThis.Boolean(object.limitedToStores) : undefined,
-      status: isSet(object.status) ? productStatusFromJSON(object.status) : undefined,
+      status: isSet(object.status) ? globalThis.String(object.status) : undefined,
       displayPrice: isSet(object.displayPrice) ? globalThis.Boolean(object.displayPrice) : undefined,
       shippable: isSet(object.shippable) ? globalThis.Boolean(object.shippable) : undefined,
       weight: isSet(object.weight) ? globalThis.Number(object.weight) : undefined,
@@ -1205,20 +1106,23 @@ export const ProductInput: MessageFns<ProductInput> = {
     if (message.slug !== "") {
       obj.slug = message.slug;
     }
+    if (message.brand !== undefined) {
+      obj.brand = message.brand;
+    }
     if (message.shortDescription !== undefined) {
       obj.shortDescription = message.shortDescription;
     }
     if (message.longDescription !== undefined) {
       obj.longDescription = message.longDescription;
     }
-    if (message.thumbnailUrl !== undefined) {
-      obj.thumbnailUrl = message.thumbnailUrl;
+    if (message.thumbnail !== undefined) {
+      obj.thumbnail = message.thumbnail;
+    }
+    if (message.images?.length) {
+      obj.images = message.images;
     }
     if (message.productType !== undefined) {
-      obj.productType = productTypeToJSON(message.productType);
-    }
-    if (message.productTemplateId !== undefined) {
-      obj.productTemplateId = message.productTemplateId;
+      obj.productType = message.productType;
     }
     if (message.manufacturerId !== undefined) {
       obj.manufacturerId = message.manufacturerId;
@@ -1226,20 +1130,11 @@ export const ProductInput: MessageFns<ProductInput> = {
     if (message.sortOrder !== undefined) {
       obj.sortOrder = Math.round(message.sortOrder);
     }
-    if (message.metaTitle !== undefined) {
-      obj.metaTitle = message.metaTitle;
-    }
-    if (message.metaDescription !== undefined) {
-      obj.metaDescription = message.metaDescription;
-    }
     if (message.metaKeywords !== undefined) {
       obj.metaKeywords = message.metaKeywords;
     }
-    if (message.tags !== undefined) {
+    if (message.tags?.length) {
       obj.tags = message.tags;
-    }
-    if (message.allowCustomMetaTag !== undefined) {
-      obj.allowCustomMetaTag = message.allowCustomMetaTag;
     }
     if (message.limitedToLocations !== undefined) {
       obj.limitedToLocations = message.limitedToLocations;
@@ -1248,7 +1143,7 @@ export const ProductInput: MessageFns<ProductInput> = {
       obj.limitedToStores = message.limitedToStores;
     }
     if (message.status !== undefined) {
-      obj.status = productStatusToJSON(message.status);
+      obj.status = message.status;
     }
     if (message.displayPrice !== undefined) {
       obj.displayPrice = message.displayPrice;
